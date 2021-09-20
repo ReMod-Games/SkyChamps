@@ -1,32 +1,51 @@
 export class WSHandler {
   status: EventTarget = new EventTarget();
-  conns: Deno.WebSocketUpgrade[] = [];
+  sockets: WebSocket[] = [];
 
-  addSocket(conn: Deno.WebSocketUpgrade, id: 0 | 1) {
-    conn.socket.onopen = () => this.conns[id] = conn;
-    conn.socket.onmessage = (evt) => this.#handleMessageEvent(id, evt);
-    conn.socket.onclose = () =>
+  addSocket(sock: WebSocket, id: 0 | 1) {
+    sock.onopen = () => this.sockets[id] = sock;
+    sock.onmessage = (evt) => this.#handleMessageEvent(id, evt);
+    sock.onclose = () =>
       this.dispatchAll(new CloseEvent(`Player ${id} left the game`));
 
-    conn.socket.onerror = () =>
+    sock.onerror = () =>
       this.dispatchAll(new CloseEvent(`Unexpected Disconnect from ${id}`));
   }
 
   dispatchAll(evt: Event) {
-    this.conns.forEach((conn) => conn.socket.dispatchEvent(evt));
+    this.sockets.forEach((sock) => sock.dispatchEvent(evt));
   }
 
   dispatchToID(id: 0 | 1, evt: Event) {
-    this.conns[id].socket.dispatchEvent(evt);
+    this.sockets[id].dispatchEvent(evt);
   }
 
   #handleMessageEvent(senderID: 0 | 1, evt: MessageEvent) {
     switch (evt.type) {
       case "chat":
+        // Transform into chat object
         this.dispatchAll(evt);
         break;
-      case "playCard":
-        this.dispatchToID(senderID === 0 ? 1 : 0, evt);
+      //   case "playCard":
+      //     // Transform into card object
+      //     this.dispatchToID(senderID === 0 ? 1 : 0, EVENT);
+      //     break;
+      //   case "getCards":
+      //     // Connect to db and make card object
+      //     this.dispatchToID(senderID, evt, EVENT);
+      //     break;
+      //   case "leave":
+      //     // Transform into leave object
+      //     this.dispatchAll(EVENT);
+      //     break;
+      default:
+        this.dispatchToID(
+          senderID,
+          new ErrorEvent("Invalid Action", {
+            message: "Tried to input invalid action",
+          }),
+        );
+        break;
     }
   }
 }
