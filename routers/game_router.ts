@@ -10,15 +10,17 @@ const gameRouter = new Router<{ id: string }, ServerState>({
 });
 
 gameRouter.get("/:id", async function (ctx) {
-  if (!ctx.params.id) return ctx.response.status = 400;
-  let lobby = ctx.state.lobbies.get(ctx.params.id);
+  const lobbyID = ctx.params.id;
+  // If no ID is provided, return error
+  if (!lobbyID) return ctx.response.status = 400;
+  let lobby = ctx.state.lobbies.get(lobbyID);
   if (!lobby) {
-    lobby = new Lobby();
-    ctx.state.lobbies.set(ctx.params.id, lobby);
+    lobby = new Lobby(lobbyID);
+    ctx.state.lobbies.set(lobbyID, lobby);
   }
 
   lobby.addPlayer(await ctx.upgrade());
-  if (lobby.playerCount >= 2) {
+  if (lobby.playerCount === 2) {
     lobby.startGame();
   }
 });
