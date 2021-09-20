@@ -1,20 +1,16 @@
 import { Router } from "../deps.ts";
-import { ServerState } from "../types.ts";
-/**
- * Game stuff
- */
+import type { ServerState } from "../types.ts";
 
 const lobbyRouter = new Router<never, ServerState>({ prefix: "/lobby" });
 
-lobbyRouter.get("/", function (ctx) {
+lobbyRouter.get("/", async function (ctx) {
   // Send normal page
-  // Join and create button
-  ctx.response.body = ctx.state.cache.get("./client/index.html");
+  ctx.response.body = await ctx.state.cache.get("./resources/html/index.html");
 });
-lobbyRouter.get("/:id", function (ctx) {
-  ctx.response.body = "ree ID";
-  // Show waiting list
-  // CLIENT: Start socket connection to /game/:id
+
+lobbyRouter.get("/:id", async function (ctx) {
+  // Send lobby page
+  ctx.response.body = await ctx.state.cache.get("./resources/html/lobby.html");
 });
 
 export { lobbyRouter };

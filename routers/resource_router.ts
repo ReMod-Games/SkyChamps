@@ -1,10 +1,27 @@
 import { Router } from "../deps.ts";
+import type { ServerState } from "../types.ts";
 
-const resourceRouter = new Router({ prefix: "/resources" });
+const resourceRouter = new Router<{ file: string }, ServerState>({
+  prefix: "/resources",
+});
 
-resourceRouter.get("/card/:id", function (_ctx) {});
-resourceRouter.get("/css/:id", function (_ctx) {});
-resourceRouter.get("/js/:id", function (_ctx) {});
-resourceRouter.get("/misc/:id", function (_ctx) {});
+// This is explicit to avoid UB
+resourceRouter.get("/css/:file", async function (ctx) {
+  ctx.response.body = await ctx.state.cache.get(
+    `./resources/css/${ctx.params.file}`,
+  );
+});
+
+resourceRouter.get("/images/:file", async function (ctx) {
+  ctx.response.body = await ctx.state.cache.get(
+    `./resources/images/${ctx.params.file}`,
+  );
+});
+
+resourceRouter.get("/javascript/:file", async function (ctx) {
+  ctx.response.body = await ctx.state.cache.get(
+    `./resources/javascript/${ctx.params.file}`,
+  );
+});
 
 export { resourceRouter };

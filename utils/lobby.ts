@@ -3,17 +3,24 @@ import { WSHandler } from "./ws_handler.ts";
 export class Lobby {
   code: string;
   createdAt: Date;
+  abortController: AbortController = new AbortController();
   /**
-  0: Waiting for players
-  1: Playing
-  2: Done with the game
-  */
+   * 0: Waiting for players
+   *
+   * 1: Playing
+   *
+   * 2: Done with the game
+   */
   state: 0 | 1 | 2;
   playerCount: 0 | 1 | 2;
   #wsHandler: WSHandler;
 
   constructor(code: string) {
     this.#wsHandler = new WSHandler();
+    this.#wsHandler.abortController.signal.onabort = () => {
+      this.state = 2;
+      this.abortController.abort();
+    };
     this.playerCount = 0;
     this.state = 0;
 
@@ -31,11 +38,6 @@ export class Lobby {
 
   startGame(): void {
     this.state = 1;
-    this.#wsHandler.dispatchAll(new Event("start"));
-  }
-
-  stopGame(): void {
-    this.state = 2;
-    this.#wsHandler.dispatchAll(new CloseEvent("Server stopped this game"));
+    this.#wsHandler.sendAll(new Event("start"));
   }
 }

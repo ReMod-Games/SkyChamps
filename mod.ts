@@ -14,6 +14,7 @@ const app = new Application<ServerState>({
   },
 });
 
+app.addEventListener("error", console.log);
 app.use(lobbyRouter.allowedMethods());
 app.use(lobbyRouter.routes());
 

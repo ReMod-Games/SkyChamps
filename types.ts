@@ -1,4 +1,4 @@
-import type { Lobby } from "./utils/lobbies.ts";
+import type { Lobby } from "./utils/lobby.ts";
 import type { Cache } from "./utils/cache.ts";
 
 export interface ServerState {
