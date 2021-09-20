@@ -1,7 +1,4 @@
-import { Err, Ok } from "../deps.ts";
 import { WSHandler } from "./ws_handler.ts";
-
-import type { Result } from "../deps.ts";
 
 export class Lobby {
   code: string;
@@ -15,23 +12,20 @@ export class Lobby {
   playerCount: 0 | 1 | 2;
   #wsHandler: WSHandler;
 
-  constructor() {
+  constructor(code: string) {
     this.#wsHandler = new WSHandler();
     this.playerCount = 0;
     this.state = 0;
 
-    const d = new Date();
-    this.code = d.getMilliseconds().toString(16).toUpperCase();
-    this.createdAt = d;
+    this.code = code;
+    this.createdAt = new Date();
   }
 
-  addPlayer(sock: WebSocket): Result<string, string> {
-    if (this.playerCount > 2) return Err("Too many players");
+  addPlayer(sock: WebSocket): string | undefined {
+    if (this.playerCount > 2) return "Too many players";
 
     this.#wsHandler.addSocket(sock, this.playerCount - 1 as 0 | 1);
     this.playerCount++;
-
-    return Ok("Player Connected");
   }
 
   startGame(): void {

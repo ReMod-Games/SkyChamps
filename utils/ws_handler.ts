@@ -3,6 +3,7 @@ export class WSHandler {
   sockets: WebSocket[] = [];
 
   addSocket(sock: WebSocket, id: 0 | 1) {
+    // I feel like this onopen will fuck up at some point
     sock.onopen = () => this.sockets[id] = sock;
     sock.onmessage = (evt) => this.#handleMessageEvent(id, evt);
     sock.onclose = () =>
