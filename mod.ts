@@ -7,6 +7,7 @@ import { Cache } from "./utils/cache.ts";
 import type { ServerState } from "./types.ts";
 
 const app = new Application<ServerState>({
+  contextState: "alias",
   state: {
     lobbies: new Map(),
     cache: new Cache(),
