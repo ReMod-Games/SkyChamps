@@ -22,6 +22,7 @@ export class Lobby {
   }
 
   addPlayer(sock: WebSocket): string | undefined {
+    // TODO: Make it possible to have spectators via a seperate WS lobby or something
     if (this.playerCount > 2) return "Too many players";
 
     this.#wsHandler.addSocket(sock, this.playerCount - 1 as 0 | 1);
