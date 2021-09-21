@@ -7,38 +7,32 @@ export class WSHandler {
     sock.onopen = () => this.sockets[id] = sock;
     sock.onmessage = (evt) => this.#handleMessageEvent(id, evt);
     sock.onclose = () => {
-      this.sendAll(
-        new CloseEvent("close", { reason: `Player ${id} left the game` }),
-      );
+      this.sendAll(`type:close\x1Creason:Player ${id} left the game`);
       this.sockets.forEach((sock) => sock.close(0));
       this.abortController.abort();
     };
 
     sock.onerror = () => {
       this.sendAll(
-        new ErrorEvent("error", {
-          error: "Player Disconnect",
-          message: `Unexpected Disconnect from ${id}`,
-        }),
+        `type:error\x1Cerror:Player Disconnected\x1Cmessage:Unexpected Disconnect from ${id}`,
       );
       this.sockets.forEach((sock) => sock.close(0));
       this.abortController.abort();
     };
   }
 
-  sendAll(evt: Event) {
-    this.sockets.forEach((sock) => sock.send(formatEvent(evt)));
+  sendAll(data: string) {
+    this.sockets.forEach((sock) => sock.send(data));
   }
 
-  sendToID(id: 0 | 1, evt: Event) {
-    this.sockets[id].send(formatEvent(evt));
+  sendToID(id: 0 | 1, data: string) {
+    this.sockets[id].send(data);
   }
 
   #handleMessageEvent(senderID: 0 | 1, evt: MessageEvent) {
     switch (evt.type) {
       case "chat":
         // Transform into chat object
-        this.sendAll(evt);
         break;
       //   case "playCard":
       //     // Transform into card object
@@ -55,25 +49,9 @@ export class WSHandler {
       default:
         this.sendToID(
           senderID,
-          new ErrorEvent("error", {
-            error: "Invalid Action",
-            message: "Tried to input invalid action",
-          }),
+          "type:error\x1Cerror:Invalid Action\x1Cmessage:Tried to input invalid action",
         );
         break;
     }
   }
-}
-
-function formatEvent(evt: Event): string {
-  switch (evt.type) {
-    case "close":
-      return `type:close\x1Creason:${(evt as CloseEvent).reason}`;
-    case "message":
-      return `type:message\x1Cmessage:${(evt as MessageEvent).data}`;
-    case "error":
-      // deno-fmt-ignore
-      return `type:error\x1Cerror:${(evt as ErrorEvent).error}\x1Cmessage:${(evt as ErrorEvent).message}`;
-  }
-  return `type:error\x1Cerror:unknown\x1Cmessage:Unknown Error`;
 }
