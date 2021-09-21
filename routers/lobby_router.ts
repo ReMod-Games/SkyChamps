@@ -15,6 +15,7 @@ lobbyRouter.get("/", async function (ctx) {
 lobbyRouter.get("/get_code", function (ctx) {
   const code = crypto.randomUUID().substring(0, 8);
   ctx.state.lobbies.set(code, new Lobby(code));
+  ctx.response.body = code;
 });
 
 lobbyRouter.get("/:id", async function (ctx) {
