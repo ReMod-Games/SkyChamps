@@ -19,14 +19,15 @@ export class Lobby {
    */
   state: 0 | 1 | 2 = 0;
   playerCount: 0 | 1 | 2 = 0;
-  #wsHandler: WSHandler;
+  #wsHandler: WSHandler = new WSHandler();
   // Will cancel the game if both players don't join in 2 minutes
   #timeoutID = setTimeout(() => {
-    if (this.playerCount < 2) this.abortController.abort();
-  }, 1000 * 60 * 2);
+    if (this.playerCount < 2) {
+      this.#wsHandler.abortMatch(1000, "Not all players joined");
+    }
+  }, 1000 * 25);
 
   constructor(code: string) {
-    this.#wsHandler = new WSHandler();
     this.#wsHandler.abortController.signal.onabort = () => {
       // Immediate disconnect may fuck this up?
       clearTimeout(this.#timeoutID);

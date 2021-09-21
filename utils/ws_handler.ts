@@ -10,25 +10,23 @@ export class WSHandler {
 
   async addSocket(sock: WebSocket, id: 0 | 1) {
     const connection = new Promise((res) => sock.onopen = res);
+
     sock.onmessage = (evt) => this.#handleMessageEvent(id, evt);
     sock.onclose = () => {
       // Remove itself from the connection pool when closed
       delete this.sockets[id];
-      this.sendAll(`type:close\x1Creason:Player ${id} left the game`);
-      this.sockets.forEach((sock) => sock.close(0));
-      this.abortController.abort();
+      this.abortMatch(1000, `type:close\x1Creason:Player ${id} left the game`);
     };
+
     sock.onerror = () => {
       // Remove itself from the connection pool when it errors
       delete this.sockets[id];
-      this.sendAll(
+      this.abortMatch(
+        1000,
         `type:error\x1Cerror:Player Disconnected\x1Cmessage:Unexpected Disconnect from ${id}`,
       );
-      this.sockets.forEach((sock) =>
-        sock.close(0, "Unexpected Disconnect from " + id)
-      );
-      this.abortController.abort();
     };
+
     await connection;
     this.sockets[id] = sock;
   }
@@ -46,6 +44,26 @@ export class WSHandler {
     // Remove this console
     console.log({ senderID, evt: originalEvent.type, data });
     // Switch statement here, Still needs some things
+  }
+
+  abortMatch(code: number, message?: string): void {
+    // Ping with reason
+    for (const ws of this.sockets) {
+      // Silently ignore removed connections
+      if (ws) {
+        // These are to ensure they don't get called multiple times during abort
+        ws.onclose = null;
+        ws.onerror = null;
+        ws.onmessage = null;
+        ws.onopen = null;
+        if (message) ws.send(message);
+        ws.close(code);
+      }
+    }
+    // Delete socket array;
+    this.sockets = [];
+    // Abort
+    this.abortController.abort();
   }
 }
 
