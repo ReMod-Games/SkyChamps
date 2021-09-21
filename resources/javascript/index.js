@@ -1,17 +1,10 @@
 onload = function () {
-  document.getElementById("join_match").addEventListener(
+  document.getElementById("create_match").addEventListener(
     "click",
-    () => window.location.replace(createID()),
+    async () => window.location.replace(`./lobby/${await getID()}`),
   );
 };
 
-function createID() {
-  const u8 = new Uint8Array(3);
-  crypto.getRandomValues(u8);
-  let buff = "";
-
-  for (const num of u8.values()) {
-    buff += num.toString(16);
-  }
-  return buff;
+async function getID() {
+  return await fetch(`./lobby/get_code`).then((x) => x.text());
 }

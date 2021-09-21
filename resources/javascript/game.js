@@ -1,4 +1,5 @@
-const gameID = document.location.path.split("/").pop();
+// Hacky but it works
+const gameID = document.location.pathname.split("/").pop();
 const ws = new WebSocket(`ws://${document.location.host}/game/${gameID}/`);
 
 ws.onopen = console.log;
@@ -20,6 +21,9 @@ function messageHandler(evt) {
       // Change values
       break;
     case "opponent_ability":
+    case "self_play_card":
+    case "self_attack":
+    case "self_ability":
       break;
   }
 }

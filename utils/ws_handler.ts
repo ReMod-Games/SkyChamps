@@ -1,24 +1,36 @@
+/**
+  Resources that need to be managed:
+  - Websocket connections (make sure all of these are closed)
+  - Abortcontroller (make sure this always abort once the socket's are closed)
+*/
+
 export class WSHandler {
   sockets: WebSocket[] = [];
   abortController: AbortController = new AbortController();
 
-  addSocket(sock: WebSocket, id: 0 | 1) {
-    // I feel like this onopen will fuck up at some point
-    sock.onopen = () => this.sockets[id] = sock;
+  async addSocket(sock: WebSocket, id: 0 | 1) {
+    const connection = new Promise((res) => sock.onopen = res);
     sock.onmessage = (evt) => this.#handleMessageEvent(id, evt);
     sock.onclose = () => {
+      // Remove itself from the connection pool when closed
+      delete this.sockets[id];
       this.sendAll(`type:close\x1Creason:Player ${id} left the game`);
       this.sockets.forEach((sock) => sock.close(0));
       this.abortController.abort();
     };
-
     sock.onerror = () => {
+      // Remove itself from the connection pool when it errors
+      delete this.sockets[id];
       this.sendAll(
         `type:error\x1Cerror:Player Disconnected\x1Cmessage:Unexpected Disconnect from ${id}`,
       );
-      this.sockets.forEach((sock) => sock.close(0));
+      this.sockets.forEach((sock) =>
+        sock.close(0, "Unexpected Disconnect from " + id)
+      );
       this.abortController.abort();
     };
+    await connection;
+    this.sockets[id] = sock;
   }
 
   sendAll(data: string) {
@@ -29,29 +41,22 @@ export class WSHandler {
     this.sockets[id].send(data);
   }
 
-  #handleMessageEvent(senderID: 0 | 1, evt: MessageEvent) {
-    switch (evt.type) {
-      case "chat":
-        // Transform into chat object
-        break;
-      //   case "playCard":
-      //     // Transform into card object
-      //     this.dispatchToID(senderID === 0 ? 1 : 0, EVENT);
-      //     break;
-      //   case "getCards":
-      //     // Connect to db and make card object
-      //     this.dispatchToID(senderID, evt, EVENT);
-      //     break;
-      //   case "leave":
-      //     // Transform into leave object
-      //     this.dispatchAll(EVENT);
-      //     break;
-      default:
-        this.sendToID(
-          senderID,
-          "type:error\x1Cerror:Invalid Action\x1Cmessage:Tried to input invalid action",
-        );
-        break;
-    }
+  #handleMessageEvent(senderID: 0 | 1, originalEvent: MessageEvent<string>) {
+    const data = transformMessageEvent(originalEvent);
+    // Remove this console
+    console.log({ senderID, evt: originalEvent.type, data });
+    // Switch statement here, Still needs some things
   }
+}
+
+// Transform message event into a object.
+function transformMessageEvent(
+  evt: MessageEvent<string>,
+): Record<string, string> {
+  const rec: Record<string, string> = {};
+  const data: string[][] = evt.data.split("\x1D").map((x) => x.split("\x1C"));
+  for (const [key, value] of data) {
+    rec[key] = value;
+  }
+  return rec;
 }
