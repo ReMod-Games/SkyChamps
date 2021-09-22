@@ -29,15 +29,6 @@ export class Game {
     this.abortController.signal.addEventListener("abort", this.cleanUp);
   }
 
-  async addClient(websocket: WebSocket, name: string) {
-    if (this.#players.length < 2) {
-      await this.#addPlayer(websocket, name);
-      if (this.#players.length === 2) this.startGame();
-    } else {
-      await this.#addSpectator(websocket, name);
-    }
-  }
-
   startGame(): void {
     const event = new Event("start");
     for (const player of this.#players) player.sendEvent(event);
@@ -57,6 +48,21 @@ export class Game {
     );
   }
 
+  sendGlobalEvent(): void {
+    // Broadcast to players and spectators
+  }
+
+  sendPlayerEvent(): void {
+    // Send only to players
+  }
+
+  async addClient(websocket: WebSocket, name: string) {
+    if (this.#players.length < 2) {
+      return await this.#addPlayer(websocket, name);
+    }
+    await this.#addSpectator(websocket, name);
+  }
+
   /**
    * Works as a destructor.
    *
@@ -68,10 +74,10 @@ export class Game {
     this.abortController.signal.removeEventListener("abort", this.cleanUp);
     this.#spectators = [];
     this.#players = [];
-    // if (isFinite(this.#timeoutID)) {
     clearTimeout(this.#timeoutID);
-    // }
   }
+
+  // Private API
 
   async #addPlayer(webSocket: WebSocket, name: string) {
     const player = new Player({
@@ -137,14 +143,6 @@ export class Game {
         reason: "Spectator Disconnected",
       }),
     );
-  }
-
-  sendGlobalEvent(): void {
-    // Broadcast to players and spectators
-  }
-
-  sendPlayerEvent(): void {
-    // Send only to players
   }
 
   #gameEventHandler(evt: MessageEvent<string>, player: Player): void {
