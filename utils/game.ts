@@ -43,7 +43,7 @@ export class Game {
     this.abortController.signal.dispatchEvent(
       new CloseEvent("closing", {
         reason: "Not all players connected",
-        code: CloseCodes.GAME_CANCELLED,
+        code: CloseCodes.MATCH_CANCELED,
       }),
     );
   }
@@ -93,7 +93,7 @@ export class Game {
       this.stopGame(
         new CloseEvent("close", {
           reason: "Player disconnected",
-          code: CloseCodes.USER_DISCONNECTED,
+          code: CloseCodes.PLAYER_LEFT,
         }),
       )
     );
@@ -102,7 +102,7 @@ export class Game {
       this.stopGame(
         new CloseEvent("close", {
           reason: "Player connection got forcibly closed",
-          code: CloseCodes.USER_DISCONNECTED,
+          code: CloseCodes.PLAYER_LEFT_ERROR,
         }),
       )
     );
