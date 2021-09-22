@@ -1,7 +1,7 @@
-import type { Lobby } from "./utils/lobby.ts";
+import type { Game } from "./utils/game.ts";
 import type { Cache } from "./utils/cache.ts";
 
 export interface ServerState {
-  lobbies: Map<string, Lobby>;
+  lobbies: Map<string, Game>;
   cache: Cache;
 }
