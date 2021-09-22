@@ -1,51 +1,77 @@
 import { Player, Spectator } from "./clients.ts";
-
-interface StopInit {
-  reason?: string;
-  code?: number;
-}
+import { CloseCodes } from "./codes.ts";
 
 /**
-  Resources that need to be managed:
-  - Timeout's
-  - Abortcontroller (make sure this always abort once the socket's are closed)
-*/
-
+ * Resources that need to be managed
+ *
+ * Websocket connections of players (done by `Player` and `Spectator` classes)
+ *
+ * Timeout for lobby (done by `this.cleanUp`)
+ *
+ * AbortController eventListeners (done by `Player` and `Spectator` classes)
+ */
 export class Game {
   gameID: string;
   createdAt = new Date();
   abortController: AbortController = new AbortController();
-  /**
-   * 0: Waiting for players
-   *
-   * 1: Playing
-   *
-   * 2: Done with the game
-   */
   state: 0 | 1 | 2 = 0;
+
   #spectators: Spectator[] = [];
   #players: Player[] = [];
+
   #timeoutID = setTimeout(() => {
-    if (this.#players.length > 2) this.cleanUp();
-    clearTimeout(this.#timeoutID);
-  });
+    if (this.#players.length < 2) this.cancelGame();
+  }, 1000 * 60 * 2);
+
   constructor(gameID: string) {
     this.gameID = gameID;
+
+    this.abortController.signal.addEventListener("abort", this.cleanUp);
   }
 
   async addClient(websocket: WebSocket, name: string) {
     if (this.#players.length < 2) {
       await this.#addPlayer(websocket, name);
+      if (this.#players.length === 2) this.startGame();
     } else {
       await this.#addSpectator(websocket, name);
     }
   }
 
-  startGame(): void {}
-  // Already started
-  stopGame(init: StopInit): void {}
-  // Not started yet
-  cancelGame(): void {}
+  startGame(): void {
+    const event = new Event("start");
+    for (const player of this.#players) player.sendEvent(event);
+    for (const spectator of this.#spectators) spectator.sendEvent(event);
+  }
+
+  stopGame(evt: CloseEvent): void {
+    this.abortController.signal.dispatchEvent(evt);
+  }
+
+  cancelGame(): void {
+    this.abortController.signal.dispatchEvent(
+      new CloseEvent("closing", {
+        reason: "Not all players connected",
+        code: CloseCodes.GAME_CANCELLED,
+      }),
+    );
+  }
+
+  /**
+   * Works as a destructor.
+   *
+   * Clears up AbortController stuff
+   *
+   * Clears up Players and Spectators
+   */
+  cleanUp(): void {
+    this.abortController.signal.removeEventListener("abort", this.cleanUp);
+    this.#spectators = [];
+    this.#players = [];
+    // if (isFinite(this.#timeoutID)) {
+    clearTimeout(this.#timeoutID);
+    // }
+  }
 
   async #addPlayer(webSocket: WebSocket, name: string) {
     const player = new Player({
@@ -58,12 +84,24 @@ export class Game {
 
     // Initiate all eventListeners
     player.onClose(() =>
-      this.stopGame({ reason: "Player disconnected", code: 1000 })
+      this.stopGame(
+        new CloseEvent("close", {
+          reason: "Player disconnected",
+          code: CloseCodes.USER_DISCONNECTED,
+        }),
+      )
     );
+
     player.onError(() =>
-      this.stopGame({ reason: "Player disconnected unexpectedly", code: 4000 })
+      this.stopGame(
+        new CloseEvent("close", {
+          reason: "Player connection got forcibly closed",
+          code: CloseCodes.USER_DISCONNECTED,
+        }),
+      )
     );
-    player.onMessage((evt) => this.#gameEventHandler(evt, player));
+
+    player.onMessage(this.#gameEventHandler);
 
     // Wait for the connection to be opened
     await player.awaitConnection();
@@ -75,7 +113,6 @@ export class Game {
     const possibleID = this.#spectators.findIndex((x) => x === undefined);
     const spectator = new Spectator({
       gameID: this.gameID,
-
       // If there is a empty spot in array, grab that. Else assign new one
       id: possibleID > 0 ? possibleID : this.#spectators.length,
       gameAbortController: this.abortController,
@@ -83,19 +120,34 @@ export class Game {
       name,
     });
 
-    webSocket.onclose = () => this.#removeSpectator(spectator);
-    webSocket.onerror = () => this.#removeSpectator(spectator);
+    // Silently remove spectator from match if disconnected
+    spectator.onClose(() => this.#removeSpectator(spectator));
+    spectator.onError(() => this.#removeSpectator(spectator));
 
     // Wait for the connection to be opened
-    await new Promise((res) => webSocket.onopen = res);
+    await spectator.awaitConnection();
     this.#spectators[spectator.id] = spectator;
   }
 
   #removeSpectator(spectator: Spectator) {
     delete this.#spectators[spectator.id];
-    spectator.cleanUp();
+    spectator.cleanUp(
+      new CloseEvent("close", {
+        code: CloseCodes.OK,
+        reason: "Spectator Disconnected",
+      }),
+    );
+  }
+
+  sendGlobalEvent(): void {
+    // Broadcast to players and spectators
+  }
+
+  sendPlayerEvent(): void {
+    // Send only to players
   }
 
   #gameEventHandler(evt: MessageEvent<string>, player: Player): void {
+    // Handle incoming events from players
   }
 }
