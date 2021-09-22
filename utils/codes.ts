@@ -1,0 +1,6 @@
+export enum CloseCodes {
+  OK = 1000,
+  GAME_CANCELLED = 4001,
+  GAME_STOPPED = 4002,
+  USER_DISCONNECTED = 4003,
+}
