@@ -18,7 +18,7 @@ export class Game {
 
   #spectators: Spectator[] = [];
   #players: Player[] = [];
-
+  playercount = 0;
   #timeoutID = setTimeout(() => {
     if (this.#players.length < 2) this.cancelGame();
   }, 1000 * 60 * 2);
@@ -58,7 +58,9 @@ export class Game {
 
   async addClient(websocket: WebSocket, name: string) {
     if (this.#players.length < 2) {
-      return await this.#addPlayer(websocket, name);
+      await this.#addPlayer(websocket, name);
+      this.playercount = this.#players.length;
+      return;
     }
     await this.#addSpectator(websocket, name);
   }

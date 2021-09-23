@@ -18,9 +18,7 @@ lobbyRouter.get("/get_code", function (ctx) {
   ctx.state.games.set(code, game);
 
   // Add listener for abort function
-  game.abortController.signal.onabort = () => {
-    ctx.state.games.delete(code);
-  }
+  game.abortController.signal.onabort = () => ctx.state.games.delete(code);
 
   ctx.response.body = code;
 });
