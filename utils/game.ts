@@ -21,6 +21,8 @@ export class Game {
   playercount = 0;
   #timeoutID = setTimeout(() => {
     if (this.#players.length < 2) this.cancelGame();
+    clearTimeout(this.#timeoutID);
+    this.#timeoutID = NaN;
   }, 1000 * 60 * 2);
 
   constructor(gameID: string) {
@@ -30,6 +32,7 @@ export class Game {
   }
 
   startGame(): void {
+    if (isFinite(this.#timeoutID)) clearTimeout(this.#timeoutID);
     const event = new Event("start");
     for (const player of this.#players) player.sendEvent(event);
     for (const spectator of this.#spectators) spectator.sendEvent(event);
@@ -76,7 +79,9 @@ export class Game {
     this.abortController.signal.removeEventListener("abort", this.cleanUp);
     this.#spectators = [];
     this.#players = [];
-    clearTimeout(this.#timeoutID);
+
+    // Only clear if not cleared
+    if (isFinite(this.#timeoutID)) clearTimeout(this.#timeoutID);
   }
 
   // Private API
