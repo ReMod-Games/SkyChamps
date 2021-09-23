@@ -1,7 +1,7 @@
 import { Router } from "../deps.ts";
 import type { ServerState } from "../types.ts";
 
-const gameRouter = new Router<{ id: string, name: string }, ServerState>({
+const gameRouter = new Router<{ id: string; name: string }, ServerState>({
   prefix: "/game",
 });
 
