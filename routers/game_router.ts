@@ -1,23 +1,18 @@
 import { Router } from "../deps.ts";
 import type { ServerState } from "../types.ts";
 
-const gameRouter = new Router<{ id: string }, ServerState>({
+const gameRouter = new Router<{ id: string, name: string }, ServerState>({
   prefix: "/game",
 });
 
-gameRouter.get("/:id", async function (ctx) {
-  const lobbyID = ctx.params.id;
-  const lobby = ctx.state.lobbies.get(lobbyID);
-  if (!lobby) return ctx.response.status = 400;
+gameRouter.get("/:id/:name", async function (ctx) {
+  const gameID = ctx.params.id;
+  const game = ctx.state.games.get(gameID);
+  if (!game) return ctx.response.status = 400;
 
-  // Add first listener for cleanup at abort
-  if (lobby.playerCount === 0) {
-    lobby.abortController.signal.onabort = () =>
-      ctx.state.lobbies.delete(lobbyID);
-  }
-  if (lobby.playerCount < 2) await lobby.addPlayer(await ctx.upgrade());
-  if (lobby.playerCount === 2) {
-    lobby.startGame();
+  await game.addClient(await ctx.upgrade(), ctx.params.name);
+  if (game.playercount === 2) {
+    game.startGame();
   }
 });
 

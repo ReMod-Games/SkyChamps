@@ -1,5 +1,5 @@
 import { Router } from "../deps.ts";
-import { Lobby } from "../utils/lobby.ts";
+import { Game } from "../utils/game.ts";
 
 import type { ServerState } from "../types.ts";
 
@@ -14,12 +14,19 @@ lobbyRouter.get("/", async function (ctx) {
 
 lobbyRouter.get("/get_code", function (ctx) {
   const code = crypto.randomUUID().substring(0, 8);
-  ctx.state.lobbies.set(code, new Lobby(code));
+  const game = new Game(code);
+  ctx.state.games.set(code, game);
+
+  // Add listener for abort function
+  game.abortController.signal.onabort = () => {
+    ctx.state.games.delete(code);
+  }
+
   ctx.response.body = code;
 });
 
 lobbyRouter.get("/:id", async function (ctx) {
-  if (ctx.state.lobbies.has(ctx.params.id)) {
+  if (ctx.state.games.has(ctx.params.id)) {
     // Send lobby page
     ctx.response.body = await ctx.state.cache.get(
       "./resources/html/lobby.html",
