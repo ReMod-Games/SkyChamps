@@ -24,5 +24,4 @@ app.use(gameRouter.routes());
 app.use(resourceRouter.allowedMethods());
 app.use(resourceRouter.routes());
 
-console.log("ree");
 await app.listen({ port: 8000 });

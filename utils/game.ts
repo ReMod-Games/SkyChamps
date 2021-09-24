@@ -8,12 +8,13 @@ import { CloseCodes } from "./codes.ts";
  *
  * Timeout for lobby (done by `this.cleanUp`)
  *
- * AbortController eventListeners (done by `Player` and `Spectator` classes)
+ * AbortController eventListeners (done by `Player`, `Spectator` classes and `this.cleanUp`)
  */
 export class Game {
   gameID: string;
   createdAt = new Date();
   abortController: AbortController = new AbortController();
+  // Will be reworked into a state class from `./game_state.ts`
   state: 0 | 1 | 2 = 0;
 
   #spectators: Spectator[] = [];
@@ -21,8 +22,10 @@ export class Game {
   playercount = 0;
   #timeoutID = setTimeout(() => {
     if (this.#players.length < 2) this.cancelGame();
-    clearTimeout(this.#timeoutID);
-    this.#timeoutID = NaN;
+    else {
+      clearTimeout(this.#timeoutID);
+      this.#timeoutID = NaN;
+    }
   }, 1000 * 60 * 2);
 
   constructor(gameID: string) {
@@ -37,8 +40,7 @@ export class Game {
   startGame(): void {
     if (isFinite(this.#timeoutID)) clearTimeout(this.#timeoutID);
     const event = new Event("start");
-    for (const player of this.#players) player.sendEvent(event);
-    for (const spectator of this.#spectators) spectator.sendEvent(event);
+    this.sendGlobalEvent(event);
   }
 
   stopGame(evt: CloseEvent): void {
@@ -55,12 +57,16 @@ export class Game {
     this.abortController.signal.dispatchEvent(evt);
   }
 
-  sendGlobalEvent(): void {
+  sendGlobalEvent(evt: Event): void {
     // Broadcast to players and spectators
+    for (const player of this.#players) player.sendEvent(evt);
+    for (const spectator of this.#spectators) spectator.sendEvent(evt);
   }
 
-  sendPlayerEvent(): void {
+  sendPlayerEvent(evt: Event): void {
     // Send only to players
+    // Not intended for spectators
+    for (const player of this.#players) player.sendEvent(evt);
   }
 
   async addClient(websocket: WebSocket, name: string) {
@@ -122,7 +128,7 @@ export class Game {
       )
     );
 
-    player.onMessage(this.#gameEventHandler);
+    player.onMessage(this.#gameEventHandler.bind(this));
 
     // Wait for the connection to be opened
     await player.awaitConnection();
