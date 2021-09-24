@@ -8,6 +8,7 @@ interface ClientInit {
   id: number;
   webSocket: WebSocket;
   gameAbortController: AbortController;
+  isExtended: boolean;
 }
 
 export class Spectator {
@@ -25,7 +26,12 @@ export class Spectator {
     this.webSocket = init.webSocket;
     this.gameAbortController = init.gameAbortController;
 
-    this.gameAbortController.signal.addEventListener("abort", this.cleanUp);
+    if (!init.isExtended) {
+      this.gameAbortController.signal.addEventListener(
+        "abort",
+        this.cleanUp.bind(this),
+      );
+    }
   }
 
   /** What to do when websocket errors */
@@ -56,7 +62,10 @@ export class Spectator {
    * Clears up WebSocket stuff
    */
   cleanUp(evt: Event): void {
-    this.gameAbortController.signal.removeEventListener("abort", this.cleanUp);
+    this.gameAbortController.signal.removeEventListener(
+      "abort",
+      this.cleanUp.bind(this),
+    );
     this.webSocket.onclose = null;
     this.webSocket.onerror = null;
     this.webSocket.onopen = null;
@@ -73,7 +82,10 @@ export class Player extends Spectator {
   constructor(init: ClientInit) {
     super(init);
 
-    this.gameAbortController.signal.addEventListener("abort", this.cleanUp);
+    this.gameAbortController.signal.addEventListener(
+      "abort",
+      this.cleanUp.bind(this),
+    );
   }
 
   onMessage<T>(cb: VoidEventFunction<T>): void {
@@ -87,8 +99,12 @@ export class Player extends Spectator {
    *
    * Clears up deck
    */
-  cleanUp() {
-    this.gameAbortController.signal.removeEventListener("abort", this.cleanUp);
+  cleanUp(evt: Event) {
+    super.cleanUp(evt);
+    this.gameAbortController.signal.removeEventListener(
+      "abort",
+      this.cleanUp.bind(this),
+    );
     // this.#deck = [];
   }
 }

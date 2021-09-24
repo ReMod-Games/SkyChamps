@@ -28,7 +28,10 @@ export class Game {
   constructor(gameID: string) {
     this.gameID = gameID;
 
-    this.abortController.signal.addEventListener("abort", this.cleanUp);
+    this.abortController.signal.addEventListener(
+      "abort",
+      this.cleanUp.bind(this),
+    );
   }
 
   startGame(): void {
@@ -43,12 +46,13 @@ export class Game {
   }
 
   cancelGame(): void {
-    this.abortController.signal.dispatchEvent(
-      new CloseEvent("closing", {
-        reason: "Not all players connected",
-        code: CloseCodes.MATCH_CANCELED,
-      }),
-    );
+    const evt = new CloseEvent("abort", {
+      reason: "Not all players connected",
+      code: CloseCodes.MATCH_CANCELED,
+    });
+    // don't need to use `this.sendGlobalEvent`
+    // That get's handled by `Spectator#cleanUp` and `Player#cleanUp`
+    this.abortController.signal.dispatchEvent(evt);
   }
 
   sendGlobalEvent(): void {
@@ -76,7 +80,10 @@ export class Game {
    * Clears up Players and Spectators
    */
   cleanUp(): void {
-    this.abortController.signal.removeEventListener("abort", this.cleanUp);
+    this.abortController.signal.removeEventListener(
+      "abort",
+      this.cleanUp.bind(this),
+    );
     this.#spectators = [];
     this.#players = [];
 
@@ -91,6 +98,7 @@ export class Game {
       gameID: this.gameID,
       id: this.#players.length,
       gameAbortController: this.abortController,
+      isExtended: true,
       webSocket,
       name,
     });
@@ -98,7 +106,7 @@ export class Game {
     // Initiate all eventListeners
     player.onClose(() =>
       this.stopGame(
-        new CloseEvent("close", {
+        new CloseEvent("abort", {
           reason: "Player disconnected",
           code: CloseCodes.PLAYER_LEFT,
         }),
@@ -107,7 +115,7 @@ export class Game {
 
     player.onError(() =>
       this.stopGame(
-        new CloseEvent("close", {
+        new CloseEvent("abort", {
           reason: "Player connection got forcibly closed",
           code: CloseCodes.PLAYER_LEFT_ERROR,
         }),
@@ -129,6 +137,7 @@ export class Game {
       // If there is a empty spot in array, grab that. Else assign new one
       id: possibleID > 0 ? possibleID : this.#spectators.length,
       gameAbortController: this.abortController,
+      isExtended: false,
       webSocket,
       name,
     });
