@@ -1,12 +1,44 @@
 import { DB } from "../../deps.ts";
-import type { Queries } from "./types.ts";
+import type {
+  CardEventRecord,
+  CardID,
+  CardName,
+  CardRecord,
+  EventData,
+  MatchID,
+  MatchRecord,
+  Message,
+  MessageRecord,
+  PlayerID,
+  PlayerName,
+  PlayerRecord,
+  Queries,
+  SpecialEventRecord,
+} from "./types.ts";
 
 class Database {
   preparedQueries: Queries;
   database: DB = new DB("./database.db");
 
   constructor() {
-    this.database.query("");
+    this.database.query(
+      "CREATE TABLE IF NOT EXISTS cards (card_id INTEGER, card_name TEXT, card_description TEXT, card_health INTEGER, card_attack_damage INTEGER, card_attack_name TEXT, card_ability_name TEXT, card_crit_chance REAL)",
+    );
+    this.database.query(
+      "CREATE TABLE IF NOT EXISTS matches (match_id VARCHAR(8), started_at TEXT)",
+    );
+    this.database.query(
+      "CREATE TABLE IF NOT EXISTS match_player (FOREIGN KEY(match_id) REFERENCES matches(match_id), player_id INTEGER, player_name TEXT)",
+    );
+    this.database.query(
+      "CREATE TABLE IF NOT EXISTS match_chatmessages (date TEXT, message TEXT, FOREIGN KEY(player_id) REFERENCES match_player(player_id), FOREIGN KEY(match_id) REFERENCES matches(match_id))",
+    );
+    this.database.query(
+      "CREATE TABLE IF NOT EXISTS match_special_event (date TEXT, event_data TEXT, FOREIGN KEY(player_id) REFERENCES match_player(player_id), FOREIGN KEY(match_id) REFERENCES matches(match_id))",
+    );
+    this.database.query(
+      "CREATE TABLE IF NOT EXISTS match_card_event (date TEXT, event_data TEXT, FOREIGN KEY(card_id) REFERENCES cards(card_id), FOREIGN KEY(player_id) REFERENCES match_player(player_id), FOREIGN KEY(match_id) REFERENCES matches(match_id))",
+    );
     // Create all queries needed for database
     this.preparedQueries = {
       matches: {
@@ -65,6 +97,125 @@ class Database {
         ),
       },
     };
+  }
+
+  addMatch(matchID: MatchID): void {
+    this.preparedQueries.matches.addMatch
+      .execute([
+        matchID,
+        new Date().toString(),
+      ]);
+  }
+
+  getMatchByID(matchID: MatchID): MatchRecord {
+    return this.preparedQueries.matches.getMatchByID
+      .oneEntry([
+        matchID,
+      ]);
+  }
+
+  addPlayer(
+    matchID: MatchID,
+    playerID: PlayerID,
+    playerName: PlayerName,
+  ): void {
+    this.preparedQueries.matchPlayer.addPlayer
+      .execute([
+        matchID,
+        playerID,
+        playerName,
+      ]);
+  }
+
+  getPlayersByMatchID(matchID: MatchID): PlayerRecord {
+    return this.preparedQueries.matchPlayer.getPlayersByMatchID
+      .oneEntry([
+        matchID,
+      ]);
+  }
+
+  addMessage(message: Message, playerID: PlayerID, matchID: MatchID) {
+    this.preparedQueries.matchChatMessages.addMessage
+      .execute([
+        new Date().toString(),
+        message,
+        playerID,
+        matchID,
+      ]);
+  }
+
+  getMessagesByMatchID(matchID: MatchID): MessageRecord[] {
+    return this.preparedQueries.matchChatMessages.getMessagesByMatchID
+      .allEntries([matchID]);
+  }
+
+  addSpecialEvent(
+    eventData: EventData,
+    playerID: PlayerID,
+    matchID: MatchID,
+  ): void {
+    this.preparedQueries.matchSpecialEvent.addEvent.execute([
+      new Date().toString(),
+      eventData,
+      playerID,
+      matchID,
+    ]);
+  }
+
+  getSpecialEventsByMatchID(matchID: MatchID): SpecialEventRecord[] {
+    return this.preparedQueries.matchSpecialEvent.getEventsByMatchID
+      .allEntries([
+        matchID,
+      ]);
+  }
+
+  addCardEvent(
+    cardID: CardID,
+    eventData: EventData,
+    playerID: PlayerID,
+    matchID: MatchID,
+  ): void {
+    this.preparedQueries.matchCardEvent.addEvent
+      .execute([
+        new Date().toString(),
+        cardID,
+        eventData,
+        playerID,
+        matchID,
+      ]);
+  }
+
+  getCardEventsByMatchID(matchID: MatchID): CardEventRecord[] {
+    return this.preparedQueries.matchCardEvent.getEventsByMatchID
+      .allEntries([
+        matchID,
+      ]);
+  }
+
+  getCardByID(cardID: CardID): CardRecord {
+    return this.preparedQueries.cards.getCardByID
+      .oneEntry([
+        cardID,
+      ]);
+  }
+
+  getCardByName(cardName: CardName): CardRecord {
+    return this.preparedQueries.cards.getCardByName
+      .oneEntry([
+        cardName,
+      ]);
+  }
+
+  getRandomCard(): CardRecord {
+    return this.preparedQueries.cards.getRandomCard
+      .oneEntry();
+  }
+
+  getRandomCards(limit: number): CardRecord[] {
+    return this.preparedQueries.cards.getRandomCards
+      .allEntries([
+        limit,
+      ]);
   }
 }
 
