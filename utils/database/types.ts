@@ -1,5 +1,4 @@
 // deno-lint-ignore-file camelcase
-// deno-fmt-ignore-file
 import type { PreparedQuery } from "../../deps.ts";
 
 // Type aliases for clearer understanding
@@ -18,36 +17,68 @@ type CardAttackName = string;
 type CardAbilityName = string;
 type CardCritChance = number;
 
+interface MatchRecord extends Record<string, unknown> {
+  match_id: MatchID;
+  started_at: DateString;
+}
+
 type AddMatch = PreparedQuery<never, never, [MatchID, DateString]>;
-type GetMatchByID = PreparedQuery<never, { match_id: MatchID, started_at: DateString }, [MatchID]>;
+type GetMatchByID = PreparedQuery<never, MatchRecord, [MatchID]>;
 interface MatchQueries {
   addMatch: AddMatch;
   getMatchByID: GetMatchByID;
 }
 
-type AddPlayer = PreparedQuery<never, never, [MatchID, PlayerID, PlayerName]>;
-type GetPlayerByMatchID = PreparedQuery<never, { player_id: PlayerID, player_name: PlayerName }, [MatchID]>;
+interface PlayerRecord extends Record<string, unknown> {
+  player_id: PlayerID;
+  player_name: PlayerName;
+}
+
+type AddPlayer = PreparedQuery<[], never, [MatchID, PlayerID, PlayerName]>;
+type GetPlayerByMatchID = PreparedQuery<[], PlayerRecord, [MatchID]>;
 interface MatchPlayerQueries {
   addPlayer: AddPlayer;
   getPlayersByMatchID: GetPlayerByMatchID;
 }
 
-type AddMessage = PreparedQuery<never, never, [DateString, Message, PlayerID, MatchID]>;
-type GetMessagesByMatchID = PreparedQuery<never, { date: DateString, message: Message, player_id: PlayerID }, [MatchID]>;
+interface MessageRecord extends Record<string, unknown> {
+  date: DateString;
+  message: Message;
+  player_id: PlayerID;
+}
+
+// deno-fmt-ignore
+type AddMessage = PreparedQuery<[], never, [DateString, Message, PlayerID, MatchID]>;
+type GetMessagesByMatchID = PreparedQuery<[], MessageRecord, [MatchID]>;
 interface ChatQueries {
   addMessage: AddMessage;
   getMessagesByMatchID: GetMessagesByMatchID;
 }
 
-type AddSpecialEvent = PreparedQuery<never, never, [DateString, EventData, PlayerID, MatchID]>;
-type GetSpecialEventsByMatchID = PreparedQuery<never, { date: DateString, event_data: EventData, player_id: PlayerID }, [MatchID]>;
+interface SpecialEventRecord extends Record<string, unknown> {
+  date: DateString;
+  event_data: EventData;
+  player_id: PlayerID;
+}
+// deno-fmt-ignore
+type AddSpecialEvent = PreparedQuery<[], never, [DateString, EventData, PlayerID, MatchID]>;
+// deno-fmt-ignore
+type GetSpecialEventsByMatchID = PreparedQuery<[], SpecialEventRecord, [MatchID]>;
 interface SpecialEventQueries {
   addEvent: AddSpecialEvent;
   getEventsByMatchID: GetSpecialEventsByMatchID;
 }
 
-type AddCardEvent = PreparedQuery<never, never, [DateString, CardID, EventData, PlayerID, MatchID]>;
-type GetEventsByMatchID = PreparedQuery<never, { date: DateString, card_id: CardID, event_data: EventData, player_id: PlayerID }, [MatchID]>;
+interface EventRecord extends Record<string, unknown> {
+  date: DateString;
+  card_id: CardID;
+  event_data: EventData;
+  player_id: PlayerID;
+}
+
+// deno-fmt-ignore
+type AddCardEvent = PreparedQuery<[], never, [DateString, CardID, EventData, PlayerID, MatchID]>;
+type GetEventsByMatchID = PreparedQuery<[], EventRecord, [MatchID]>;
 interface CardEventQueries {
   addEvent: AddCardEvent;
   getEventsByMatchID: GetEventsByMatchID;
@@ -64,10 +95,10 @@ interface CardRecord extends Record<string, unknown> {
   card_crit_chance: CardCritChance;
 }
 
-type GetCardByID = PreparedQuery<never, CardRecord, [CardID]>;
-type GetCardByName = PreparedQuery<never, CardRecord, [CardName]>;
-type GetRandomCard = PreparedQuery<never, CardRecord>;
-type GetRandomCards = PreparedQuery<never, CardRecord, [number]>;
+type GetCardByID = PreparedQuery<[], CardRecord, [CardID]>;
+type GetCardByName = PreparedQuery<[], CardRecord, [CardName]>;
+type GetRandomCard = PreparedQuery<[], CardRecord>;
+type GetRandomCards = PreparedQuery<[], CardRecord, [number]>;
 interface CardQueries {
   getCardByID: GetCardByID;
   getCardByName: GetCardByName;
