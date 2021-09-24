@@ -167,7 +167,7 @@ export class Game {
     );
   }
 
-  #gameEventHandler(evt: MessageEvent<string>, player: Player): void {
+  #gameEventHandler(_evt: MessageEvent<string>, _player: Player): void {
     // Handle incoming events from players
   }
 }

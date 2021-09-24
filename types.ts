@@ -1,4 +1,4 @@
-import type { Game } from "./utils/game.ts";
+import type { Game } from "./utils/match/game.ts";
 import type { Cache } from "./utils/cache.ts";
 
 export interface ServerState {
