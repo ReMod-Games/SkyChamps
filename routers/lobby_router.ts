@@ -1,5 +1,5 @@
 import { Router } from "../deps.ts";
-import { Game } from "../utils/game.ts";
+import { Game } from "../utils/match/game.ts";
 
 import type { ServerState } from "../types.ts";
 
