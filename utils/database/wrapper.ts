@@ -6,6 +6,8 @@ class Database {
   database: DB = new DB("./database.db");
 
   constructor() {
+    this.database.query("");
+    // Create all queries needed for database
     this.preparedQueries = {
       matches: {
         addMatch: this.database.prepareQuery(
