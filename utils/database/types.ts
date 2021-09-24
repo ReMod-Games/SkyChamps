@@ -22,8 +22,8 @@ interface MatchRecord extends Record<string, unknown> {
   started_at: DateString;
 }
 
-type AddMatch = PreparedQuery<never, never, [MatchID, DateString]>;
-type GetMatchByID = PreparedQuery<never, MatchRecord, [MatchID]>;
+type AddMatch = PreparedQuery<[], never, [MatchID, DateString]>;
+type GetMatchByID = PreparedQuery<[], MatchRecord, [MatchID]>;
 interface MatchQueries {
   addMatch: AddMatch;
   getMatchByID: GetMatchByID;
