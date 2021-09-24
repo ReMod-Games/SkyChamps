@@ -1,3 +1,5 @@
+// This file may get replaced by some msgpack sugar
+
 export function eventToPayload<T>(
   event: CloseEvent | Event | MessageEvent<T>,
 ): string {
@@ -9,4 +11,16 @@ export function eventToPayload<T>(
   }
 
   return `type\x1C${event.type}`;
+}
+
+export function MessageEventToRecord(
+  evt: MessageEvent<string>,
+): Record<string, string> {
+  const rec: Record<string, string> = {};
+  // \x1D is key+value seperator \x1C is for splitting key and value
+  const data: string[][] = evt.data.split("\x1D").map((x) => x.split("\x1C"));
+  for (const [key, value] of data) {
+    rec[key] = value;
+  }
+  return rec;
 }
