@@ -9,7 +9,7 @@ import type { ServerState } from "./types.ts";
 const app = new Application<ServerState>({
   contextState: "alias",
   state: {
-    lobbies: new Map(),
+    games: new Map(),
     cache: new Cache(),
   },
 });
@@ -24,4 +24,5 @@ app.use(gameRouter.routes());
 app.use(resourceRouter.allowedMethods());
 app.use(resourceRouter.routes());
 
+console.log("ree");
 await app.listen({ port: 8000 });
