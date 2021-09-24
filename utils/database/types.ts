@@ -2,7 +2,14 @@
 import type { PreparedQuery } from "../../deps.ts";
 
 // Type aliases for clearer understanding
-export type DateString = string;
+type DateString = string;
+type CardDescription = string;
+type CardHealth = number;
+type CardAttackDamage = number;
+type CardAttackName = string;
+type CardAbilityName = string;
+type CardCritChance = number;
+
 export type MatchID = string;
 export type PlayerID = 0 | 1;
 export type PlayerName = string;
@@ -10,12 +17,6 @@ export type EventData = string;
 export type Message = string;
 export type CardID = number;
 export type CardName = string;
-export type CardDescription = string;
-export type CardHealth = number;
-export type CardAttackDamage = number;
-export type CardAttackName = string;
-export type CardAbilityName = string;
-export type CardCritChance = number;
 
 export interface MatchRecord extends Record<string, unknown> {
   match_id: MatchID;
