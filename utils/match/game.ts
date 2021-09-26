@@ -1,6 +1,8 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
+import { messageEventToRecord } from "./transformers.ts";
+
 /**
  * Resources that need to be managed
  *
@@ -175,7 +177,39 @@ export class Game {
     );
   }
 
-  #gameEventHandler(_evt: MessageEvent<string>, _player: Player): void {
+  #gameEventHandler(evt: MessageEvent<string>, player: Player): void {
     // Handle incoming events from players
+    const eventRecord = messageEventToRecord(evt);
+    switch (eventRecord?.type) {
+      case "get_card":
+        // Validate action
+        // Get card from db
+        // Add card to player deck
+        break;
+      case "play_card":
+        // Validate action
+        // Add card to `this#gameState`
+        // Use `Player#id` as ID
+        break;
+      case "attack_maybe_card":
+        `type\x1Cattack_maybe_card\x1Dattack\x1Ccard\x1Dcard_index\x1C12`;
+        // Determine damage
+        // Determine which card
+        // If not card is selected and no cards on enemy field, attack enemy `Player#hp` at 0.10x
+        break;
+      case "use_ability":
+        // Determine ability
+        // Determine card that the ability is used on
+        break;
+      default:
+        // If event is not valid. Return error
+        player.sendEvent(
+          new ErrorEvent("error", {
+            error: "invalid event",
+            message: `${eventRecord?.type} is not a valid event`,
+          }),
+        );
+        break;
+    }
   }
 }
