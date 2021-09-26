@@ -1,8 +1,13 @@
 import type { CardRecord } from "../database/types.ts";
 
 export class GameState {
-  playerOneDeck: CardRecord[] = [];
-  playerTwoDeck: CardRecord[] = [];
+  playerOneDeck: CardRecord[];
+  playerTwoDeck: CardRecord[];
+
+  constructor() {
+    this.playerOneDeck = [];
+    this.playerTwoDeck = [];
+  }
 
   addCard(playerID: 0 | 1, card: CardRecord): number {
     const deck = playerID === 0 ? this.playerOneDeck : this.playerTwoDeck;

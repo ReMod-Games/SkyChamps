@@ -18,9 +18,11 @@ import type {
 
 class Database {
   preparedQueries: Queries;
-  database: DB = new DB("./database.db");
+  database: DB;
 
   constructor() {
+    this.database = new DB("./database.db");
+
     this.database.query(
       "CREATE TABLE IF NOT EXISTS cards (card_id INTEGER, card_name TEXT, card_description TEXT, card_health INTEGER, card_attack_damage INTEGER, card_attack_name TEXT, card_ability_name TEXT, card_crit_chance REAL)",
     );

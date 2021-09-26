@@ -74,14 +74,17 @@ export class Spectator {
 }
 
 export class Player extends Spectator {
-  mana = 0;
-  hp = 0;
-  shield = 0;
-  // #deck: Card[] = [];
+  mana: number;
+  hp: number;
+  shield: number;
+  // #deck: Card[];
 
   constructor(init: ClientInit) {
     super(init);
-
+    this.mana = 0;
+    this.hp = 0;
+    this.shield = 0;
+    // this.#deck = [];
     this.gameAbortController.signal.addEventListener(
       "abort",
       this.cleanUp.bind(this),

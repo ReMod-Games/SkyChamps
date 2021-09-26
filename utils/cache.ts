@@ -1,5 +1,9 @@
 export class Cache {
-  #data: Map<string, Uint8Array> = new Map();
+  #data: Map<string, Uint8Array>;
+
+  constructor() {
+    this.#data = new Map();
+  }
 
   async get(path: string): Promise<Uint8Array> {
     let content = this.#data.get(path);

@@ -12,28 +12,36 @@ import { GameState } from "./game_state.ts";
  */
 export class Game {
   gameID: string;
-  createdAt = new Date();
-  abortController: AbortController = new AbortController();
-  state: GameState = new GameState();
+  createdAt: Date;
+  abortController: AbortController;
+  state: GameState;
+  playercount: number;
 
-  #spectators: Spectator[] = [];
-  #players: Player[] = [];
-  playercount = 0;
-  #timeoutID = setTimeout(() => {
-    if (this.#players.length < 2) this.cancelGame();
-    else {
-      clearTimeout(this.#timeoutID);
-      this.#timeoutID = NaN;
-    }
-  }, 1000 * 60 * 2);
+  #spectators: Spectator[];
+  #players: Player[];
+  #timeoutID: number;
 
   constructor(gameID: string) {
     this.gameID = gameID;
+    this.createdAt = new Date();
+    this.abortController = new AbortController();
+    this.state = new GameState();
+    this.playercount = 0;
+    this.#spectators = [];
+    this.#players = [];
 
     this.abortController.signal.addEventListener(
       "abort",
       this.cleanUp.bind(this),
     );
+
+    this.#timeoutID = setTimeout(() => {
+      if (this.#players.length < 2) this.cancelGame();
+      else {
+        clearTimeout(this.#timeoutID);
+        this.#timeoutID = NaN;
+      }
+    }, 1000 * 60 * 2);
   }
 
   startGame(): void {
