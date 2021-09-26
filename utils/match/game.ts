@@ -1,6 +1,6 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
-
+import { GameState } from "./game_state.ts";
 /**
  * Resources that need to be managed
  *
@@ -14,8 +14,7 @@ export class Game {
   gameID: string;
   createdAt = new Date();
   abortController: AbortController = new AbortController();
-  // Will be reworked into a state class from `./game_state.ts`
-  state: 0 | 1 | 2 = 0;
+  state: GameState = new GameState();
 
   #spectators: Spectator[] = [];
   #players: Player[] = [];
@@ -90,6 +89,7 @@ export class Game {
       "abort",
       this.cleanUp.bind(this),
     );
+    this.state.cleanUp();
     this.#spectators = [];
     this.#players = [];
 
