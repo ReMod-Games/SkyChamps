@@ -7,6 +7,7 @@ const lobbyRouter = new Router<{ id: string }, ServerState>({
   prefix: "/lobby",
 });
 
+// At some point move this to the real index of the site and not /lobby
 lobbyRouter.get("/", async function (ctx) {
   // Send normal page
   ctx.response.body = await ctx.state.cache.get("./resources/html/index.html");
