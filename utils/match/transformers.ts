@@ -9,7 +9,9 @@ export function eventToPayload<T>(
   if (event instanceof MessageEvent) {
     return `type\x1C${event.type}\x1Ddata\x1C${event.data}`;
   }
-
+  if (event instanceof ErrorEvent) {
+    return `type\x1C${event.type}\x1Derror\x1C${event.error}\x1Dmessage\x1C${event.message}`;
+  }
   return `type\x1C${event.type}`;
 }
 
