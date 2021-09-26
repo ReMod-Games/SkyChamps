@@ -13,7 +13,7 @@ export function eventToPayload<T>(
   return `type\x1C${event.type}`;
 }
 
-export function MessageEventToRecord(
+export function messageEventToRecord(
   evt: MessageEvent<string>,
 ): Record<string, string> {
   const rec: Record<string, string> = {};
