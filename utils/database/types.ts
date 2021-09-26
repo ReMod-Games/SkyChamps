@@ -85,21 +85,21 @@ interface CardEventQueries {
   getEventsByMatchID: GetCardEventsByMatchID;
 }
 
-export interface CardRecord extends Record<string, unknown> {
-  card_id: CardID;
-  card_name: CardName;
-  card_description: CardDescription;
+export interface CardRecord {
+  readonly card_id: CardID;
+  readonly card_name: CardName;
+  readonly card_description: CardDescription;
+  readonly card_attack_name: CardAttackName;
+  readonly card_ability_name: CardAbilityName;
   card_health: CardHealth;
   card_attack_dmg: CardAttackDamage;
-  card_attack_name: CardAttackName;
-  card_ability_name: CardAbilityName;
   card_crit_chance: CardCritChance;
 }
 
-type GetCardByID = PreparedQuery<[], CardRecord, [CardID]>;
-type GetCardByName = PreparedQuery<[], CardRecord, [CardName]>;
-type GetRandomCard = PreparedQuery<[], CardRecord>;
-type GetRandomCards = PreparedQuery<[], CardRecord, [number]>;
+type GetCardByID = PreparedQuery<[], Record<string, unknown>, [CardID]>;
+type GetCardByName = PreparedQuery<[], Record<string, unknown>, [CardName]>;
+type GetRandomCard = PreparedQuery<[], Record<string, unknown>>;
+type GetRandomCards = PreparedQuery<[], Record<string, unknown>, [number]>;
 interface CardQueries {
   getCardByID: GetCardByID;
   getCardByName: GetCardByName;

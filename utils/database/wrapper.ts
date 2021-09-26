@@ -198,26 +198,26 @@ class Database {
     return this.preparedQueries.cards.getCardByID
       .oneEntry([
         cardID,
-      ]);
+      ]) as unknown as CardRecord;
   }
 
   getCardByName(cardName: CardName): CardRecord {
     return this.preparedQueries.cards.getCardByName
       .oneEntry([
         cardName,
-      ]);
+      ]) as unknown as CardRecord;
   }
 
   getRandomCard(): CardRecord {
     return this.preparedQueries.cards.getRandomCard
-      .oneEntry();
+      .oneEntry() as unknown as CardRecord;
   }
 
   getRandomCards(limit: number): CardRecord[] {
     return this.preparedQueries.cards.getRandomCards
       .allEntries([
         limit,
-      ]);
+      ]) as unknown as CardRecord[];
   }
 }
 
