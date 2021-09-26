@@ -146,7 +146,9 @@ class Database {
 
   getMessagesByMatchID(matchID: MatchID): MessageRecord[] {
     return this.preparedQueries.matchChatMessages.getMessagesByMatchID
-      .allEntries([matchID]);
+      .allEntries([
+        matchID,
+      ]);
   }
 
   addSpecialEvent(
