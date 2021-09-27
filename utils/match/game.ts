@@ -48,8 +48,7 @@ export class Game {
 
   startGame(): void {
     if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
-    const event = new Event("start");
-    this.sendGlobalEvent(event);
+    this.sendGlobalEvent(new Event("start"));
   }
 
   stopGame(evt: CloseEvent): void {
@@ -57,13 +56,14 @@ export class Game {
   }
 
   cancelGame(): void {
-    const evt = new CloseEvent("abort", {
-      reason: "Not all players connected",
-      code: CloseCodes.MATCH_CANCELED,
-    });
     // don't need to use `this.sendGlobalEvent`
     // That get's handled by `Spectator#cleanUp` and `Player#cleanUp`
-    this.abortController.signal.dispatchEvent(evt);
+    this.abortController.signal.dispatchEvent(
+      new CloseEvent("abort", {
+        reason: "Not all players connected",
+        code: CloseCodes.MATCH_CANCELED,
+      }),
+    );
   }
 
   sendGlobalEvent(evt: Event): void {
