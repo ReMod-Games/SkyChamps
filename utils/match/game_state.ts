@@ -1,8 +1,8 @@
 import type { CardRecord } from "../database/types.ts";
 
 export class GameState {
-  playerOneDeck: CardRecord[];
-  playerTwoDeck: CardRecord[];
+  declare playerOneDeck: CardRecord[];
+  declare playerTwoDeck: CardRecord[];
 
   constructor() {
     this.playerOneDeck = [];
