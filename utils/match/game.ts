@@ -181,23 +181,22 @@ export class Game {
     // Handle incoming events from players
     const eventRecord = messageEventToRecord(evt);
     switch (eventRecord?.type) {
-      case "get_card":
+      case "getCard":
         // Validate action
         // Get card from db
         // Add card to player deck
         break;
-      case "play_card":
+      case "playCard":
         // Validate action
         // Add card to `thisgameState`
         // Use `Playerid` as ID
         break;
-      case "attack_maybe_card":
-        `type\x1Cattack_maybe_card\x1Dattack\x1Ccard\x1Dcard_index\x1C12`;
+      case "attackMaybeCard":
         // Determine damage
         // Determine which card
         // If not card is selected and no cards on enemy field, attack enemy `Playerhp` at 0.10x
         break;
-      case "use_ability":
+      case "useAbility":
         // Determine ability
         // Determine card that the ability is used on
         break;
