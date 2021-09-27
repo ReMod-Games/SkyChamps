@@ -3,6 +3,7 @@ import { lobbyRouter } from "./routers/lobby_router.ts";
 import { gameRouter } from "./routers/game_router.ts";
 import { resourceRouter } from "./routers/resource_router.ts";
 import { Cache } from "./utils/cache.ts";
+import { logger, tracker } from "./utils/logger.ts";
 
 import type { ServerState } from "./types.ts";
 
@@ -11,10 +12,11 @@ const app = new Application<ServerState>({
   state: {
     games: new Map(),
     cache: new Cache(),
+    tracker,
   },
 });
 
-app.addEventListener("error", console.log);
+app.addEventListener("error", (e) => logger.error(e) as unknown as void);
 app.use(lobbyRouter.allowedMethods());
 app.use(lobbyRouter.routes());
 
