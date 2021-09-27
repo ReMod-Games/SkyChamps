@@ -84,7 +84,7 @@ export class Game {
       this.playercount = this.players.length;
       return;
     }
-    await this.#addSpectator(websocket, name);
+    return this.#addSpectator(websocket, name);
   }
 
   /**

@@ -103,6 +103,7 @@ export class Player extends Spectator {
    * Clears up deck
    */
   cleanUp(evt: Event) {
+    this.webSocket.onmessage = null;
     super.cleanUp(evt);
     this.gameAbortController.signal.removeEventListener(
       "abort",
