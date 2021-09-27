@@ -6,6 +6,7 @@ const gameRouter = new Router<{ id: string; name: string }, ServerState>({
 });
 
 gameRouter.get("/:id/:name", async function (ctx) {
+  ctx.state.tracker(ctx);
   const gameID = ctx.params.id;
   const game = ctx.state.games.get(gameID);
   if (!game) return ctx.response.status = 400;
