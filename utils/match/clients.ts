@@ -12,12 +12,12 @@ interface ClientInit {
 }
 
 export class Spectator {
-  gameID: string;
-  name: string;
-  id: number;
+  declare gameID: string;
+  declare name: string;
+  declare id: number;
 
-  protected webSocket: WebSocket;
-  protected gameAbortController: AbortController;
+  declare protected webSocket: WebSocket;
+  declare protected gameAbortController: AbortController;
 
   constructor(init: ClientInit) {
     this.gameID = init.gameID;
@@ -74,17 +74,17 @@ export class Spectator {
 }
 
 export class Player extends Spectator {
-  mana: number;
-  hp: number;
-  shield: number;
-  // #deck: Card[];
+  declare mana: number;
+  declare hp: number;
+  declare shield: number;
+  // declare deck: Card[];
 
   constructor(init: ClientInit) {
     super(init);
     this.mana = 0;
     this.hp = 0;
     this.shield = 0;
-    // this.#deck = [];
+    // this.deck = [];
     this.gameAbortController.signal.addEventListener(
       "abort",
       this.cleanUp.bind(this),

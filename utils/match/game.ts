@@ -13,15 +13,15 @@ import { messageEventToRecord } from "./transformers.ts";
  * AbortController eventListeners (done by `Player`, `Spectator` classes and `this.cleanUp`)
  */
 export class Game {
-  gameID: string;
-  createdAt: Date;
-  abortController: AbortController;
-  state: GameState;
-  playercount: number;
+  declare gameID: string;
+  declare createdAt: Date;
+  declare abortController: AbortController;
+  declare state: GameState;
+  declare playercount: number;
 
-  #spectators: Spectator[];
-  #players: Player[];
-  #timeoutID: number;
+  declare private spectators: Spectator[];
+  declare private players: Player[];
+  declare private timeoutID: number;
 
   constructor(gameID: string) {
     this.gameID = gameID;
@@ -29,25 +29,25 @@ export class Game {
     this.abortController = new AbortController();
     this.state = new GameState();
     this.playercount = 0;
-    this.#spectators = [];
-    this.#players = [];
+    this.spectators = [];
+    this.players = [];
 
     this.abortController.signal.addEventListener(
       "abort",
       this.cleanUp.bind(this),
     );
 
-    this.#timeoutID = setTimeout(() => {
-      if (this.#players.length < 2) this.cancelGame();
+    this.timeoutID = setTimeout(() => {
+      if (this.players.length < 2) this.cancelGame();
       else {
-        clearTimeout(this.#timeoutID);
-        this.#timeoutID = NaN;
+        clearTimeout(this.timeoutID);
+        this.timeoutID = NaN;
       }
     }, 1000 * 60 * 2);
   }
 
   startGame(): void {
-    if (isFinite(this.#timeoutID)) clearTimeout(this.#timeoutID);
+    if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
     const event = new Event("start");
     this.sendGlobalEvent(event);
   }
@@ -68,20 +68,20 @@ export class Game {
 
   sendGlobalEvent(evt: Event): void {
     // Broadcast to players and spectators
-    for (const player of this.#players) player.sendEvent(evt);
-    for (const spectator of this.#spectators) spectator.sendEvent(evt);
+    for (const player of this.players) player.sendEvent(evt);
+    for (const spectator of this.spectators) spectator.sendEvent(evt);
   }
 
   sendPlayerEvent(evt: Event): void {
     // Send only to players
     // Not intended for spectators
-    for (const player of this.#players) player.sendEvent(evt);
+    for (const player of this.players) player.sendEvent(evt);
   }
 
   async addClient(websocket: WebSocket, name: string) {
-    if (this.#players.length < 2) {
+    if (this.players.length < 2) {
       await this.#addPlayer(websocket, name);
-      this.playercount = this.#players.length;
+      this.playercount = this.players.length;
       return;
     }
     await this.#addSpectator(websocket, name);
@@ -100,11 +100,11 @@ export class Game {
       this.cleanUp.bind(this),
     );
     this.state.cleanUp();
-    this.#spectators = [];
-    this.#players = [];
+    this.spectators = [];
+    this.players = [];
 
     // Only clear if not cleared
-    if (isFinite(this.#timeoutID)) clearTimeout(this.#timeoutID);
+    if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
   }
 
   // Private API
@@ -112,7 +112,7 @@ export class Game {
   async #addPlayer(webSocket: WebSocket, name: string) {
     const player = new Player({
       gameID: this.gameID,
-      id: this.#players.length,
+      id: this.players.length,
       gameAbortController: this.abortController,
       isExtended: true,
       webSocket,
@@ -143,15 +143,15 @@ export class Game {
     // Wait for the connection to be opened
     await player.awaitConnection();
 
-    this.#players.push(player);
+    this.players.push(player);
   }
 
   async #addSpectator(webSocket: WebSocket, name: string) {
-    const possibleID = this.#spectators.findIndex((x) => x === undefined);
+    const possibleID = this.spectators.findIndex((x) => x === undefined);
     const spectator = new Spectator({
       gameID: this.gameID,
       // If there is a empty spot in array, grab that. Else assign new one
-      id: possibleID > 0 ? possibleID : this.#spectators.length,
+      id: possibleID > 0 ? possibleID : this.spectators.length,
       gameAbortController: this.abortController,
       isExtended: false,
       webSocket,
@@ -164,11 +164,11 @@ export class Game {
 
     // Wait for the connection to be opened
     await spectator.awaitConnection();
-    this.#spectators[spectator.id] = spectator;
+    this.spectators[spectator.id] = spectator;
   }
 
   #removeSpectator(spectator: Spectator) {
-    delete this.#spectators[spectator.id];
+    delete this.spectators[spectator.id];
     spectator.cleanUp(
       new CloseEvent("close", {
         code: CloseCodes.OK,
@@ -188,14 +188,14 @@ export class Game {
         break;
       case "play_card":
         // Validate action
-        // Add card to `this#gameState`
-        // Use `Player#id` as ID
+        // Add card to `thisgameState`
+        // Use `Playerid` as ID
         break;
       case "attack_maybe_card":
         `type\x1Cattack_maybe_card\x1Dattack\x1Ccard\x1Dcard_index\x1C12`;
         // Determine damage
         // Determine which card
-        // If not card is selected and no cards on enemy field, attack enemy `Player#hp` at 0.10x
+        // If not card is selected and no cards on enemy field, attack enemy `Playerhp` at 0.10x
         break;
       case "use_ability":
         // Determine ability

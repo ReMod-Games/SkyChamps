@@ -17,8 +17,8 @@ import type {
 } from "./types.ts";
 
 class Database {
-  preparedQueries: Queries;
-  database: DB;
+  declare preparedQueries: Queries;
+  declare database: DB;
 
   constructor() {
     this.database = new DB("./database.db");
