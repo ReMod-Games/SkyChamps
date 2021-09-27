@@ -5,9 +5,11 @@ const name = prompt(
 
 // Hacky but it works
 const gameID = document.location.pathname.split("/").pop();
-const ws = new WebSocket(`ws://${document.location.host}/game/${gameID}/`);
+const ws = new WebSocket(
+  `ws://${document.location.host}/game/${gameID}/${name}`,
+);
 
-ws.onopen = console.log;
+ws.onopen = console.error;
 ws.onclose = console.log; // Possibly Add this to chat?
 ws.onmessage = messageHandler;
 
