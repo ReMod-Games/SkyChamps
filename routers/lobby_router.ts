@@ -9,11 +9,13 @@ const lobbyRouter = new Router<{ id: string }, ServerState>({
 
 // At some point move this to the real index of the site and not /lobby
 lobbyRouter.get("/", async function (ctx) {
+  ctx.state.tracker(ctx);
   // Send normal page
   ctx.response.body = await ctx.state.cache.get("./resources/html/index.html");
 });
 
 lobbyRouter.get("/get_code", function (ctx) {
+  ctx.state.tracker(ctx);
   const code = crypto.randomUUID().substring(0, 8);
   const game = new Game(code);
   ctx.state.games.set(code, game);
@@ -30,6 +32,7 @@ lobbyRouter.get("/get_code", function (ctx) {
 });
 
 lobbyRouter.get("/:id", async function (ctx) {
+  ctx.state.tracker(ctx);
   if (ctx.state.games.has(ctx.params.id)) {
     // Send lobby page
     ctx.response.body = await ctx.state.cache.get(

@@ -109,6 +109,6 @@ export class Player extends Spectator {
       "abort",
       this.cleanUp.bind(this),
     );
-    // this.#deck = [];
+    // this.deck = [];
   }
 }
