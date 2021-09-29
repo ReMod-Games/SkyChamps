@@ -36,7 +36,7 @@ lobbyRouter.get("/:id", async function (ctx) {
   if (ctx.state.games.has(ctx.params.id)) {
     // Send lobby page
     ctx.response.body = await ctx.state.cache.get(
-      "./resources/html/player.html",
+      "./resources/html/game.html",
     );
   } else {
     // Bad request. Lobby does not exist

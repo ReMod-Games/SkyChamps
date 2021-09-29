@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../resources/css/game.css">
+  <script type="module" src="../resources/javascript/game.js"></script>
+  <title>Lobby</title>
+</head>
+
+<body>
+  <main>
+    <div id="game_lobby">
+      <player-list>
+      </player-list>
+    </div>
+
+<!-- game-lobby will be shown and once `Event("start")` is received board will be shown and lobby will be deleted -->
+<!-- On `Event("game_won")` or `Event("game_lost") board will be deleted and show either `win-card` or `lost-card` -->
+
+    <div id="board"> <!-- Should have a `../../resources/svg/board.svg` as background-image -->
+      <div id="enemy" class="player_ui">
+        <hp-bar id="enemy_hp"><!-- inner value is hp. Background image make it pretty --></hp-bar>
+        <card-deck id="enemy_deck">
+          <!-- x times card back -->
+        </card-deck>
+      </div>
+
+      <div id="play_board">
+        <cards-list id="enemy_cards">
+          <!-- Has array of `card` in it with ID, name and hp which are saved internally and are children of `card` -->
+        </cards-list>
+        <card-list id="player_cards">
+          <!-- Has array of `card` in it with ID, name and hp which are saved internally and are children of `card` -->
+        </card-list>
+      </div>
+
+      <div id="player" class="player_ui">
+        <hp-bar id="player_hp"><!-- inner value is hp. Background image make it pretty --></hp-bar>
+        <card-deck id="player_deck">
+          <!-- x times card front -->
+        </card-deck>
+      </div>
+
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
