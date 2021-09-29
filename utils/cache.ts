@@ -9,7 +9,7 @@ export class Cache {
     let content = this.#data.get(path);
     if (!content) {
       content = await Deno.readFile(path);
-      this.#data.set(path, content);
+      // this.#data.set(path, content);
     }
 
     return content;
