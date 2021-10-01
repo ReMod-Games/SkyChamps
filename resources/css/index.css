@@ -1,0 +1,10 @@
+main {
+  display: flex;
+  justify-content: center;
+}
+
+#flex {
+  display: flex;
+  
+  justify-content: space-between;
+}
