@@ -22,7 +22,7 @@
 
     <div id="board"> <!-- Should have a `../../resources/svg/board.svg` as background-image -->
       <div id="enemy" class="player_ui">
-        <hp-bar id="enemy_hp"><!-- inner value is hp. Background image make it pretty --></hp-bar>
+        <health-bar id="enemy_health"><!-- inner value is health. Background image make it pretty --></health-bar>
         <card-deck id="enemy_deck">
           <!-- x times card back -->
         </card-deck>
@@ -30,15 +30,15 @@
 
       <div id="play_board">
         <cards-list id="enemy_cards">
-          <!-- Has array of `card` in it with ID, name and hp which are saved internally and are children of `card` -->
+          <!-- Has array of `card` in it with ID, name and health which are saved internally and are children of `card` -->
         </cards-list>
         <card-list id="player_cards">
-          <!-- Has array of `card` in it with ID, name and hp which are saved internally and are children of `card` -->
+          <!-- Has array of `card` in it with ID, name and health which are saved internally and are children of `card` -->
         </card-list>
       </div>
 
       <div id="player" class="player_ui">
-        <hp-bar id="player_hp"><!-- inner value is hp. Background image make it pretty --></hp-bar>
+        <health-bar id="player_health"><!-- inner value is health. Background image make it pretty --></health-bar>
         <card-deck id="player_deck">
           <!-- x times card front -->
         </card-deck>
