@@ -21,27 +21,13 @@
 <!-- On `Event("game_won")` or `Event("game_lost") board will be deleted and show either `win-card` or `lost-card` -->
 
     <div id="board"> <!-- Should have a `../../resources/svg/board.svg` as background-image -->
-      <div id="enemy" class="player_ui">
-        <health-bar id="enemy_health"><!-- inner value is health. Background image make it pretty --></health-bar>
-        <card-deck id="enemy_deck">
-          <!-- x times card back -->
-        </card-deck>
+      <div class="player_ui" id="enemy_ui">
       </div>
 
-      <div id="play_board">
-        <cards-list id="enemy_cards">
-          <!-- Has array of `card` in it with ID, name and health which are saved internally and are children of `card` -->
-        </cards-list>
-        <card-list id="player_cards">
-          <!-- Has array of `card` in it with ID, name and health which are saved internally and are children of `card` -->
-        </card-list>
+      <div class="match_board">
       </div>
 
-      <div id="player" class="player_ui">
-        <health-bar id="player_health"><!-- inner value is health. Background image make it pretty --></health-bar>
-        <card-deck id="player_deck">
-          <!-- x times card front -->
-        </card-deck>
+      <div class="player_ui" id="self_ui">
       </div>
 
       </div>
