@@ -1,4 +1,5 @@
 import { eventToPayload } from "./transformers.ts";
+import type { CardRecord as Card } from "../database/types.ts";
 
 type VoidEventFunction<T> = (evt: MessageEvent<T>, player: Player) => void;
 
@@ -69,6 +70,7 @@ export class Spectator {
     this.webSocket.onclose = null;
     this.webSocket.onerror = null;
     this.webSocket.onopen = null;
+    this.webSocket.onmessage = null;
     this.webSocket.close((evt as CloseEvent).code, (evt as CloseEvent).reason);
   }
 }
@@ -77,7 +79,7 @@ export class Player extends Spectator {
   declare mana: number;
   declare hp: number;
   declare shield: number;
-  // declare deck: Card[];
+  declare deck: Card[];
 
   constructor(init: ClientInit) {
     super(init);
@@ -108,6 +110,6 @@ export class Player extends Spectator {
       "abort",
       this.cleanUp.bind(this),
     );
-    // this.deck = [];
+    this.deck = [];
   }
 }
