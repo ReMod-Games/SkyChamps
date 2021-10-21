@@ -1,7 +1,7 @@
 import { Router } from "../deps.ts";
-import type { ServerState } from "../types.ts";
+import type { HTTPState } from "../types.ts";
 
-const resourceRouter = new Router<{ file: string }, ServerState>({
+const resourceRouter = new Router<{ file: string }, HTTPState>({
   prefix: "/resources",
 });
 

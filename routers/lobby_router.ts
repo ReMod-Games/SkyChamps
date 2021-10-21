@@ -1,9 +1,9 @@
 import { Router } from "../deps.ts";
 import { Game } from "../utils/match/game.ts";
 
-import type { ServerState } from "../types.ts";
+import type { HTTPState } from "../types.ts";
 
-const lobbyRouter = new Router<{ id: string }, ServerState>({
+const lobbyRouter = new Router<{ id: string }, HTTPState>({
   prefix: "/lobby",
 });
 

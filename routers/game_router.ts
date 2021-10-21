@@ -1,9 +1,7 @@
 import { Router } from "../deps.ts";
-import type { ServerState } from "../types.ts";
+import type { WebSocketState } from "../types.ts";
 
-const gameRouter = new Router<{ id: string; name: string }, ServerState>({
-  prefix: "/game",
-});
+const gameRouter = new Router<{ id: string; name: string }, WebSocketState>();
 
 gameRouter.get("/:id/:name", async function (ctx) {
   ctx.state.tracker(ctx);
