@@ -66,12 +66,14 @@ export class Game {
     );
   }
 
+  // Not sure if I will need this.
   sendGlobalEvent(evt: Event): void {
     // Broadcast to players and spectators
     for (const player of this.players) player.sendEvent(evt);
     for (const spectator of this.spectators) spectator.sendEvent(evt);
   }
 
+  // Not sure if I will need this.
   sendPlayerEvent(evt: Event): void {
     // Send only to players
     // Not intended for spectators
