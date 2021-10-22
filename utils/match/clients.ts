@@ -1,5 +1,5 @@
 import { eventToPayload } from "./transformers.ts";
-import type { CardRecord as Card } from "../database/types.ts";
+import { Deck } from "./deck.ts";
 
 type VoidEventFunction<T> = (evt: MessageEvent<T>, player: Player) => void;
 
@@ -78,15 +78,13 @@ export class Spectator {
 export class Player extends Spectator {
   declare mana: number;
   declare hp: number;
-  declare shield: number;
-  declare deck: Card[];
+  declare deck: Deck;
 
   constructor(init: ClientInit) {
     super(init);
     this.mana = 0;
     this.hp = 0;
-    this.shield = 0;
-    // this.deck = [];
+    this.deck = new Deck();
     this.gameAbortController.signal.addEventListener(
       "abort",
       this.cleanUp.bind(this),
@@ -110,6 +108,6 @@ export class Player extends Spectator {
       "abort",
       this.cleanUp.bind(this),
     );
-    this.deck = [];
+    this.deck.cleanUp();
   }
 }
