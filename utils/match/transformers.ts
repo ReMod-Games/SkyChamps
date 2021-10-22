@@ -1,5 +1,3 @@
-// This file may get replaced by some msgpack sugar
-
 export function eventToPayload<T>(
   event: CloseEvent | Event | MessageEvent<T>,
 ): string {
