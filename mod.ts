@@ -7,7 +7,7 @@ const _httpServer = new Worker(httpServerImportURL, {
   deno: {
     permissions: {
       net: ["0.0.0.0"],
-      read: ["./resources"],
+      read: ["./resources", "./logs"],
       write: ["./logs"],
     },
     namespace: true,
