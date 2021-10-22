@@ -1,20 +1,20 @@
-import type { Card } from "../cards/cards_cache.ts";
+import { Deck } from "./deck.ts";
 
 export class GameState {
   declare turn: number;
   // These deck's are already played
   // Should be visible to all players
-  declare playerOneDeck: Card[];
-  declare playerTwoDeck: Card[];
+  declare playerOneDeck: Deck;
+  declare playerTwoDeck: Deck;
 
   constructor() {
     this.turn = 0;
-    this.playerOneDeck = [];
-    this.playerTwoDeck = [];
+    this.playerOneDeck = new Deck();
+    this.playerTwoDeck = new Deck();
   }
 
   cleanUp(): void {
-    this.playerOneDeck = [];
-    this.playerTwoDeck = [];
+    this.playerOneDeck.cleanUp();
+    this.playerTwoDeck.cleanUp();
   }
 }
