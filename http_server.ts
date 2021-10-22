@@ -6,19 +6,23 @@ import { logger, tracker } from "./utils/logger.ts";
 
 import type { HTTPState } from "./types.ts";
 
-const app = new Application<HTTPState>({
+const httpServer = new Application<HTTPState>({
   contextState: "alias",
   state: {
     cache: new Cache(),
     tracker,
+    serverConfig: {
+      port: 8000,
+      protocol: "tcp",
+    },
   },
 });
 
-app.addEventListener("error", (e) => logger.error(e) as unknown as void);
-app.use(lobbyRouter.allowedMethods());
-app.use(lobbyRouter.routes());
+httpServer.addEventListener("error", (e) => logger.error(e) as unknown as void);
+httpServer.use(lobbyRouter.allowedMethods());
+httpServer.use(lobbyRouter.routes());
 
-app.use(resourceRouter.allowedMethods());
-app.use(resourceRouter.routes());
+httpServer.use(resourceRouter.allowedMethods());
+httpServer.use(resourceRouter.routes());
 
-await app.listen({ port: 8000 });
+await httpServer.listen(httpServer.state.serverConfig);
