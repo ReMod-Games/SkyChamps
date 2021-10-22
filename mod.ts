@@ -20,6 +20,7 @@ const _websocketServer = new Worker(websocketImportURL, {
   deno: {
     permissions: {
       net: ["0.0.0.0"],
+      read: ["./logs", "./cards.json"],
       write: ["./logs"],
     },
     namespace: true,
