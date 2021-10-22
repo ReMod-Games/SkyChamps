@@ -19,7 +19,7 @@ class Database {
 
   constructor() {
     this.database = new DB("./database.db");
-
+    // TODO: Make a buildstep for this...
     this.database.query(
       "CREATE TABLE IF NOT EXISTS matches (match_id VARCHAR(8), started_at TEXT)",
     );

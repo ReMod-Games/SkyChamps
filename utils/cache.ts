@@ -9,6 +9,7 @@ export class Cache {
     let content = this.#data.get(path);
     if (!content) {
       content = await Deno.readFile(path);
+      // TODO: Re-enable this once html files are done.
       // this.#data.set(path, content);
     }
 

@@ -4,7 +4,7 @@ import type { HTTPState } from "../types.ts";
 
 const lobbyRouter = new Router<{ id: string }, HTTPState>();
 
-// At some point move this to the real index of the site and not /lobby
+// TODO: At some point move this to the real index of the site and not /lobby
 lobbyRouter.get("/", async function (ctx) {
   ctx.state.tracker(ctx);
   // Send normal page
