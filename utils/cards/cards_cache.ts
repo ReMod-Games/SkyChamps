@@ -13,6 +13,8 @@ export interface Card {
 export const cardCache: Map<number, Card> = new Map();
 
 {
-  const jsonData: Card[] = JSON.parse(await Deno.readTextFile("./cards.json"));
+  const jsonData: Card[] = JSON.parse(
+    await Deno.readTextFile(new URL("./cards.json", import.meta.url)),
+  );
   for (const card of jsonData) cardCache.set(card.id, card);
 }
