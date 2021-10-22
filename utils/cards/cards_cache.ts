@@ -10,11 +10,23 @@ export interface Card {
   critChance: number;
 }
 
-export const cardCache: Map<number, Card> = new Map();
+class CardCache {
+  declare private innerMap: Map<number, Card>;
 
-{
-  const jsonData: Card[] = JSON.parse(
-    await Deno.readTextFile("./cards.json"),
-  );
-  for (const card of jsonData) cardCache.set(card.id, card);
+  constructor(cards: Card[]) {
+    for (const card of cards) this.innerMap.set(card.id, card);
+  }
+
+  getCard(id: number): Card | undefined {
+    return this.innerMap.get(id);
+  }
+
+  getRandomCard(): Card {
+    const id = Math.floor(Math.random() * this.innerMap.size) + 1;
+    return this.innerMap.get(id)!;
+  }
 }
+
+export const cardCache = new CardCache(
+  JSON.parse(await Deno.readTextFile("./cards.json")),
+);
