@@ -1,14 +1,6 @@
-export interface Card {
-  readonly id: number;
-  readonly name: string;
-  readonly description: string;
-  readonly attackName: string;
-  readonly abilityName: string;
-  health: number;
-  attackDamage: number;
-  critFactor: number;
-  critChance: number;
-}
+import { Card } from "./card.ts";
+
+import type { CardJson } from "./card.ts";
 
 class CardCache {
   declare private innerMap: Map<number, Card>;
@@ -28,5 +20,7 @@ class CardCache {
 }
 
 export const cardCache = new CardCache(
-  JSON.parse(await Deno.readTextFile("./cards.json")),
+  JSON.parse(await Deno.readTextFile("./cards.json")).map((x: CardJson) =>
+    new Card(x)
+  ),
 );

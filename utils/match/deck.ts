@@ -1,4 +1,4 @@
-import type { Card } from "../cards/cards_cache.ts";
+import type { Card } from "../cards/card.ts";
 
 type ModifiableKeys = "critChance" | "attackDamage" | "health" | "critFactor";
 
@@ -14,6 +14,9 @@ export class Deck {
   }
 
   removeCard(cardIndex: number): void {
+    const card = this.innerDeck[cardIndex];
+    if (!card) return;
+    card.cleanUp();
     delete this.innerDeck[cardIndex];
   }
 
@@ -33,12 +36,17 @@ export class Deck {
     return this.innerDeck[cardIndex];
   }
 
+  getDeck(): Card[] {
+    return this.innerDeck;
+  }
+
   /**
    * Works as a destructor.
    *
    * Clears up deck
    */
   cleanUp() {
+    this.innerDeck.forEach((x) => x.cleanUp());
     this.innerDeck = [];
   }
 }
