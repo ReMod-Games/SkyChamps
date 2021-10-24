@@ -3,10 +3,10 @@ import { Card } from "./card.ts";
 import type { CardJson } from "./card.ts";
 
 class CardCache {
-  declare private innerMap: Map<number, Card>;
+  private innerMap: Map<number, Card>;
 
-  constructor(cards: Card[]) {
-    for (const card of cards) this.innerMap.set(card.id, card);
+  constructor(cards: CardJson[]) {
+    this.innerMap = new Map(cards.map((x, i) => [i, new Card(x)]));
   }
 
   getCard(id: number): Card | undefined {
@@ -20,7 +20,5 @@ class CardCache {
 }
 
 export const cardCache = new CardCache(
-  JSON.parse(await Deno.readTextFile("./cards.json")).map((x: CardJson) =>
-    new Card(x)
-  ),
+  JSON.parse(await Deno.readTextFile("./cards.json")),
 );
