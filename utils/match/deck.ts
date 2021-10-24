@@ -3,7 +3,11 @@ import type { Card } from "../cards/card.ts";
 type ModifiableKeys = "critChance" | "attackDamage" | "health" | "critFactor";
 
 export class Deck {
-  declare private innerDeck: Card[];
+  private innerDeck: Card[];
+
+  constructor() {
+    this.innerDeck = [];
+  }
 
   addCard(card: Card): number {
     // Note: This may need changes depending on client code.
@@ -38,6 +42,20 @@ export class Deck {
 
   getDeck(): Card[] {
     return this.innerDeck;
+  }
+
+  [Symbol.iterator](): Iterator<Card> {
+    let i = 0;
+    return {
+      next: () => {
+        if (i < this.innerDeck.length - 1) {
+          const card = this.innerDeck[i];
+          i++;
+          return { value: card, done: false };
+        }
+        return { value: this.innerDeck[i], done: true };
+      },
+    };
   }
 
   /**
