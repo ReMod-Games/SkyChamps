@@ -15,3 +15,9 @@ export interface GameDraw {
 export interface GameStart {
   type: "game_start";
 }
+
+export interface Error {
+  type: "error";
+  error: string;
+  message: string;
+}
