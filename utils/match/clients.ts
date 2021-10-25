@@ -12,12 +12,12 @@ interface ClientInit {
 }
 
 export class Spectator {
-  declare gameID: string;
-  declare name: string;
-  declare id: number;
+  public gameID: string;
+  public name: string;
+  public id: number;
 
-  declare protected webSocket: WebSocket;
-  declare protected gameAbortController: AbortController;
+  protected webSocket: WebSocket;
+  protected gameAbortController: AbortController;
 
   constructor(init: ClientInit) {
     this.gameID = init.gameID;

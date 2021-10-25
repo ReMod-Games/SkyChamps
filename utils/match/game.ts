@@ -13,15 +13,15 @@ import { GameState } from "./game_state.ts";
  * AbortController eventListeners (done by `Player`, `Spectator` classes and `this.cleanUp`)
  */
 export class Game {
-  declare gameID: string;
-  declare createdAt: Date;
-  declare abortController: AbortController;
-  declare state: GameState;
-  declare playercount: number;
+  public gameID: string;
+  public createdAt: Date;
+  public abortController: AbortController;
+  public state: GameState;
+  public playercount: number;
 
-  declare private spectators: Spectator[];
-  declare private players: Player[];
-  declare private timeoutID: number;
+  private spectators: Spectator[];
+  private players: Player[];
+  private timeoutID: number;
 
   constructor(gameID: string) {
     this.gameID = gameID;
