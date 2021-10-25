@@ -21,3 +21,9 @@ export interface Error {
   error: string;
   message: string;
 }
+
+export interface ChatMessage {
+  type: "chat_message";
+  message: string;
+  user: string;
+}
