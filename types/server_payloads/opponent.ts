@@ -19,7 +19,7 @@ export interface OppPlay {
 export interface OppAttack {
   type: "opp_attack";
   attackCardIndex: number;
-  defendCardIndex: number; // If -1 it's player
+  defendCardIndex: number; // -1 if player
   damage: number;
 }
 
