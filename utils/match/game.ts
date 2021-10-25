@@ -1,6 +1,8 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
+import { validateRecord } from "./validate_record.ts";
+
 // import { cardCache } from "../cards/cards_cache.ts";
 
 /**
