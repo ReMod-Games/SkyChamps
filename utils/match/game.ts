@@ -1,7 +1,6 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
-import { messageEventToRecord } from "./transformers.ts";
 import { cardCache } from "../cards/cards_cache.ts";
 
 /**
@@ -49,7 +48,7 @@ export class Game {
 
   startGame(): void {
     if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
-    this.sendGlobalEvent(new Event("start"));
+    this.sendGlobalEvent({ type: "start" });
   }
 
   stopGame(evt: CloseEvent): void {
@@ -68,17 +67,17 @@ export class Game {
   }
 
   // Not sure if I will need this.
-  sendGlobalEvent(evt: Event): void {
+  sendGlobalEvent<T>(record: Record<string, T>): void {
     // Broadcast to players and spectators
-    for (const player of this.players) player.sendEvent(evt);
-    for (const spectator of this.spectators) spectator.sendEvent(evt);
+    for (const player of this.players) player.sendEvent(record);
+    for (const spectator of this.spectators) spectator.sendEvent(record);
   }
 
   // Not sure if I will need this.
-  sendPlayerEvent(evt: Event): void {
+  sendPlayerEvent<T>(record: Record<string, T>): void {
     // Send only to players
     // Not intended for spectators
-    for (const player of this.players) player.sendEvent(evt);
+    for (const player of this.players) player.sendEvent(record);
   }
 
   async addClient(websocket: WebSocket, name: string) {
@@ -172,17 +171,13 @@ export class Game {
 
   #removeSpectator(spectator: Spectator) {
     delete this.spectators[spectator.id];
-    spectator.cleanUp(
-      new CloseEvent("close", {
-        code: CloseCodes.OK,
-        reason: "Spectator Disconnected",
-      }),
-    );
+    spectator.cleanUp();
   }
 
-  #gameEventHandler(evt: MessageEvent<string>, player: Player): void {
+  #gameEventHandler(evt: MessageEvent<string>, playerID: number): void {
     // Handle incoming events from players
-    const eventRecord = messageEventToRecord(evt);
+    const player = this.players[playerID];
+    const eventRecord = JSON.parse(evt.data);
     switch (eventRecord?.type) {
       case "getCard":
         // Validate action
@@ -205,12 +200,11 @@ export class Game {
         break;
       default:
         // If event is not valid. Return error
-        player.sendEvent(
-          new ErrorEvent("error", {
-            error: "invalid event",
-            message: `${eventRecord?.type} is not a valid event`,
-          }),
-        );
+        player.sendEvent({
+          type: "error",
+          error: "Invalid Event",
+          message: `${eventRecord?.type} is not a valid event`,
+        });
         break;
     }
   }
