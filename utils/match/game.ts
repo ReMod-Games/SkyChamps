@@ -1,7 +1,7 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
-import { cardCache } from "../cards/cards_cache.ts";
+// import { cardCache } from "../cards/cards_cache.ts";
 
 /**
  * Resources that need to be managed

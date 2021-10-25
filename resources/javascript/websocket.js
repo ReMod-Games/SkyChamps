@@ -13,5 +13,5 @@ ws.onopen = console.error;
 ws.onclose = console.log; // Possibly Add this to chat?
 ws.onmessage = messageHandler;
 
-function messageHandler(evt) {
+function messageHandler(_evt) {
 }
