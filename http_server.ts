@@ -4,7 +4,7 @@ import { resourceRouter } from "./routers/resource_router.ts";
 import { Cache } from "./utils/cache.ts";
 import { logger, tracker } from "./utils/logger.ts";
 
-import type { HTTPState } from "./types.ts";
+import type { HTTPState } from "./types/server_internals.ts";
 
 const httpServer = new Application<HTTPState>({
   contextState: "alias",
