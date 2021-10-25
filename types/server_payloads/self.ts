@@ -1,10 +1,12 @@
+import type { CardJson } from "../card.ts";
+
 // Self
 
 // Self draw
 export interface SelfDraw {
   type: "self_draw";
   cardIndex: number;
-  card: JSON;
+  card: CardJson;
 }
 
 // Self play

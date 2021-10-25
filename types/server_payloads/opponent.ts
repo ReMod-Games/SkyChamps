@@ -1,3 +1,5 @@
+import type { CardJson } from "../card.ts";
+
 // Opponent
 
 // Opponent draw
@@ -10,8 +12,9 @@ export interface OppDraw {
 export interface OppPlay {
   type: "opp_play";
   cardIndex: number;
-  card: JSON;
+  card: CardJson;
 }
+
 // Opponent attack
 export interface OppAttack {
   type: "opp_attack";
