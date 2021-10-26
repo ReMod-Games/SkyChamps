@@ -1,6 +1,6 @@
 import type { Card } from "../cards/card.ts";
 
-type ModifiableKeys = "critChance" | "attackDamage" | "health" | "critFactor";
+type ModifyFunction = (card: Card) => void;
 
 export class Deck {
   private innerDeck: Card[];
@@ -34,13 +34,11 @@ export class Deck {
 
   modifyCard(
     cardIndex: number,
-    key: ModifiableKeys,
-    value: Card[typeof key],
+    modifier: ModifyFunction,
   ): boolean {
     const card = this.innerDeck[cardIndex];
     if (!card) return false;
-
-    card[key] = value;
+    modifier(card);
     return true;
   }
 
