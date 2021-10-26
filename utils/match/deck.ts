@@ -24,6 +24,14 @@ export class Deck {
     delete this.innerDeck[cardIndex];
   }
 
+  moveCard(cardIndex: number): Card | undefined {
+    const card = this.innerDeck[cardIndex];
+    if (!card) return;
+    delete this.innerDeck[cardIndex];
+
+    return card;
+  }
+
   modifyCard(
     cardIndex: number,
     key: ModifiableKeys,
