@@ -1,6 +1,6 @@
-export * as Opp from "./opponent.ts";
-export * as Self from "./self.ts";
-export * as Misc from "./misc.ts";
+export * as OppEvents from "./opponent.ts";
+export * as SelfEvents from "./self.ts";
+export * as MiscEvents from "./misc.ts";
 
 import type { AnyMiscEvent } from "./misc.ts";
 import type { AnyOppEvent } from "./opponent.ts";
