@@ -48,10 +48,6 @@ export class Deck {
     return this.innerDeck[cardIndex];
   }
 
-  getDeck(): Card[] {
-    return this.innerDeck;
-  }
-
   [Symbol.iterator](): Iterator<Card> {
     let i = 0;
     return {
