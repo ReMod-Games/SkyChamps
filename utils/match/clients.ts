@@ -1,5 +1,7 @@
 import { Deck } from "./deck.ts";
 
+import type { AnyServerEvent } from "../../types/server_payloads/mod.ts";
+
 type VoidEventFunction<T> = (evt: MessageEvent<T>, id: number) => void;
 
 interface ClientInit {
@@ -50,7 +52,7 @@ export class Spectator {
   }
 
   /** Send events to this websocket */
-  sendEvent<T>(record: Record<string, T>): void {
+  sendEvent(record: AnyServerEvent): void {
     this.webSocket.send(JSON.stringify(record));
   }
 

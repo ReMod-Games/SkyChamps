@@ -1,6 +1,6 @@
-export function validateRecord(
-  object: Record<string, string>,
-  validationArray: string[],
+export function validateRecord<T>(
+  object: T,
+  validationArray: [keyof T],
 ): boolean {
   // Check if length is the same.
   // Either required keys are not present.
