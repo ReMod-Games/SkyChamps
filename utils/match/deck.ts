@@ -5,6 +5,10 @@ type ModifyFunction = (card: Card) => void;
 export class Deck {
   private innerDeck: Card[];
 
+  get length() {
+    return this.innerDeck.length;
+  }
+
   constructor() {
     this.innerDeck = [];
   }
