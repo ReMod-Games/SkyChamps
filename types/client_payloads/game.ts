@@ -10,8 +10,11 @@ export interface Attack {
 
 export interface Ability {
   type: "ability";
-  attackerCardIndex: number;
-  defenderCardIndex: number; // -1 if player
+  cardIndex: number;
+  receiver: string; // "self" | "self_card" | "opp_card"
+  receiverIndex: number; // is -1 if receiver is "self"
+  abilityType: string; // "attack" | "passive"
+  damage: number; // -1 if "abilityType" is "passive"
 }
 
 export interface PlayCard {
