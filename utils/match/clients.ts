@@ -1,6 +1,6 @@
-import { eventToPayload } from "./transformers.ts";
+import { Deck } from "./deck.ts";
 
-type VoidEventFunction<T> = (evt: MessageEvent<T>, player: Player) => void;
+type VoidEventFunction<T> = (evt: MessageEvent<T>, id: number) => void;
 
 interface ClientInit {
   gameID: string;
@@ -12,12 +12,12 @@ interface ClientInit {
 }
 
 export class Spectator {
-  declare gameID: string;
-  declare name: string;
-  declare id: number;
+  public gameID: string;
+  public name: string;
+  public id: number;
 
-  declare protected webSocket: WebSocket;
-  declare protected gameAbortController: AbortController;
+  protected webSocket: WebSocket;
+  protected gameAbortController: AbortController;
 
   constructor(init: ClientInit) {
     this.gameID = init.gameID;
@@ -50,8 +50,8 @@ export class Spectator {
   }
 
   /** Send events to this websocket */
-  sendEvent(evt: Event): void {
-    this.webSocket.send(eventToPayload(evt));
+  sendEvent<T>(record: Record<string, T>): void {
+    this.webSocket.send(JSON.stringify(record));
   }
 
   /**
@@ -61,7 +61,7 @@ export class Spectator {
    *
    * Clears up WebSocket stuff
    */
-  cleanUp(evt: Event): void {
+  cleanUp(): void {
     this.gameAbortController.signal.removeEventListener(
       "abort",
       this.cleanUp.bind(this),
@@ -69,22 +69,21 @@ export class Spectator {
     this.webSocket.onclose = null;
     this.webSocket.onerror = null;
     this.webSocket.onopen = null;
-    this.webSocket.close((evt as CloseEvent).code, (evt as CloseEvent).reason);
+    this.webSocket.onmessage = null;
+    this.webSocket.close();
   }
 }
 
 export class Player extends Spectator {
   declare mana: number;
   declare hp: number;
-  declare shield: number;
-  // declare deck: Card[];
+  declare deck: Deck;
 
   constructor(init: ClientInit) {
     super(init);
     this.mana = 0;
     this.hp = 0;
-    this.shield = 0;
-    // this.deck = [];
+    this.deck = new Deck();
     this.gameAbortController.signal.addEventListener(
       "abort",
       this.cleanUp.bind(this),
@@ -92,7 +91,7 @@ export class Player extends Spectator {
   }
 
   onMessage<T>(cb: VoidEventFunction<T>): void {
-    this.webSocket.onmessage = (evt) => cb(evt, this);
+    this.webSocket.onmessage = (evt) => cb(evt, this.id);
   }
 
   /**
@@ -102,13 +101,12 @@ export class Player extends Spectator {
    *
    * Clears up deck
    */
-  cleanUp(evt: Event) {
-    this.webSocket.onmessage = null;
-    super.cleanUp(evt);
+  cleanUp() {
+    super.cleanUp();
     this.gameAbortController.signal.removeEventListener(
       "abort",
       this.cleanUp.bind(this),
     );
-    // this.deck = [];
+    this.deck.cleanUp();
   }
 }

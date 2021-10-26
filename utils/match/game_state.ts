@@ -1,48 +1,31 @@
-import type { CardRecord } from "../database/types.ts";
+import { Deck } from "./deck.ts";
 
 export class GameState {
-  declare playerOneDeck: CardRecord[];
-  declare playerTwoDeck: CardRecord[];
+  public turn: number;
+  // These deck's are already played
+  // Should be visible to all players
+  public playerOneDeck: Deck;
+  public playerTwoDeck: Deck;
 
   constructor() {
-    this.playerOneDeck = [];
-    this.playerTwoDeck = [];
+    this.turn = 0;
+    this.playerOneDeck = new Deck();
+    this.playerTwoDeck = new Deck();
   }
 
-  addCard(playerID: 0 | 1, card: CardRecord): number {
-    const deck = playerID === 0 ? this.playerOneDeck : this.playerTwoDeck;
-    const possibleIndex = deck.findIndex((x) => x === undefined);
-    const index = possibleIndex > 0 ? possibleIndex : deck.length;
-    deck[index] = card;
-    return index;
-  }
+  nextTurn() {
+    for (const card of this.playerOneDeck) {
+      card.executeTurnActions(this.turn);
+    }
+    for (const card of this.playerTwoDeck) {
+      card.executeTurnActions(this.turn);
+    }
 
-  removeCard(playerID: 0 | 1, cardIndex: number): void {
-    const deck = playerID === 0 ? this.playerOneDeck : this.playerTwoDeck;
-    delete deck[cardIndex];
-  }
-
-  changeCard(
-    playerID: 0 | 1,
-    cardIndex: number,
-    key: "card_crit_chance" | "card_attack_dmg" | "card_health",
-    value: CardRecord[typeof key],
-  ): boolean {
-    const deck = playerID === 0 ? this.playerOneDeck : this.playerTwoDeck;
-    const card = deck[cardIndex];
-    if (!card) return false;
-
-    card[key] = value;
-    return true;
-  }
-
-  getCard(playerID: 0 | 1, cardIndex: number): CardRecord | undefined {
-    const deck = playerID === 0 ? this.playerOneDeck : this.playerTwoDeck;
-    return deck[cardIndex];
+    this.turn++;
   }
 
   cleanUp(): void {
-    this.playerOneDeck = [];
-    this.playerTwoDeck = [];
+    this.playerOneDeck.cleanUp();
+    this.playerTwoDeck.cleanUp();
   }
 }

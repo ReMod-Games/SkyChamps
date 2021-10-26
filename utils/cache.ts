@@ -1,15 +1,16 @@
 export class Cache {
-  #data: Map<string, Uint8Array>;
+  private data: Map<string, Uint8Array>;
 
   constructor() {
-    this.#data = new Map();
+    this.data = new Map();
   }
 
   async get(path: string): Promise<Uint8Array> {
-    let content = this.#data.get(path);
+    let content = this.data.get(path);
     if (!content) {
       content = await Deno.readFile(path);
-      this.#data.set(path, content);
+      // TODO: Re-enable this once html files are done.
+      // this.#data.set(path, content);
     }
 
     return content;

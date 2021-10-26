@@ -1,9 +1,6 @@
 import { DB } from "../../deps.ts";
 import type {
   CardEventRecord,
-  CardID,
-  CardName,
-  CardRecord,
   EventData,
   MatchID,
   MatchRecord,
@@ -17,15 +14,12 @@ import type {
 } from "./types.ts";
 
 class Database {
-  declare preparedQueries: Queries;
-  declare database: DB;
+  public preparedQueries: Queries;
+  public database: DB;
 
   constructor() {
     this.database = new DB("./database.db");
-
-    this.database.query(
-      "CREATE TABLE IF NOT EXISTS cards (card_id INTEGER, card_name TEXT, card_description TEXT, card_health INTEGER, card_attack_damage INTEGER, card_attack_name TEXT, card_ability_name TEXT, card_crit_chance REAL)",
-    );
+    // TODO: Make a buildstep for this...
     this.database.query(
       "CREATE TABLE IF NOT EXISTS matches (match_id VARCHAR(8), started_at TEXT)",
     );
@@ -82,20 +76,6 @@ class Database {
 
         getEventsByMatchID: this.database.prepareQuery(
           "SELECT (date, card_id, event_data, player_id) FROM match_card_event WHERE match_id = ?",
-        ),
-      },
-      cards: {
-        getCardByID: this.database.prepareQuery(
-          "SELECT (card_id, card_name, card_description, card_health, card_attack_damage, card_attack_name, card_ability_name, card_crit_chance) FROM cards WHERE card_id = ?",
-        ),
-        getCardByName: this.database.prepareQuery(
-          "SELECT (card_id, card_name, card_description, card_health, card_attack_damage, card_attack_name, card_ability_name, card_crit_chance) FROM cards WHERE card_name = ?",
-        ),
-        getRandomCard: this.database.prepareQuery(
-          "SELECT (card_id, card_name, card_description, card_health, card_attack_damage, card_attack_name, card_ability_name, card_crit_chance) FROM cards ORDER BY RANDOM() LIMIT = 1",
-        ),
-        getRandomCards: this.database.prepareQuery(
-          "SELECT (card_id, card_name, card_description, card_health, card_attack_damage, card_attack_name, card_ability_name, card_crit_chance) FROM cards ORDER BY RANDOM() LIMIT = ?",
         ),
       },
     };
@@ -174,7 +154,7 @@ class Database {
   }
 
   addCardEvent(
-    cardID: CardID,
+    cardID: number,
     eventData: EventData,
     playerID: PlayerID,
     matchID: MatchID,
@@ -194,32 +174,6 @@ class Database {
       .allEntries([
         matchID,
       ]);
-  }
-
-  getCardByID(cardID: CardID): CardRecord {
-    return this.preparedQueries.cards.getCardByID
-      .oneEntry([
-        cardID,
-      ]) as unknown as CardRecord;
-  }
-
-  getCardByName(cardName: CardName): CardRecord {
-    return this.preparedQueries.cards.getCardByName
-      .oneEntry([
-        cardName,
-      ]) as unknown as CardRecord;
-  }
-
-  getRandomCard(): CardRecord {
-    return this.preparedQueries.cards.getRandomCard
-      .oneEntry() as unknown as CardRecord;
-  }
-
-  getRandomCards(limit: number): CardRecord[] {
-    return this.preparedQueries.cards.getRandomCards
-      .allEntries([
-        limit,
-      ]) as unknown as CardRecord[];
   }
 }
 

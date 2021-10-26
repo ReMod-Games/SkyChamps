@@ -1,7 +1,9 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
-import { messageEventToRecord } from "./transformers.ts";
+import { validateRecord } from "./validate_record.ts";
+
+// import { cardCache } from "../cards/cards_cache.ts";
 
 /**
  * Resources that need to be managed
@@ -13,15 +15,15 @@ import { messageEventToRecord } from "./transformers.ts";
  * AbortController eventListeners (done by `Player`, `Spectator` classes and `this.cleanUp`)
  */
 export class Game {
-  declare gameID: string;
-  declare createdAt: Date;
-  declare abortController: AbortController;
-  declare state: GameState;
-  declare playercount: number;
+  public gameID: string;
+  public createdAt: Date;
+  public abortController: AbortController;
+  public state: GameState;
+  public playercount: number;
 
-  declare private spectators: Spectator[];
-  declare private players: Player[];
-  declare private timeoutID: number;
+  private spectators: Spectator[];
+  private players: Player[];
+  private timeoutID: number;
 
   constructor(gameID: string) {
     this.gameID = gameID;
@@ -48,7 +50,7 @@ export class Game {
 
   startGame(): void {
     if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
-    this.sendGlobalEvent(new Event("start"));
+    this.sendGlobalEvent({ type: "start" });
   }
 
   stopGame(evt: CloseEvent): void {
@@ -66,16 +68,18 @@ export class Game {
     );
   }
 
-  sendGlobalEvent(evt: Event): void {
+  // Not sure if I will need this.
+  sendGlobalEvent<T>(record: Record<string, T>): void {
     // Broadcast to players and spectators
-    for (const player of this.players) player.sendEvent(evt);
-    for (const spectator of this.spectators) spectator.sendEvent(evt);
+    for (const player of this.players) player.sendEvent(record);
+    for (const spectator of this.spectators) spectator.sendEvent(record);
   }
 
-  sendPlayerEvent(evt: Event): void {
+  // Not sure if I will need this.
+  sendPlayerEvent<T>(record: Record<string, T>): void {
     // Send only to players
     // Not intended for spectators
-    for (const player of this.players) player.sendEvent(evt);
+    for (const player of this.players) player.sendEvent(record);
   }
 
   async addClient(websocket: WebSocket, name: string) {
@@ -169,17 +173,13 @@ export class Game {
 
   #removeSpectator(spectator: Spectator) {
     delete this.spectators[spectator.id];
-    spectator.cleanUp(
-      new CloseEvent("close", {
-        code: CloseCodes.OK,
-        reason: "Spectator Disconnected",
-      }),
-    );
+    spectator.cleanUp();
   }
 
-  #gameEventHandler(evt: MessageEvent<string>, player: Player): void {
+  #gameEventHandler(evt: MessageEvent<string>, playerID: number): void {
     // Handle incoming events from players
-    const eventRecord = messageEventToRecord(evt);
+    const player = this.players[playerID];
+    const eventRecord = JSON.parse(evt.data);
     switch (eventRecord?.type) {
       case "getCard":
         // Validate action
@@ -202,12 +202,11 @@ export class Game {
         break;
       default:
         // If event is not valid. Return error
-        player.sendEvent(
-          new ErrorEvent("error", {
-            error: "invalid event",
-            message: `${eventRecord?.type} is not a valid event`,
-          }),
-        );
+        player.sendEvent({
+          type: "error",
+          error: "Invalid Event",
+          message: `${eventRecord?.type} is not a valid event`,
+        });
         break;
     }
   }

@@ -1,0 +1,167 @@
+[
+  {
+    "id": 0,
+    "name": "Lucas",
+    "description": "Meme wizard. Has a attack of dank memes and a ability of wholesome memes.",
+    "attackName": "Dank meme attack",
+    "abilityName": "Wholesome ability",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 1,
+    "name": "Jeremy",
+    "description": "Deadly assasin. Able to throw any knife and stab you faster than you can blink. Ability to dash which gives a double crit chance",
+    "attackName": "Stab",
+    "abilityName": "Dash",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 2,
+    "name": "IOExceptional",
+    "description": "Invasive computer virus able to reroute incoming damage to other cards.",
+    "attackName": "Packet spam",
+    "abilityName": "Reroute",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 3,
+    "name": "Squirtle",
+    "description": "High damage but a 10% chance of missing his shot.",
+    "attackName": "Awp attack",
+    "abilityName": "no idea",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 4,
+    "name": "Saltine",
+    "description": "Saltine is a powerful salt shaker. When the time is ready he can delete any card with his salt magic.",
+    "attackName": "Salt swipe",
+    "abilityName": "Salterminate",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 5,
+    "name": "NPA",
+    "description": "When he sees it he is able to do 727 damage on the next attack.",
+    "attackName": "Aireu's scream of WYSI",
+    "abilityName": "When You See It",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 6,
+    "name": "Xenocidium",
+    "description": "idk",
+    "attackName": "idk",
+    "abilityName": "idk",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 7,
+    "name": "Crashrere",
+    "description": "Glitches through time and space. Able to dodge some attacks with a quick time event",
+    "attackName": "idk",
+    "abilityName": "Glitch",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 8,
+    "name": "Grian",
+    "description": "Grian is a deadly bread! One of the strongest knights of the universe",
+    "attackName": "Wheat Whack",
+    "abilityName": "Bread-o-punch?? idk",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 9,
+    "name": "InvalidCards",
+    "description": "Status 404",
+    "attackName": "Status 500",
+    "abilityName": "Transform",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 10,
+    "name": "Shumara",
+    "description": "Magic anime girl",
+    "attackName": "Magic beam",
+    "abilityName": "Healing beam",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 11,
+    "name": "Yunho",
+    "description": "Korean Hacker. Disable card abilities and slap computers",
+    "attackName": "Typing",
+    "abilityName": "Hack Card",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 12,
+    "name": "HypeLevels",
+    "description": "Hyper energetic",
+    "attackName": "Speedpunch",
+    "abilityName": "Hyper",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 13,
+    "name": "Hummr",
+    "description": "Big ass humvee",
+    "attackName": "Roadkill",
+    "abilityName": "Gasoline leak",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  },
+  {
+    "id": 14,
+    "name": "DJ",
+    "description": "Badass Disk Jockey",
+    "attackName": "Plate spin",
+    "abilityName": "Sound of heath",
+    "health": 100,
+    "attackDamage": 10,
+    "critFactor": 1,
+    "critChance": 0.05
+  }
+]
