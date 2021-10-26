@@ -1,6 +1,6 @@
 import { Card } from "./card.ts";
 
-import type { CardJson } from "./card.ts";
+import type { CardJson } from "../../types/card.ts";
 
 class CardCache {
   private innerMap: Map<number, Card>;
@@ -14,7 +14,7 @@ class CardCache {
   }
 
   getRandomCard(): Card {
-    const id = Math.floor(Math.random() * this.innerMap.size) + 1;
+    const id = Math.floor(Math.random() * this.innerMap.size);
     return this.innerMap.get(id)!;
   }
 }
