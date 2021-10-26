@@ -1,6 +1,6 @@
 import { Router } from "../deps.ts";
 
-import type { HTTPState } from "../types.ts";
+import type { HTTPState } from "../types/server_internals.ts";
 
 const lobbyRouter = new Router<{ id: string }, HTTPState>();
 

@@ -1,5 +1,5 @@
 import { Router } from "../deps.ts";
-import type { HTTPState } from "../types.ts";
+import type { HTTPState } from "../types/server_internals.ts";
 
 const resourceRouter = new Router<{ file: string }, HTTPState>({
   prefix: "/resources",

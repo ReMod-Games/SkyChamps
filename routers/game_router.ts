@@ -1,6 +1,6 @@
 import { Router } from "../deps.ts";
 import { Game } from "../utils/match/game.ts";
-import type { WebSocketState } from "../types.ts";
+import type { WebSocketState } from "../types/server_internals.ts";
 
 const gameRouter = new Router<{ id: string; name: string }, WebSocketState>();
 
