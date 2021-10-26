@@ -6,4 +6,4 @@ import type { AnyMiscEvent } from "./misc.ts";
 import type { AnyOppEvent } from "./opponent.ts";
 import type { AnySelfEvent } from "./self.ts";
 
-export type AnyClientEvent = AnyMiscEvent | AnyOppEvent | AnySelfEvent;
+export type AnyServerEvent = AnyMiscEvent | AnyOppEvent | AnySelfEvent;
