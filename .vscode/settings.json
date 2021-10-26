@@ -2,5 +2,8 @@
   "deno.suggest.imports.hosts": {
     "https://deno.land": true
   },
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "deno.lint": true,
+  "deno.enable": true,
+  "deno.unstable": true
 }
