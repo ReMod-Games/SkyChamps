@@ -7,3 +7,5 @@ export interface ChatMessage {
   message: string;
   user: string;
 }
+
+export type AnyMiscEvent = Disconnect | ChatMessage;

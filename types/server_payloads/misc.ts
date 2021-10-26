@@ -16,7 +16,7 @@ export interface GameStart {
   type: "game_start";
 }
 
-export interface Error {
+export interface GameError {
   type: "error";
   error: string;
   message: string;
@@ -27,3 +27,11 @@ export interface ChatMessage {
   message: string;
   user: string;
 }
+
+export type AnyMiscEvent =
+  | GameWin
+  | GameLoss
+  | GameDraw
+  | GameStart
+  | GameError
+  | ChatMessage;

@@ -22,3 +22,5 @@ export interface PlayCard {
 export interface EndTurn {
   type: "end_turn";
 }
+
+export type AnyGameEvent = DrawCard | Attack | Ability | PlayCard | EndTurn;

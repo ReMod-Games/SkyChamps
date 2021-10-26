@@ -43,3 +43,11 @@ export interface SelfEffectDOT {
   cardIndex: number; // -1 if player
   damage: number;
 }
+
+export type AnySelfEvent =
+  | SelfDraw
+  | SelfPlay
+  | SelfAttack
+  | SelfAbility
+  | SelfKill
+  | SelfEffectDOT;

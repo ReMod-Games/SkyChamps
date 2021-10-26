@@ -43,3 +43,11 @@ export interface OppEffectDOT {
   cardIndex: number; // -1 if player
   damage: number;
 }
+
+export type AnyOppEvent =
+  | OppDraw
+  | OppPlay
+  | OppAttack
+  | OppAbility
+  | OppKill
+  | OppEffectDOT;
