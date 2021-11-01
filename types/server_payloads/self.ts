@@ -44,10 +44,20 @@ export interface SelfEffectDOT {
   damage: number;
 }
 
+export interface SelfEndTurn {
+  type: "self_end_turn";
+}
+
+export interface SelfStartTurn {
+  type: "self_start_turn";
+}
+
 export type AnySelfEvent =
   | SelfDraw
   | SelfPlay
   | SelfAttack
   | SelfAbility
   | SelfKill
-  | SelfEffectDOT;
+  | SelfEffectDOT
+  | SelfEndTurn
+  | SelfStartTurn;
