@@ -29,10 +29,9 @@ export class Spectator {
     this.gameAbortController = init.gameAbortController;
 
     if (!init.isExtended) {
-      this.gameAbortController.signal.addEventListener(
-        "abort",
-        this.cleanUp.bind(this),
-      );
+      this.gameAbortController
+        .signal
+        .addEventListener("abort", () => this.cleanUp(), { once: true });
     }
   }
 
@@ -64,10 +63,6 @@ export class Spectator {
    * Clears up WebSocket stuff
    */
   cleanUp(): void {
-    this.gameAbortController.signal.removeEventListener(
-      "abort",
-      this.cleanUp.bind(this),
-    );
     this.webSocket.onclose = null;
     this.webSocket.onerror = null;
     this.webSocket.onopen = null;
@@ -86,10 +81,9 @@ export class Player extends Spectator {
     this.mana = 0;
     this.hp = 0;
     this.deck = new Deck();
-    this.gameAbortController.signal.addEventListener(
-      "abort",
-      this.cleanUp.bind(this),
-    );
+    this.gameAbortController
+      .signal
+      .addEventListener("abort", () => this.cleanUp(), { once: true });
   }
 
   onMessage<T>(cb: VoidEventFunction<T>): void {
@@ -105,10 +99,6 @@ export class Player extends Spectator {
    */
   cleanUp() {
     super.cleanUp();
-    this.gameAbortController.signal.removeEventListener(
-      "abort",
-      this.cleanUp.bind(this),
-    );
     this.deck.cleanUp();
   }
 }

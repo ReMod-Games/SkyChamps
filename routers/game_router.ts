@@ -22,13 +22,12 @@ gameRouter.get("/get_code", function (ctx) {
   const game = new Game(code);
   ctx.state.games.set(code, game);
 
-  const abort = () => {
-    ctx.state.games.delete(code);
-    game.abortController.signal.removeEventListener("abort", abort);
-  };
-
   // Add listener for abort function
-  game.abortController.signal.addEventListener("abort", abort);
+  game.abortController.signal.addEventListener(
+    "abort",
+    () => ctx.state.games.delete(code),
+    { once: true },
+  );
 
   ctx.response.body = code;
 });

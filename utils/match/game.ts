@@ -1,5 +1,4 @@
 import { Player, Spectator } from "./clients.ts";
-import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
 import { isValidPayload } from "./validate_payload.ts";
 import { cardCache } from "../cards/cards_cache.ts";
@@ -51,10 +50,9 @@ export class Game {
     this.spectators = [];
     this.players = [];
 
-    this.abortController.signal.addEventListener(
-      "abort",
-      this.cleanUp.bind(this),
-    );
+    this.abortController
+      .signal
+      .addEventListener("abort", () => this.cleanUp(), { once: true });
 
     this.timeoutID = setTimeout(() => {
       if (this.players.length < 2) this.cancelGame();
@@ -70,22 +68,18 @@ export class Game {
     this.sendGlobalEvent({ type: "game_start" });
   }
 
-  stopGame(evt: CloseEvent): void {
-    this.abortController.signal.dispatchEvent(evt);
+  stopGame(event: MiscEvents.GameCancel): void {
+    this.sendGlobalEvent(event);
+    this.players[0].cleanUp();
   }
 
   cancelGame(): void {
-    // don't need to use `this.sendGlobalEvent`
-    // That get's handled by `Spectator#cleanUp` and `Player#cleanUp`
-    this.abortController.signal.dispatchEvent(
-      new CloseEvent("abort", {
-        reason: "Not all players connected",
-        code: CloseCodes.MATCH_CANCELED,
-      }),
-    );
+    this.sendGlobalEvent({
+      type: "game_cancel",
+      reason: "Not all players connected",
+    });
   }
 
-  // Not sure if I will need this.
   sendGlobalEvent(record: AnyServerEvent): void {
     // Broadcast to players and spectators
     for (const player of this.players) player.sendEvent(record);
@@ -116,12 +110,9 @@ export class Game {
    * Clears up Players and Spectators
    */
   cleanUp(): void {
-    this.abortController.signal.removeEventListener(
-      "abort",
-      this.cleanUp.bind(this),
-    );
     this.state.cleanUp();
     this.spectators = [];
+    this.players.forEach((x) => x.cleanUp());
     this.players = [];
 
     // Only clear if not cleared
@@ -142,21 +133,14 @@ export class Game {
 
     // Initiate all eventListeners
     player.onClose(() =>
-      this.stopGame(
-        new CloseEvent("abort", {
-          reason: "Player disconnected",
-          code: CloseCodes.PLAYER_LEFT,
-        }),
-      )
+      this.stopGame({ type: "game_cancel", reason: "Player disconnected" })
     );
 
     player.onError(() =>
-      this.stopGame(
-        new CloseEvent("abort", {
-          reason: "Player connection got forcibly closed",
-          code: CloseCodes.PLAYER_LEFT_ERROR,
-        }),
-      )
+      this.stopGame({
+        type: "game_cancel",
+        reason: "Player connection got forcibly closed",
+      })
     );
 
     player.onMessage(this.#gameEventHandler.bind(this));
