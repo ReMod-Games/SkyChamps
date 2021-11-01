@@ -28,10 +28,16 @@ export interface ChatMessage {
   user: string;
 }
 
+export interface GameCancel {
+  type: "game_cancel";
+  reason: string;
+}
+
 export type AnyMiscEvent =
   | GameWin
   | GameLoss
   | GameDraw
   | GameStart
   | ServerError
-  | ChatMessage;
+  | ChatMessage
+  | GameCancel;
