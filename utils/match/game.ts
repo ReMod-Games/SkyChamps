@@ -1,9 +1,26 @@
 import { Player, Spectator } from "./clients.ts";
 import { CloseCodes } from "./codes.ts";
 import { GameState } from "./game_state.ts";
-import { validateRecord } from "./validate_record.ts";
+import { isValidPayload } from "./validate_payload.ts";
+import { cardCache } from "../cards/cards_cache.ts";
 
-// import { cardCache } from "../cards/cards_cache.ts";
+import type { AnyClientEvent } from "../../types/client_payloads/mod.ts";
+import type {
+  AnyServerEvent,
+  MiscEvents,
+} from "../../types/server_payloads/mod.ts";
+
+const INVALID_PAYLOAD: MiscEvents.ServerError = {
+  type: "error",
+  error: "Invalid payload",
+  message: "Payload that was send is invalid",
+};
+
+const INVALID_CARD_INDEX: MiscEvents.ServerError = {
+  type: "error",
+  error: "Invalid card index",
+  message: "Card could not be found",
+};
 
 /**
  * Resources that need to be managed
@@ -50,7 +67,7 @@ export class Game {
 
   startGame(): void {
     if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
-    this.sendGlobalEvent({ type: "start" });
+    this.sendGlobalEvent({ type: "game_start" });
   }
 
   stopGame(evt: CloseEvent): void {
@@ -69,14 +86,14 @@ export class Game {
   }
 
   // Not sure if I will need this.
-  sendGlobalEvent<T>(record: Record<string, T>): void {
+  sendGlobalEvent(record: AnyServerEvent): void {
     // Broadcast to players and spectators
     for (const player of this.players) player.sendEvent(record);
     for (const spectator of this.spectators) spectator.sendEvent(record);
   }
 
   // Not sure if I will need this.
-  sendPlayerEvent<T>(record: Record<string, T>): void {
+  sendPlayerEvent(record: AnyServerEvent): void {
     // Send only to players
     // Not intended for spectators
     for (const player of this.players) player.sendEvent(record);
@@ -179,35 +196,199 @@ export class Game {
   #gameEventHandler(evt: MessageEvent<string>, playerID: number): void {
     // Handle incoming events from players
     const player = this.players[playerID];
-    const eventRecord = JSON.parse(evt.data);
-    switch (eventRecord?.type) {
-      case "getCard":
+    const opponent = this.players[playerID === 0 ? 1 : 0];
+
+    const eventRecord: AnyClientEvent = JSON.parse(evt.data);
+    switch (eventRecord.type) {
+      case "draw_card": {
         // Validate action
+        if (!isValidPayload(eventRecord, ["type"])) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+
         // Get card from db
+        const card = cardCache.getRandomCard();
+
         // Add card to player deck
+        const index = player.deck.addCard(card);
+
+        // Send events
+        player.sendEvent({ type: "self_draw", cardIndex: index, card });
+        opponent.sendEvent({ type: "opp_draw", cardIndex: index });
+
         break;
-      case "playCard":
+      }
+
+      case "play_card": {
         // Validate action
-        // Add card to `thisgameState`
-        // Use `Playerid` as ID
+        if (!isValidPayload(eventRecord, ["type", "cardIndex"])) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+
+        // Add card to `this.gameState`
+        const card = player.deck.moveCard(eventRecord.cardIndex);
+        if (!card) {
+          return player.sendEvent(INVALID_CARD_INDEX);
+        }
+        const index = this
+          .state.playerDecks[playerID]
+          .addCard(card);
+
+        player.sendEvent({ type: "self_play", cardIndex: index });
+        opponent.sendEvent({ type: "opp_play", cardIndex: index, card });
         break;
-      case "attackMaybeCard":
+      }
+
+      case "attack": {
+        // Validate action
+        if (
+          !isValidPayload(
+            eventRecord,
+            ["type", "attackerCardIndex", "defenderCardIndex"],
+          )
+        ) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+        const attackIndex = eventRecord.attackerCardIndex;
+        const defenderIndex = eventRecord.defenderCardIndex;
+        const attacker = this
+          .state.playerDecks[playerID]
+          .getCard(attackIndex);
+
+        if (!attacker) {
+          return player.sendEvent(INVALID_CARD_INDEX);
+        }
+
         // Determine damage
-        // Determine which card
-        // If not card is selected and no cards on enemy field, attack enemy `Playerhp` at 0.10x
+        const damage = attacker.attackDamage *
+          (Math.random() < attacker.critChance ? attacker.critFactor : 1);
+
+        if (defenderIndex === -1 && opponent.deck.length > 0) {
+          // return `Invalid action`
+          return player.sendEvent(INVALID_CARD_INDEX);
+        }
+
+        if (defenderIndex === -1) {
+          // If not card is selected and no cards on enemy field, attack enemy `Playerhp` at 0.10x
+          player.hp -= damage * 0.25;
+        } else {
+          const deck = this.state.playerDecks[opponent.id];
+          const card = deck.modifyCard(
+            defenderIndex,
+            (card) => card.health -= damage,
+          );
+
+          if (!card) return player.sendEvent(INVALID_CARD_INDEX);
+
+          player.sendEvent({
+            type: "self_attack",
+            attackCardIndex: attackIndex,
+            defendCardIndex: defenderIndex,
+            damage,
+          });
+
+          opponent.sendEvent({
+            type: "opp_attack",
+            attackCardIndex: attackIndex,
+            defendCardIndex: defenderIndex,
+            damage,
+          });
+        }
         break;
-      case "useAbility":
-        // Determine ability
-        // Determine card that the ability is used on
+      }
+
+      case "ability": {
+        // Validate action
+        if (
+          !isValidPayload(eventRecord, [
+            "type",
+            "cardIndex",
+            "receiver",
+            "receiverIndex",
+            "abilityType",
+            "damage",
+          ])
+        ) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+
+        const abilityName = player
+          .deck
+          .getCard(eventRecord.cardIndex)
+          ?.abilityName;
+
+        if (!abilityName) {
+          return player.sendEvent(INVALID_CARD_INDEX);
+        }
+        // Either executes or queue's ability depending on it's name
+        activatePlayerAbility(abilityName, player, opponent);
         break;
+      }
+
+      case "end_turn": {
+        // Validate action
+        if (!isValidPayload(eventRecord, ["type"])) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+
+        // Send end turn event
+        player.sendEvent({ type: "self_end_turn" });
+        opponent.sendEvent({ type: "opp_end_turn" });
+
+        // Send start turn event to opp
+        player.sendEvent({ type: "opp_start_turn" });
+        opponent.sendEvent({ type: "self_start_turn" });
+
+        break;
+      }
+
+      case "disconnect": {
+        // Validate action
+        if (!isValidPayload(eventRecord, ["type"])) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+
+        opponent.sendEvent({ type: "game_win" });
+        // Send win to opp
+        // Close all connections and clean up
+        player.cleanUp();
+        opponent.cleanUp();
+        break;
+      }
+
+      case "chat_message": {
+        // Validate action
+        if (!isValidPayload(eventRecord, ["type", "message", "user"])) {
+          return player.sendEvent(INVALID_PAYLOAD);
+        }
+
+        // Resend message to Opp and Self
+        player.sendEvent(eventRecord);
+        opponent.sendEvent(eventRecord);
+        break;
+      }
+
       default:
         // If event is not valid. Return error
         player.sendEvent({
           type: "error",
           error: "Invalid Event",
-          message: `${eventRecord?.type} is not a valid event`,
+          message: `Tried to send invalid event.`,
         });
         break;
     }
+  }
+}
+
+function activatePlayerAbility(
+  abilityName: string,
+  _player: Player,
+  _opponent: Player,
+): void {
+  switch (abilityName) {
+    // TODO: add all abilities
+    // TODO: Remove default case (not needed)
+    default:
+      break;
   }
 }
