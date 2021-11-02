@@ -9,8 +9,8 @@ interface ClientInit {
   name: string;
   id: number;
   webSocket: WebSocket;
-  gameAbortController: AbortController;
-  isExtended: boolean;
+  gameAbortSignal: AbortSignal;
+  isPlayer: boolean;
 }
 
 export class Spectator {
@@ -19,18 +19,17 @@ export class Spectator {
   public id: number;
 
   protected webSocket: WebSocket;
-  protected gameAbortController: AbortController;
+  protected gameAbortSignal: AbortSignal;
 
   constructor(init: ClientInit) {
     this.gameID = init.gameID;
     this.name = init.name;
     this.id = init.id;
     this.webSocket = init.webSocket;
-    this.gameAbortController = init.gameAbortController;
+    this.gameAbortSignal = init.gameAbortSignal;
 
-    if (!init.isExtended) {
-      this.gameAbortController
-        .signal
+    if (!init.isPlayer) {
+      this.gameAbortSignal
         .addEventListener("abort", () => this.cleanUp(), { once: true });
     }
   }
@@ -81,8 +80,7 @@ export class Player extends Spectator {
     this.mana = 0;
     this.hp = 0;
     this.deck = new Deck();
-    this.gameAbortController
-      .signal
+    this.gameAbortSignal
       .addEventListener("abort", () => this.cleanUp(), { once: true });
   }
 

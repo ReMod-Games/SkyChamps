@@ -56,21 +56,19 @@ export class Game {
 
     this.timeoutID = setTimeout(() => {
       if (this.players.length < 2) this.cancelGame();
-      else {
-        clearTimeout(this.timeoutID);
-        this.timeoutID = NaN;
-      }
+      this.timeoutID = NaN;
     }, 1000 * 60 * 2);
   }
 
   startGame(): void {
-    if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
+    clearTimeout(this.timeoutID);
     this.sendGlobalEvent({ type: "game_start" });
   }
 
   stopGame(event: MiscEvents.GameCancel): void {
     this.sendGlobalEvent(event);
-    this.players[0].cleanUp();
+    // cleanUp will handle all player connections
+    this.cleanUp();
   }
 
   cancelGame(): void {
@@ -93,13 +91,10 @@ export class Game {
     for (const player of this.players) player.sendEvent(record);
   }
 
-  async addClient(websocket: WebSocket, name: string) {
-    if (this.players.length < 2) {
-      await this.#addPlayer(websocket, name);
-      this.playercount = this.players.length;
-      return;
-    }
-    return this.#addSpectator(websocket, name);
+  addClient(websocket: WebSocket, name: string): Promise<void> {
+    return this.playercount < 2
+      ? this.#addPlayer(websocket, name)
+      : this.#addSpectator(websocket, name);
   }
 
   /**
@@ -114,9 +109,6 @@ export class Game {
     this.spectators = [];
     this.players.forEach((x) => x.cleanUp());
     this.players = [];
-
-    // Only clear if not cleared
-    if (isFinite(this.timeoutID)) clearTimeout(this.timeoutID);
   }
 
   // Private API
@@ -125,8 +117,8 @@ export class Game {
     const player = new Player({
       gameID: this.gameID,
       id: this.players.length,
-      gameAbortController: this.abortController,
-      isExtended: true,
+      gameAbortSignal: this.abortController.signal,
+      isPlayer: true,
       webSocket,
       name,
     });
@@ -149,6 +141,7 @@ export class Game {
     await player.awaitConnection();
 
     this.players.push(player);
+    this.playercount += 1;
   }
 
   async #addSpectator(webSocket: WebSocket, name: string) {
@@ -157,8 +150,8 @@ export class Game {
       gameID: this.gameID,
       // If there is a empty spot in array, grab that. Else assign new one
       id: possibleID > 0 ? possibleID : this.spectators.length,
-      gameAbortController: this.abortController,
-      isExtended: false,
+      gameAbortSignal: this.abortController.signal,
+      isPlayer: false,
       webSocket,
       name,
     });

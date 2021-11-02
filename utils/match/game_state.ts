@@ -4,7 +4,7 @@ export class GameState {
   public turn: number;
   // These deck's are already played
   // Should be visible to all players
-  public playerDecks: Deck[];
+  public playerDecks: [Deck, Deck];
   constructor() {
     this.turn = 0;
     this.playerDecks = [new Deck(), new Deck()];
