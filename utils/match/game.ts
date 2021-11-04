@@ -21,6 +21,14 @@ const INVALID_CARD_INDEX: MiscEvents.ServerError = {
   message: "Card could not be found",
 };
 
+const NOT_YOUR_TURN: MiscEvents.ServerError = {
+  type: "error",
+  error: "Illegal actions",
+  message: "Tried to use a move while it is not your turn",
+};
+
+const NON_TURN_BASED_EVENTS = ["chat_message", "disconnect"];
+
 /**
  * Resources that need to be managed
  *
@@ -80,8 +88,9 @@ export class Game {
 
   sendGlobalEvent(record: AnyServerEvent): void {
     // Broadcast to players and spectators
-    for (const player of this.players) player.sendEvent(record);
-    for (const spectator of this.spectators) spectator.sendEvent(record);
+    this.spectators
+      .concat(this.players)
+      .forEach((x) => x.sendEvent(record));
   }
 
   // Not sure if I will need this.
@@ -173,9 +182,18 @@ export class Game {
   #gameEventHandler(evt: MessageEvent<string>, playerID: number): void {
     // Handle incoming events from players
     const player = this.players[playerID];
-    const opponent = this.players[playerID === 0 ? 1 : 0];
 
     const eventRecord: AnyClientEvent = JSON.parse(evt.data);
+    // Check if it's player's turn and if the action requires a turn
+    if (
+      this.state.turn % 2 !== playerID &&
+      !NON_TURN_BASED_EVENTS.includes(eventRecord.type)
+    ) {
+      return player.sendEvent(NOT_YOUR_TURN);
+    }
+
+    const opponent = this.players[playerID === 0 ? 1 : 0];
+
     switch (eventRecord.type) {
       case "draw_card": {
         // Validate action
@@ -240,6 +258,7 @@ export class Game {
         const damage = attacker.attackDamage *
           (Math.random() < attacker.critChance ? attacker.critFactor : 1);
 
+        // Safety check to avoid damaging the player too early
         if (defenderIndex === -1 && opponent.deck.length > 0) {
           // return `Invalid action`
           return player.sendEvent(INVALID_CARD_INDEX);
@@ -249,7 +268,9 @@ export class Game {
           // If not card is selected and no cards on enemy field, attack enemy `Playerhp` at 0.10x
           player.hp -= damage * 0.25;
         } else {
+          // Get deck from player
           const deck = this.state.playerDecks[opponent.id];
+          // Modify card in the deck
           const card = deck.modifyCard(
             defenderIndex,
             (card) => card.health -= damage,
@@ -330,7 +351,7 @@ export class Game {
         // Close all connections and clean up
         player.cleanUp();
         opponent.cleanUp();
-        break;
+        return;
       }
 
       case "chat_message": {
@@ -340,20 +361,19 @@ export class Game {
         }
 
         // Resend message to Opp and Self
-        player.sendEvent(eventRecord);
-        opponent.sendEvent(eventRecord);
-        break;
+        return this.sendGlobalEvent(eventRecord);
       }
 
       default:
         // If event is not valid. Return error
-        player.sendEvent({
+        return player.sendEvent({
           type: "error",
           error: "Invalid Event",
           message: `Tried to send invalid event.`,
         });
-        break;
     }
+
+    this.state.nextTurn();
   }
 }
 
