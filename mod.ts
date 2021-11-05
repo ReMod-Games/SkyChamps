@@ -1,7 +1,9 @@
+import { startWorker } from "./utils/worker.ts";
+
 const httpServerImportURL = new URL("./http_server.ts", import.meta.url);
 const websocketImportURL = new URL("./websocket_server.ts", import.meta.url);
 
-const _httpServer = new Worker(httpServerImportURL, {
+startWorker(httpServerImportURL, {
   type: "module",
   name: "http server",
   deno: {
@@ -10,7 +12,7 @@ const _httpServer = new Worker(httpServerImportURL, {
   },
 });
 
-const _websocketServer = new Worker(websocketImportURL, {
+startWorker(websocketImportURL, {
   type: "module",
   name: "websocket server",
   deno: {
