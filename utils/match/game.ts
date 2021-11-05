@@ -339,9 +339,8 @@ export class Game {
           return player.sendEvent(INVALID_PAYLOAD);
         }
 
-        // Resend message to Opp and Self
-        player.sendEvent(eventRecord);
-        opponent.sendEvent(eventRecord);
+        // Resend message to everyone
+        this.sendGlobalEvent(eventRecord);
         break;
       }
 
