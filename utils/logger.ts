@@ -13,7 +13,7 @@ const console = new ConsoleStream()
     new TokenReplacer()
       .withDateTimeFormat("YYYY-MM-DD hh:mm:ss:SSS")
       .withColor(),
-  );
+  ).withLogHeader(false);
 
 const file = new FileStream("./logs/output.log")
   .withMinLogLevel(10)
@@ -23,7 +23,7 @@ const file = new FileStream("./logs/output.log")
       .withDateTimeFormat("YYYY-MM-DD hh:mm:ss:SSS")
       .withColor(false),
   ).withLogFileInitMode("append")
-  .withLogFileRotation(every(1).days());
+  .withLogFileRotation(every(1).days()).withLogHeader(false);
 
 file.setup();
 
