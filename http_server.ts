@@ -25,4 +25,5 @@ httpServer.use(lobbyRouter.routes());
 httpServer.use(resourceRouter.allowedMethods());
 httpServer.use(resourceRouter.routes());
 
+logger.info("HTTP Server has started!");
 await httpServer.listen(httpServer.state.serverConfig);

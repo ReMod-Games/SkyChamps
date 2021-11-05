@@ -20,4 +20,5 @@ wsServer.addEventListener("error", (e) => logger.error(e) as unknown as void);
 wsServer.use(gameRouter.allowedMethods());
 wsServer.use(gameRouter.routes());
 
+logger.info("WebSocket Server has started!");
 await wsServer.listen(wsServer.state.serverConfig);
