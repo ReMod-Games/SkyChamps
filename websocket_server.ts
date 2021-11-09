@@ -1,3 +1,5 @@
+/// <reference lib="webworker"/>
+
 import { Application } from "./deps.ts";
 import { gameRouter } from "./routers/game_router.ts";
 import { logger, tracker } from "./utils/logger.ts";

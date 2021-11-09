@@ -1,3 +1,5 @@
+/// <reference lib="webworker"/>
+
 import { Application } from "./deps.ts";
 import { lobbyRouter } from "./routers/lobby_router.ts";
 import { resourceRouter } from "./routers/resource_router.ts";
