@@ -7,4 +7,4 @@ const websocketImportURL = new URL("./websocket_server.ts", baseURL);
 
 startWorker(httpServerImportURL, "HTTP Server");
 
-startWorker(websocketImportURL, "WebSocket server");
+startWorker(websocketImportURL, "WebSocket Server");
