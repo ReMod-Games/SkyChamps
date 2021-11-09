@@ -21,6 +21,8 @@ export function startWorker(workerURL: URL, name: string) {
   worker.onerror = (error) => {
     error.preventDefault();
     logger.critical(`Worker "${name}" has crashed!`);
+    logger.critical(`Worker Crashed on: "${error.error}"`);
+    logger.critical(`Occured on: ${error.filename}|${error.lineno}`);
     logger.critical(`Restarting "${name}" now!`);
     worker.terminate();
     startWorker(workerURL, name);
