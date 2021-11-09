@@ -47,6 +47,6 @@ export class Card {
   }
 
   cleanUp() {
-    this.turnTable = new Map();
+    this.turnTable.clear();
   }
 }
