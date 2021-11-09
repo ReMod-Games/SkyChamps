@@ -1,6 +1,5 @@
 import {
   ConsoleStream,
-  Context,
   every,
   FileStream,
   Logger,
@@ -27,11 +26,4 @@ const file = new FileStream("./logs/output.log")
 
 file.setup();
 
-const logger = new Logger().addStream(file).addStream(console);
-function tracker(ctx: Context) {
-  logger.info(
-    `new ${ctx.request.method} from ${ctx.request.ip} to ${ctx.request.url}`,
-  );
-}
-
-export { logger, tracker };
+export const logger = new Logger().addStream(file).addStream(console);

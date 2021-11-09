@@ -1,5 +1,7 @@
 import { logger } from "./logger.ts";
 
+import type { LogFromWorker } from "../types/worker.ts";
+
 export function startWorker(workerURL: URL, name: string) {
   logger.debug(`Worker "${name}" Starting!`);
 
@@ -11,6 +13,10 @@ export function startWorker(workerURL: URL, name: string) {
       namespace: true,
     },
   });
+
+  worker.onmessage = (evt: MessageEvent<LogFromWorker>) => {
+    logger.log(evt.data.logLevel, evt.data.message);
+  };
 
   worker.onerror = (error) => {
     error.preventDefault();
