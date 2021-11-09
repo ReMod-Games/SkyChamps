@@ -1,22 +1,10 @@
 import { startWorker } from "./utils/worker.ts";
 
-const httpServerImportURL = new URL("./http_server.ts", import.meta.url);
-const websocketImportURL = new URL("./websocket_server.ts", import.meta.url);
+const baseURL = import.meta.url;
 
-startWorker(httpServerImportURL, {
-  type: "module",
-  name: "HTTP Server",
-  deno: {
-    permissions: "inherit",
-    namespace: true,
-  },
-});
+const httpServerImportURL = new URL("./http_server.ts", baseURL);
+const websocketImportURL = new URL("./websocket_server.ts", baseURL);
 
-startWorker(websocketImportURL, {
-  type: "module",
-  name: "WebSocket server",
-  deno: {
-    permissions: "inherit",
-    namespace: true,
-  },
-});
+startWorker(httpServerImportURL, "HTTP Server");
+
+startWorker(websocketImportURL, "WebSocket server");
