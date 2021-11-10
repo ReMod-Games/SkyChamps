@@ -23,7 +23,7 @@ resourceRouter.get("/images/:file", async function (ctx) {
 resourceRouter.get("/javascript/:file", async function (ctx) {
   ctx.state.tracker(ctx);
   ctx.response.body = await ctx.state.cache.get(
-    `./resources/javascript/${ctx.params.file}`,
+    `./resources/typescript/${ctx.params.file}`,
   );
 });
 
