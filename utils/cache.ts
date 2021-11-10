@@ -1,4 +1,4 @@
-import { swcPrint } from "../deps.ts";
+import { swcParse, swcPrint } from "../deps.ts";
 
 const encoder = new TextEncoder();
 
@@ -12,9 +12,20 @@ export class Cache {
   async get(path: string): Promise<Uint8Array> {
     let content = this.data.get(path);
     if (!content) {
-      if (path.endsWith(".ts")) {
+      if (path.endsWith(".js")) {
+        const ast = swcParse(
+          await Deno.readTextFile(path.replace(".js", ".ts")),
+          {
+            syntax: "typescript",
+            comments: false,
+            target: "es2020",
+          },
+        );
+
         content = encoder.encode(
-          swcPrint(await Deno.readTextFile(path), { minify: true }).code,
+          swcPrint(ast, {
+            minify: true,
+          }).code,
         );
       } else {
         content = await Deno.readFile(path);
