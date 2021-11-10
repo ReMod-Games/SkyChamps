@@ -13,17 +13,17 @@
 <body>
   <main>
     <div id="game_lobby">
-      <player-list>
-      </player-list>
+      <div id="player_list"></div>
     </div>
 
-<!-- game-lobby will be shown and once `Event("start")` is received board will be shown and lobby will be deleted -->
-<!-- On `Event("game_won")` or `Event("game_lost") board will be deleted and show either `win-card` or `lost-card` -->
+    <!-- game-lobby will be shown and once `Event("start")` is received board will be shown and lobby will be deleted -->
+    <!-- On `Event("game_won")` or `Event("game_lost") board will be deleted and show either `win-card` or `lost-card` -->
 
-    <div id="board"> <!-- Should have a `../../resources/svg/board.svg` as background-image -->
+    <div id="board">
+      <!-- Should have a `../../resources/svg/board.svg` as background-image -->
       <div class="player_ui" id="enemy_ui">
         <div class="health bar" id="enemy_healthbar">
-          <label for="enemy_health">50/50</label> 
+          <label for="enemy_health">50/50</label>
           <progress id="enemy_health" max="50" value="50"></progress>
         </div>
         <div class="secret deck" id="enemy_deck"></div>
@@ -38,22 +38,16 @@
         </div>
       </div>
       <div class="end_turn">
-      <!-- Click to end turn -->
       </div>
 
       <div class="player_ui" id="self_ui">
         <div class="health bar" id="self_healthbar">
-          <label for="self_health">50/50</label> 
+          <label for="self_health">50/50</label>
           <progress id="self_health" max="50" value="50"></progress>
-        </div>
-        <div class="mana bar" id="self_manabar">
-          <!-- Player's mana -->
         </div>
         <div class="player deck" id="self_deck">
           <!-- Deck of cards -->
         </div>
-      </div>
-
       </div>
     </div>
   </main>
