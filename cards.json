@@ -12,7 +12,7 @@
   },
   {
     "id": 1,
-    "name": "Jeremy",
+    "name": "Un1tt",
     "description": "Deadly assasin. Able to throw any knife and stab you faster than you can blink. Ability to dash which gives a double crit chance",
     "attackName": "Stab",
     "abilityName": "Dash",
@@ -34,7 +34,7 @@
   },
   {
     "id": 3,
-    "name": "Squirtle",
+    "name": "SquirtleShot",
     "description": "High damage but a 10% chance of missing his shot.",
     "attackName": "Awp attack",
     "abilityName": "squirtle",
