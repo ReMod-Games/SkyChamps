@@ -9,21 +9,21 @@ const resourceRouter = new Router<{ file: string }, HTTPState>({
 resourceRouter.get("/css/:file", async function (ctx) {
   ctx.state.tracker(ctx);
   ctx.response.body = await ctx.state.cache.get(
-    `./resources/css/${ctx.params.file}`,
+    `./frontend/css/${ctx.params.file}`,
   );
 });
 
 resourceRouter.get("/images/:file", async function (ctx) {
   ctx.state.tracker(ctx);
   ctx.response.body = await ctx.state.cache.get(
-    `./resources/images/${ctx.params.file}`,
+    `./frontend/images/${ctx.params.file}`,
   );
 });
 
 resourceRouter.get("/javascript/:file", async function (ctx) {
   ctx.state.tracker(ctx);
   ctx.response.body = await ctx.state.cache.get(
-    `./resources/typescript/${ctx.params.file}`,
+    `./frontend/typescript/${ctx.params.file}`,
   );
 });
 
