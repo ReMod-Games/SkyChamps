@@ -3,11 +3,11 @@ import { GameState } from "./game_state.ts";
 import { isValidPayload } from "./validate_payload.ts";
 import { cardCache } from "../cards/cards_cache.ts";
 
-import type { AnyClientEvent } from "../../types/client_payloads/mod.ts";
+import type { AnyClientEvent } from "../../types/client_send_payloads/mod.ts";
 import type {
   AnyServerEvent,
   MiscEvents,
-} from "../../types/server_payloads/mod.ts";
+} from "../../types/server_send_payloads/mod.ts";
 
 const INVALID_PAYLOAD: MiscEvents.ServerError = {
   type: "error",

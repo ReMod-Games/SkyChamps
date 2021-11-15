@@ -1,6 +1,6 @@
 import { Deck } from "./deck.ts";
 
-import type { AnyServerEvent } from "../../types/server_payloads/mod.ts";
+import type { AnyServerEvent } from "../../types/server_send_payloads/mod.ts";
 
 type VoidEventFunction<T> = (evt: MessageEvent<T>, id: number) => void;
 
