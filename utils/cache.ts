@@ -27,6 +27,9 @@ export class Cache {
         const content = encoder.encode(
           swcPrint(ast, {
             minify: true,
+            jsc: {
+              target: "es2020",
+            },
           }).code,
         );
 
