@@ -1,8 +1,14 @@
 /// <reference lib="dom"/>
-export class WebSocketConnection {
-  #websocket: WebSocket;
+import { messageHandler } from "./game_logic.js";
 
-  constructor(url: URL | string) {
-    this.#websocket = new WebSocket(url);
-  }
+import type { AnyClientEvent, MiscEvents } from "../../types/client_send_payloads/mod.ts";
+
+const url = location.href;
+console.log(url);
+const ws = new WebSocket(url);
+
+ws.onmessage = messageHandler;
+
+export function send(evt: AnyClientEvent) {
+  ws.send(JSON.stringify(evt));
 }
