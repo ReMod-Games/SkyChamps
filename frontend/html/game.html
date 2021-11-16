@@ -12,12 +12,19 @@
 
 <body>
   <main>
-    <div id="game_lobby">
-      <div id="player_list"></div>
+    <div id="info">
+      <div id="timer">Time Left: </div>
+      <button id="leave">Leave</button>
+      <div id="chat">
+        <p id="chat_box"></p>
+        <label for="chat_input">Chat message</label>
+        <input type="text" name="chat_input" id="chat_input">
+      </div>
+    </div>
     </div>
 
-    <!-- game-lobby will be shown and once `Event("start")` is received board will be shown and lobby will be deleted -->
-    <!-- On `Event("game_won")` or `Event("game_lost") board will be deleted and show either `win-card` or `lost-card` -->
+    <!-- game-lobby will be shown and once `Event("start")` is received board will be shown and `timer` will be deleted -->
+    <!-- On `Event("game_won")` or `Event("game_lost") show either `win-card` or `lost-card` -->
 
     <div id="board">
       <!-- Should have a `../../resources/svg/board.svg` as background-image -->
