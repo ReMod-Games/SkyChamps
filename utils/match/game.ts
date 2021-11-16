@@ -1,7 +1,8 @@
 import { Player, Spectator } from "./clients.ts";
 import { GameState } from "./game_state.ts";
 import { isValidPayload } from "./validate_payload.ts";
-import { cardCache } from "../cards/cards_cache.ts";
+import { CardCache } from "../cards/cards_cache.ts";
+import * as Errors from "./game_errors.ts"
 
 import type { AnyClientEvent } from "../../types/client_send_payloads/mod.ts";
 import type {
@@ -9,23 +10,7 @@ import type {
   MiscEvents,
 } from "../../types/server_send_payloads/mod.ts";
 
-const INVALID_PAYLOAD: MiscEvents.ServerError = {
-  type: "error",
-  error: "Invalid payload",
-  message: "Payload that was send is invalid",
-};
-
-const INVALID_CARD_INDEX: MiscEvents.ServerError = {
-  type: "error",
-  error: "Invalid card index",
-  message: "Card could not be found",
-};
-
-const NOT_YOUR_TURN: MiscEvents.ServerError = {
-  type: "error",
-  error: "Illegal actions",
-  message: "Tried to use a move while it is not your turn",
-};
+const CARD_CACHE: CardCache = new CardCache(JSON.parse(await Deno.readTextFile("./cards.json")))
 
 const NON_TURN_BASED_EVENTS = ["chat_message", "disconnect"];
 
@@ -189,7 +174,7 @@ export class Game {
       this.state.turn % 2 !== playerID &&
       !NON_TURN_BASED_EVENTS.includes(eventRecord.type)
     ) {
-      return player.sendEvent(NOT_YOUR_TURN);
+      return player.sendEvent(Errors.NOT_YOUR_TURN);
     }
 
     const opponent = this.players[playerID === 0 ? 1 : 0];
@@ -198,11 +183,11 @@ export class Game {
       case "draw_card": {
         // Validate action
         if (!isValidPayload(eventRecord, ["type"])) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
 
         // Get card from db
-        const card = cardCache.getRandomCard();
+        const card = CARD_CACHE.getRandomCard();
 
         // Add card to player deck
         const index = player.deck.addCard(card);
@@ -217,13 +202,13 @@ export class Game {
       case "play_card": {
         // Validate action
         if (!isValidPayload(eventRecord, ["type", "cardIndex"])) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
 
         // Add card to `this.gameState`
         const card = player.deck.moveCard(eventRecord.cardIndex);
         if (!card) {
-          return player.sendEvent(INVALID_CARD_INDEX);
+          return player.sendEvent(Errors.INVALID_CARD_INDEX);
         }
         const index = this
           .state.playerDecks[playerID]
@@ -242,7 +227,7 @@ export class Game {
             ["type", "attackerCardIndex", "defenderCardIndex"],
           )
         ) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
         const attackIndex = eventRecord.attackerCardIndex;
         const defenderIndex = eventRecord.defenderCardIndex;
@@ -251,7 +236,7 @@ export class Game {
           .getCard(attackIndex);
 
         if (!attacker) {
-          return player.sendEvent(INVALID_CARD_INDEX);
+          return player.sendEvent(Errors.INVALID_CARD_INDEX);
         }
 
         // Determine damage
@@ -261,7 +246,7 @@ export class Game {
         // Safety check to avoid damaging the player too early
         if (defenderIndex === -1 && opponent.deck.length > 0) {
           // return `Invalid action`
-          return player.sendEvent(INVALID_CARD_INDEX);
+          return player.sendEvent(Errors.INVALID_CARD_INDEX);
         }
 
         if (defenderIndex === -1) {
@@ -276,7 +261,7 @@ export class Game {
             (card) => card.health -= damage,
           );
 
-          if (!card) return player.sendEvent(INVALID_CARD_INDEX);
+          if (!card) return player.sendEvent(Errors.INVALID_CARD_INDEX);
 
           player.sendEvent({
             type: "self_attack",
@@ -307,7 +292,7 @@ export class Game {
             "damage",
           ])
         ) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
 
         const abilityName = player
@@ -316,7 +301,7 @@ export class Game {
           ?.abilityName;
 
         if (!abilityName) {
-          return player.sendEvent(INVALID_CARD_INDEX);
+          return player.sendEvent(Errors.INVALID_CARD_INDEX);
         }
         // Either executes or queue's ability depending on it's name
         activatePlayerAbility(abilityName, player, opponent);
@@ -326,7 +311,7 @@ export class Game {
       case "end_turn": {
         // Validate action
         if (!isValidPayload(eventRecord, ["type"])) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
 
         // Send end turn event
@@ -343,7 +328,7 @@ export class Game {
       case "disconnect": {
         // Validate action
         if (!isValidPayload(eventRecord, ["type"])) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
 
         opponent.sendEvent({ type: "game_win" });
@@ -357,7 +342,7 @@ export class Game {
       case "chat_message": {
         // Validate action
         if (!isValidPayload(eventRecord, ["type", "message", "user"])) {
-          return player.sendEvent(INVALID_PAYLOAD);
+          return player.sendEvent(Errors.INVALID_PAYLOAD);
         }
 
         // Resend message to Opp and Self

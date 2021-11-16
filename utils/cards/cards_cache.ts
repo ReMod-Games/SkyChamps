@@ -2,7 +2,7 @@ import { Card } from "./card.ts";
 
 import type { CardJson } from "../../types/card.ts";
 
-class CardCache {
+export class CardCache {
   private innerMap: Map<number, Card>;
 
   constructor(cards: CardJson[]) {
@@ -18,7 +18,3 @@ class CardCache {
     return this.innerMap.get(id)!;
   }
 }
-
-export const cardCache = new CardCache(
-  JSON.parse(await Deno.readTextFile("./cards.json")),
-);
