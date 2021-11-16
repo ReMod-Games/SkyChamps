@@ -11,8 +11,7 @@ export {
 } from "https://deno.land/x/optic@1.3.1/streams/fileStream/mod.ts";
 export { TokenReplacer } from "https://deno.land/x/optic@1.3.1/formatters/mod.ts";
 export {
-  parse as swcParse,
-  print as swcPrint,
+  transform as swcTransform,
 } from "https://deno.land/x/swc@0.1.4/mod.ts";
 
 export type { Context } from "https://deno.land/x/oak@v9.0.1/mod.ts";
