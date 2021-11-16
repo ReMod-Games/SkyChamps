@@ -7,14 +7,11 @@ export class Cache {
 
   constructor() {
     this.data = new Map();
-  }
 
-  async get(path: string): Promise<Uint8Array> {
-    let content = this.data.get(path);
-    if (!content) {
-      if (path.endsWith(".js")) {
+    for (const entry of Deno.readDirSync("./frontend/typescript")) {
+      if (entry.isFile) {
         const ast = swcParse(
-          await Deno.readTextFile(path.replace(".js", ".ts")),
+          Deno.readTextFileSync(entry.name),
           {
             syntax: "typescript",
             comments: false,
@@ -22,17 +19,26 @@ export class Cache {
           },
         );
 
-        content = encoder.encode(
+        const content = encoder.encode(
           swcPrint(ast, {
             minify: true,
           }).code,
         );
-      } else {
-        content = await Deno.readFile(path);
+
+        this.data.set(entry.name.replace(".ts", ".js"), content);
       }
-      // TODO: Re-enable this once html files are done.
-      // this.#data.set(path, content);
     }
+  }
+
+  async get(path: string): Promise<Uint8Array> {
+    let content = this.data.get(path);
+
+    if (!content) {
+      content = await Deno.readFile(path);
+    }
+
+    // TODO: Re-enable this once html files are done.
+    // this.#data.set(path, content);
 
     return content;
   }
