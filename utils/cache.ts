@@ -1,7 +1,6 @@
-import { swcParse, swcPrint } from "../deps.ts";
-import { logger } from "./logger.ts";
+import { compile } from "./jit_compile.ts";
 
-const encoder = new TextEncoder();
+const base = "./frontend/typescript/";
 
 export class Cache {
   private data: Map<string, Uint8Array>;
@@ -9,36 +8,17 @@ export class Cache {
   constructor() {
     this.data = new Map();
 
-    const base = "./frontend/typescript/";
-    for (const entry of Deno.readDirSync(base)) {
-      if (entry.isFile) {
-        logger.debug(`Reading ${entry.name}`);
-        const tsCode = Deno.readTextFileSync(base + entry.name);
-        logger.debug(`Parsing ${entry.name}`);
-        const ast = swcParse(
-          tsCode,
-          {
-            syntax: "typescript",
-            comments: false,
-            target: "es2020",
-          },
-        );
-        logger.debug(`Printing & Encoding ${entry.name}`);
-        const content = encoder.encode(
-          swcPrint(ast, {
-            minify: true,
-            jsc: {
-              target: "es2020",
-            },
-          }).code,
-        );
+    this.init();
+  }
 
+  async init(): Promise<void> {
+    for await (const entry of Deno.readDir(base)) {
+      if (entry.isFile) {
+        const content = compile(base, entry);
         this.data.set(base + entry.name.replace(".ts", ".js"), content);
-        logger.debug(`Finished Compiling & Caching of ${entry.name}`);
       }
     }
   }
-
   async get(path: string): Promise<Uint8Array> {
     let content = this.data.get(path);
 
@@ -50,9 +30,5 @@ export class Cache {
     // this.#data.set(path, content);
 
     return content;
-  }
-
-  set(path: string, data: Uint8Array) {
-    this.data.set(path, data);
   }
 }
