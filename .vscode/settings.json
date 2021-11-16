@@ -5,5 +5,6 @@
   "editor.tabSize": 2,
   "deno.lint": true,
   "deno.enable": true,
-  "deno.unstable": true
+  "deno.unstable": true,
+  "deno.importMap": "./dev_import_map.json"
 }
