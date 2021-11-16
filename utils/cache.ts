@@ -1,4 +1,5 @@
 import { swcParse, swcPrint } from "../deps.ts";
+import { logger } from "./logger.ts";
 
 const encoder = new TextEncoder();
 
@@ -8,24 +9,29 @@ export class Cache {
   constructor() {
     this.data = new Map();
 
-    for (const entry of Deno.readDirSync("./frontend/typescript")) {
+    const base = "./frontend/typescript/";
+    for (const entry of Deno.readDirSync(base)) {
       if (entry.isFile) {
+        logger.debug(`Reading ${entry.name}`);
+        const tsCode = Deno.readTextFileSync(base + entry.name);
+        logger.debug(`Parsing ${entry.name}`);
         const ast = swcParse(
-          Deno.readTextFileSync(entry.name),
+          tsCode,
           {
             syntax: "typescript",
             comments: false,
             target: "es2020",
           },
         );
-
+        logger.debug(`Printing & Encoding ${entry.name}`);
         const content = encoder.encode(
           swcPrint(ast, {
             minify: true,
           }).code,
         );
 
-        this.data.set(entry.name.replace(".ts", ".js"), content);
+        this.data.set(base + entry.name.replace(".ts", ".js"), content);
+        logger.debug(`Finished Compiling & Caching of ${entry.name}`);
       }
     }
   }
