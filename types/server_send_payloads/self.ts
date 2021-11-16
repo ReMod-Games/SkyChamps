@@ -48,9 +48,6 @@ export interface SelfEndTurn {
   type: "self_end_turn";
 }
 
-export interface SelfStartTurn {
-  type: "self_start_turn";
-}
 
 export type AnySelfEvent =
   | SelfDraw
@@ -60,4 +57,3 @@ export type AnySelfEvent =
   | SelfKill
   | SelfEffectDOT
   | SelfEndTurn
-  | SelfStartTurn;

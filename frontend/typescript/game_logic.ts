@@ -56,9 +56,6 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     case "opp_end_turn": {
       break;
     }
-    case "opp_start_turn": {
-      break;
-    }
 
     // Self Events
 
@@ -81,9 +78,6 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "self_end_turn": {
-      break;
-    }
-    case "self_start_turn": {
       break;
     }
   }

@@ -48,10 +48,6 @@ export interface OppEndTurn {
   type: "opp_end_turn";
 }
 
-export interface OppStartTurn {
-  type: "opp_start_turn";
-}
-
 export type AnyOppEvent =
   | OppDraw
   | OppPlay
@@ -60,4 +56,3 @@ export type AnyOppEvent =
   | OppKill
   | OppEffectDOT
   | OppEndTurn
-  | OppStartTurn;
