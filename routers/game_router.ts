@@ -2,7 +2,7 @@ import { Router } from "../deps.ts";
 import { Game } from "../utils/match/game.ts";
 import type { WebSocketState } from "../types/server_internals.ts";
 
-const gameRouter = new Router<{ id: string; name: string }, WebSocketState>();
+const gameRouter = new Router<WebSocketState>();
 
 gameRouter.get("/:id/:name", async function (ctx) {
   if (!ctx.isUpgradable) return ctx.response.status = 400;
@@ -11,7 +11,7 @@ gameRouter.get("/:id/:name", async function (ctx) {
   const game = ctx.state.games.get(gameID);
   if (!game) return ctx.response.status = 400;
 
-  await game.addClient(await ctx.upgrade(), ctx.params.name);
+  await game.addClient(ctx.upgrade(), ctx.params.name);
   if (game.playercount === 2) game.startGame();
 });
 

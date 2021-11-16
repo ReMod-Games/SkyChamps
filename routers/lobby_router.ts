@@ -2,7 +2,7 @@ import { Router } from "../deps.ts";
 
 import type { HTTPState } from "../types/server_internals.ts";
 
-const lobbyRouter = new Router<{ id: string }, HTTPState>();
+const lobbyRouter = new Router<HTTPState>();
 
 // TODO: At some point move this to the real index of the site and not /lobby
 lobbyRouter.get("/", async function (ctx) {
