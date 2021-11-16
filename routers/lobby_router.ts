@@ -8,7 +8,7 @@ const lobbyRouter = new Router<{ id: string }, HTTPState>();
 lobbyRouter.get("/", async function (ctx) {
   ctx.state.tracker(ctx);
   // Send normal page
-  ctx.response.body = await ctx.state.cache.get("./frontedn/html/index.html");
+  ctx.response.body = await ctx.state.cache.get("./frontend/html/index.html");
 });
 
 lobbyRouter.get("/lobby", async function (ctx) {
