@@ -2,7 +2,7 @@ import { Player, Spectator } from "./clients.ts";
 import { GameState } from "./game_state.ts";
 import { isValidPayload } from "./validate_payload.ts";
 import { CardCache } from "../cards/cards_cache.ts";
-import * as Errors from "./game_errors.ts"
+import * as Errors from "./game_errors.ts";
 
 import type { AnyClientEvent } from "../../types/client_send_payloads/mod.ts";
 import type {
@@ -10,7 +10,9 @@ import type {
   MiscEvents,
 } from "../../types/server_send_payloads/mod.ts";
 
-const CARD_CACHE: CardCache = new CardCache(JSON.parse(await Deno.readTextFile("./cards.json")))
+const CARD_CACHE: CardCache = new CardCache(
+  JSON.parse(await Deno.readTextFile("./cards.json")),
+);
 
 const NON_TURN_BASED_EVENTS = ["chat_message", "disconnect"];
 
