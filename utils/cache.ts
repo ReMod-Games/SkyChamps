@@ -1,4 +1,4 @@
-import { compile } from "./jit_compile.ts";
+import { compile } from "./otf_compile.ts";
 
 const base = "./frontend/typescript/";
 
