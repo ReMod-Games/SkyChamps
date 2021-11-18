@@ -1,8 +1,8 @@
 {
   "imports": {
-     "./frontend/typescript/game_logic.js": "./frontend/typescript/game_logic.ts",
-     "./frontend/typescript/dom_interaction.js": "./frontend/typescript/dom_interaction.ts",
-     "./frontend/typescript/index.js": "./frontend/typescript/index.ts",
-     "./frontend/typescript/websocket.js": "./frontend/typescript/websocket.ts"
+    "./frontend/typescript/game_logic.js": "./frontend/typescript/game_logic.ts",
+    "./frontend/typescript/dom_interaction.js": "./frontend/typescript/dom_interaction.ts",
+    "./frontend/typescript/index.js": "./frontend/typescript/index.ts",
+    "./frontend/typescript/websocket.js": "./frontend/typescript/websocket.ts"
   }
 }

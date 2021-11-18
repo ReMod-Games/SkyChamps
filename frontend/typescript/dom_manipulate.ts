@@ -12,8 +12,7 @@ export function startTimer(endDate: Date) {
     const now = new Date();
 
     if (now.getMilliseconds() < stopTimeMs) {
-      timer.innerText = `Time Left: ${(stopTimS - now.getSeconds())}`
+      timer.innerText = `Time Left: ${(stopTimS - now.getSeconds())}`;
     } else cancelTimer(id);
-
   }, 1000);
 }

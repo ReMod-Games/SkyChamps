@@ -55,4 +55,4 @@ export type AnyOppEvent =
   | OppAbility
   | OppKill
   | OppEffectDOT
-  | OppEndTurn
+  | OppEndTurn;
