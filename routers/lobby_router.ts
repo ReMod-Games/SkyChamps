@@ -11,14 +11,15 @@ lobbyRouter.get("/", async function (ctx) {
 });
 
 lobbyRouter.get("/lobby", async function (ctx) {
-  ctx.state.tracker(ctx);
+  // ctx.state.tracker(ctx);
   ctx.response.body = await ctx.state.cache.get(
     "frontend/html/lobby.html",
   );
 });
 
 lobbyRouter.get("/lobby/:id", async function (ctx) {
-  ctx.state.tracker(ctx);
+  // ctx.state.tracker(ctx);
+  console.log(ctx.params);
   // Send lobby page
   ctx.response.body = await ctx.state.cache.get(
     "frontend/html/game.html",

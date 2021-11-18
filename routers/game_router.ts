@@ -16,7 +16,7 @@ gameRouter.get("/:id/:name", async function (ctx) {
 });
 
 gameRouter.get("/get_code", function (ctx) {
-  ctx.state.tracker(ctx);
+  // ctx.state.tracker(ctx);
   const code = crypto.randomUUID().substring(0, 8);
   const game = new Game(code);
   ctx.state.games.set(code, game);
