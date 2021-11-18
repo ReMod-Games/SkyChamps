@@ -2,7 +2,7 @@ import { Deck } from "./deck.ts";
 
 import type { AnyServerEvent } from "../../types/server_send_payloads/mod.ts";
 
-type VoidEventFunction<T> = (evt: MessageEvent<T>, id: number) => void;
+type VoidEventFunction<T> = (evt: MessageEvent<T>) => void;
 
 interface ClientInit {
   gameID: string;
@@ -10,7 +10,6 @@ interface ClientInit {
   id: number;
   webSocket: WebSocket;
   gameAbortSignal: AbortSignal;
-  isPlayer: boolean;
 }
 
 export class Spectator {
@@ -27,11 +26,8 @@ export class Spectator {
     this.id = init.id;
     this.webSocket = init.webSocket;
     this.gameAbortSignal = init.gameAbortSignal;
-
-    if (!init.isPlayer) {
-      this.gameAbortSignal
-        .addEventListener("abort", () => this.cleanUp(), { once: true });
-    }
+    this.gameAbortSignal
+      .addEventListener("abort", this.cleanUp, { once: true });
   }
 
   /** What to do when websocket errors */
@@ -57,8 +53,6 @@ export class Spectator {
   /**
    * Works as a destructor.
    *
-   * Clears up AbortController stuff
-   *
    * Clears up WebSocket stuff
    */
   cleanUp(): void {
@@ -81,22 +75,10 @@ export class Player extends Spectator {
     this.hp = 0;
     this.deck = new Deck();
     this.gameAbortSignal
-      .addEventListener("abort", () => this.cleanUp(), { once: true });
+      .addEventListener("abort", this.deck.cleanUp, { once: true });
   }
 
-  onMessage<T>(cb: VoidEventFunction<T>): void {
-    this.webSocket.onmessage = (evt) => cb(evt, this.id);
-  }
-
-  /**
-   * Works as a destructor.
-   *
-   * Clears up AbortController stuff
-   *
-   * Clears up deck
-   */
-  cleanUp() {
-    super.cleanUp();
-    this.deck.cleanUp();
+  onMessage(cb: VoidEventFunction<string>): void {
+    this.webSocket.onmessage = cb;
   }
 }
