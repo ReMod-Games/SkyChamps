@@ -1,9 +1,9 @@
 /// <reference lib="dom"/>
 import type {
   AnyServerEvent,
-  MiscEvents,
-  OppEvents,
-  SelfEvents,
+  MiscEvents as _,
+  OppEvents as _1,
+  SelfEvents as _2,
 } from "../../types/server_send_payloads/mod.ts";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {

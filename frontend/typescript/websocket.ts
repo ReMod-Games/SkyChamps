@@ -3,7 +3,7 @@ import { messageHandler } from "./game_logic.js";
 
 import type {
   AnyClientEvent,
-  MiscEvents,
+  MiscEvents as _,
 } from "../../types/client_send_payloads/mod.ts";
 
 const url = location.href;

@@ -1,3 +1,5 @@
+/// <reference lib="dom"/>
+
 export function cancelTimer(id: number) {
   const timer = document.getElementById("timer")!;
   document.removeChild(timer);
