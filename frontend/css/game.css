@@ -40,7 +40,7 @@ main {
   min-width: 1600px;
   min-height: 900px;
   background-color: red;
-  background-image: url("../resources/png/board.png");
+  background-image: url("../resources/images/board.png");
   display: flex;
   flex-direction: column;
 }
