@@ -13,10 +13,12 @@ export class Cache {
 
   async init(): Promise<void> {
     for await (const entry of Deno.readDir(base)) {
-      if (entry.isFile) {
-        const content = compile(base, entry);
-        this.data.set(base + entry.name.replace(".ts", ".js"), content);
-      }
+      (async () => {
+        if (entry.isFile) {
+          const content = await compile(base, entry);
+          this.data.set(base + entry.name.replace(".ts", ".js"), content);
+        }
+      })();
     }
   }
   async get(path: string): Promise<Uint8Array> {
