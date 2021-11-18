@@ -16,7 +16,7 @@ export class Cache {
     for await (const entry of walk(base, { includeDirs: false })) {
       (async () => {
         const content = await compile(entry.path, entry.name);
-        this.data.set(base + entry.name.replace(".ts", ".js"), content);
+        this.data.set(entry.path.replace(".ts", ".js"), content);
       })();
     }
   }
