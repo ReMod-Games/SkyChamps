@@ -19,6 +19,14 @@ export function startWorker(workerURL: URL, name: string) {
   };
 
   worker.onerror = (error) => {
+    if (
+      error.error === null && error.filename === "" && error.lineno === 0 &&
+      error.type === "error" && error.colno === 0
+    ) {
+      worker.terminate();
+      return;
+    }
+
     error.preventDefault();
     logger.critical(`Worker "${name}" has crashed!`);
     logger.critical(`Worker Crashed on: "${error.error}"`);
