@@ -1,5 +1,4 @@
 export { Application, Router } from "https://deno.land/x/oak@v10.0.0/mod.ts";
-export { DB } from "https://deno.land/x/sqlite@v3.1.2/mod.ts";
 export {
   ConsoleStream,
   Level,
@@ -15,4 +14,3 @@ export {
 } from "https://deno.land/x/swc@0.1.4/mod.ts";
 
 export type { Context } from "https://deno.land/x/oak@v10.0.0/mod.ts";
-export type { PreparedQuery } from "https://deno.land/x/sqlite@v3.1.2/mod.ts";

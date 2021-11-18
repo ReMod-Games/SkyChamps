@@ -6,6 +6,11 @@ export function cancelTimer(id: number) {
   clearInterval(id);
 }
 
+export function setUsername(name: string) {
+  const user = document.getElementById("username")!;
+  user.innerHTML = name;
+}
+
 export function startTimer(endDate: Date) {
   const timer = document.getElementById("timer")!;
   const stopTimeMs = endDate.getMilliseconds();
