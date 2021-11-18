@@ -4,7 +4,7 @@ import type {
   MiscEvents as _,
   OppEvents as _1,
   SelfEvents as _2,
-} from "../../types/server_send_payloads/mod.ts";
+} from "../../../types/server_send_payloads/mod.ts";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {
   const event: AnyServerEvent = JSON.parse(messageEvent.data);
