@@ -12,6 +12,8 @@ const ws = new WebSocket(url);
 
 ws.onmessage = messageHandler;
 
+export const identity = "";
+
 export function send(evt: AnyClientEvent) {
   ws.send(JSON.stringify(evt));
 }
