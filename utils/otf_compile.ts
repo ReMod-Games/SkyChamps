@@ -20,5 +20,5 @@ export async function compile(
   }).code;
 
   log(20, `Finished with ${name}`);
-  return transpiled
+  return transpiled;
 }

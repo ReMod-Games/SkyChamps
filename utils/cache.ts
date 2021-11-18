@@ -21,12 +21,11 @@ export class Cache {
     }
   }
 
-  async get(path: string): Promise<string>{
-    
+  async get(path: string): Promise<string> {
     let content: string | undefined = this.data.get(path);
 
     if (!content) {
-      console.log("grabbing", path)
+      console.log("grabbing", path);
       content = await Deno.readTextFile(path);
       this.data.set(path, content);
     }
