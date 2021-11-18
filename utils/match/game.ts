@@ -319,11 +319,6 @@ export class Game {
         // Send end turn event
         player.sendEvent({ type: "self_end_turn" });
         opponent.sendEvent({ type: "opp_end_turn" });
-
-        // Send start turn event to opp
-        player.sendEvent({ type: "opp_start_turn" });
-        opponent.sendEvent({ type: "self_start_turn" });
-
         break;
       }
 
