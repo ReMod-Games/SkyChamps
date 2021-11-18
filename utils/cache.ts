@@ -4,7 +4,7 @@ import { compile } from "./otf_compile.ts";
 const base = "./frontend/typescript/";
 
 export class Cache {
-  private data: Map<string, Uint8Array>;
+  private data: Map<string, string>;
 
   constructor() {
     this.data = new Map();
@@ -21,15 +21,15 @@ export class Cache {
     }
   }
 
-  get(path: string): Promise<Uint8Array> | Uint8Array {
-    const content = this.data.get(path);
+  async get(path: string): Promise<string>{
+    
+    let content: string | undefined = this.data.get(path);
 
     if (!content) {
-      return Deno.readFile(path);
+      console.log("grabbing", path)
+      content = await Deno.readTextFile(path);
+      this.data.set(path, content);
     }
-
-    // TODO: Re-enable this once html files are done.
-    // this.#data.set(path, content);
 
     return content;
   }

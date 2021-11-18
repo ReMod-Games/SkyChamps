@@ -5,27 +5,27 @@ const resourceRouter = new Router<HTTPState>({
   prefix: "/resources",
 });
 
-resourceRouter.get("/css/:file", function (ctx) {
+resourceRouter.get("/css/:file", async function (ctx) {
   ctx.state.tracker(ctx);
-  console.log(ctx.params.file);
-  ctx.response.body = ctx.state.cache.get(
-    `./frontend/css/${ctx.params.file}`,
+  ctx.response.body = await ctx.state.cache.get(
+    `frontend/css/${ctx.params.file}`,
   );
   ctx.response.type = "text/css";
 });
 
-resourceRouter.get("/images/:file", function (ctx) {
+resourceRouter.get("/images/:file", async function (ctx) {
   ctx.state.tracker(ctx);
-  ctx.response.body = ctx.state.cache.get(
-    `./frontend/images/${ctx.params.file}`,
+  ctx.response.body = await ctx.state.cache.get(
+    `frontend/images/${ctx.params.file}`,
   );
   ctx.response.type = "image/png";
 });
 
-resourceRouter.get("/javascript/:file", function (ctx) {
+resourceRouter.get("/javascript/:dir/:file", async function (ctx) {
+  console.log(`frontend/typescript/${ctx.params.dir}/${ctx.params.file}`)
   ctx.state.tracker(ctx);
-  ctx.response.body = ctx.state.cache.get(
-    `./frontend/typescript/${ctx.params.file}`,
+  ctx.response.body = await ctx.state.cache.get(
+    `frontend/typescript/${ctx.params.dir}/${ctx.params.file}`,
   );
   ctx.response.type = "text/javascript";
 });
