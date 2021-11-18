@@ -25,7 +25,6 @@ export class Cache {
     let content: string | undefined = this.data.get(path);
 
     if (!content) {
-      console.log("grabbing", path);
       content = await Deno.readTextFile(path);
       this.data.set(path, content);
     }

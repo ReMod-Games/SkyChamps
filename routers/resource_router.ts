@@ -22,7 +22,6 @@ resourceRouter.get("/images/:file", async function (ctx) {
 });
 
 resourceRouter.get("/javascript/:dir/:file", async function (ctx) {
-  console.log(`frontend/typescript/${ctx.params.dir}/${ctx.params.file}`);
   ctx.state.tracker(ctx);
   ctx.response.body = await ctx.state.cache.get(
     `frontend/typescript/${ctx.params.dir}/${ctx.params.file}`,
