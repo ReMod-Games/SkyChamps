@@ -4,7 +4,7 @@ import * as WebsocketConnection from "./websocket.js";
 
 onload = () => {
   const chatInput = document.getElementById("chat_input")! as HTMLInputElement;
-  
+
   chatInput.onclick = () => {
     WebsocketConnection.send({
       type: "chat_message",
@@ -14,8 +14,6 @@ onload = () => {
 
     chatInput.innerText = "";
   };
-
-  
 };
 
 export function sendMessage(evt: MouseEvent): void {

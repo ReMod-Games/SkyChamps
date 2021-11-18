@@ -15,8 +15,8 @@ export class Cache {
   async init(): Promise<void> {
     for await (const entry of walk(base, { includeDirs: false })) {
       (async () => {
-          const content = await compile(entry.path, entry.name);
-          this.data.set(base + entry.name.replace(".ts", ".js"), content);
+        const content = await compile(entry.path, entry.name);
+        this.data.set(base + entry.name.replace(".ts", ".js"), content);
       })();
     }
   }

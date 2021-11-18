@@ -27,7 +27,7 @@ resourceRouter.get("/javascript/:file", function (ctx) {
   ctx.response.body = ctx.state.cache.get(
     `./frontend/typescript/${ctx.params.file}`,
   );
-  ctx.response.type = "text/javascript"
+  ctx.response.type = "text/javascript";
 });
 
 export { resourceRouter };
