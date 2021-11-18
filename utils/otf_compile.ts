@@ -4,12 +4,12 @@ import { log } from "./worker_logger.ts";
 const encoder = new TextEncoder();
 
 export async function compile(
-  base: string,
-  entry: Deno.DirEntry,
+  path: string,
+  name: string,
 ): Promise<Uint8Array> {
-  log(20, `Reading ${entry.name}`);
-  const tsCode = await Deno.readTextFile(base + entry.name);
-  log(20, `Transforming ${entry.name}`);
+  log(20, `Reading ${name}`);
+  const tsCode = await Deno.readTextFile(path);
+  log(20, `Transforming ${name}`);
   const transpiled = swcTransform(tsCode, {
     // @ts-ignore: Typings are fucked...
     minify: true,
@@ -21,6 +21,6 @@ export async function compile(
     },
   }).code;
 
-  log(20, `Encoding ${entry.name}`);
+  log(20, `Encoding ${name}`);
   return encoder.encode(transpiled);
 }

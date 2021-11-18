@@ -13,4 +13,6 @@ export {
   transform as swcTransform,
 } from "https://deno.land/x/swc@0.1.4/mod.ts";
 
+export { walk } from "https://deno.land/std@0.115.1/fs/walk.ts";
+
 export type { Context } from "https://deno.land/x/oak@v10.0.0/mod.ts";
