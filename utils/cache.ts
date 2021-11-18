@@ -21,11 +21,12 @@ export class Cache {
       })();
     }
   }
-  async get(path: string): Promise<Uint8Array> {
-    let content = this.data.get(path);
+
+  get(path: string): Promise<Uint8Array> | Uint8Array {
+    const content = this.data.get(path);
 
     if (!content) {
-      content = await Deno.readFile(path);
+      return Deno.readFile(path);
     }
 
     // TODO: Re-enable this once html files are done.
