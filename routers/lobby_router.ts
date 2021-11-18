@@ -4,11 +4,18 @@ import type { HTTPState } from "../types/server_internals.ts";
 
 const lobbyRouter = new Router<HTTPState>();
 
-// TODO: At some point move this to the real index of the site and not /lobby
 lobbyRouter.get("/", async function (ctx) {
   ctx.state.tracker(ctx);
   // Send normal page
   ctx.response.body = await ctx.state.cache.get("./frontend/html/index.html");
+});
+
+lobbyRouter.get("/lobby", function(ctx) {
+  ctx.state.tracker(ctx);
+
+  ctx.response.body = ctx.state.cache.get(
+    "./frontend/html/lobby.html"
+  )
 });
 
 lobbyRouter.get("/lobby/:id", function (ctx) {
