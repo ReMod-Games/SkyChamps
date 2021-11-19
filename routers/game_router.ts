@@ -5,18 +5,17 @@ import type { WebSocketState } from "../types/server_internals.ts";
 const gameRouter = new Router<WebSocketState>();
 
 gameRouter.get("/:id/:name", async function (ctx) {
-  if (!ctx.isUpgradable) return ctx.response.status = 400;
-  ctx.state.tracker(ctx);
   const gameID = ctx.params.id;
   const game = ctx.state.games.get(gameID);
-  if (!game) return ctx.response.status = 400;
+  if (!ctx.isUpgradable || !game) return ctx.response.status = 400;
+  ctx.state.tracker(ctx);
 
   await game.addClient(ctx.upgrade(), ctx.params.name);
   if (game.playercount === 2) game.startGame();
 });
 
 gameRouter.get("/get_code", function (ctx) {
-  // ctx.state.tracker(ctx);
+  ctx.state.tracker(ctx);
   const code = crypto.randomUUID().substring(0, 8);
   const game = new Game(code);
   ctx.state.games.set(code, game);
