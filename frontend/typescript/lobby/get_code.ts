@@ -1,9 +1,3 @@
-/// <reference lib="dom"/>
-
-fetch(`http://localhost:8001/get_code`, { mode: "no-cors" })
-  .then((res) => res.headers)
-  .then((id) => {
-    console.log(id);
-    location.replace(`../lobby/${id}`)
-  }
-    );
+fetch(`http://localhost:8000/get_code`)
+  .then((res) => res.text())
+  .then((id) => location.replace("../lobby/" + id));

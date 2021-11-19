@@ -17,6 +17,13 @@ lobbyRouter.get("/lobby", async function (ctx) {
   );
 });
 
+lobbyRouter.get("/get_code", async function (ctx) {
+  const res = await fetch("http://localhost:8001/get_code");
+
+  ctx.response.status = res.status;
+  ctx.response.body = res.body;
+});
+
 lobbyRouter.get("/lobby/:id", async function (ctx) {
   // ctx.state.tracker(ctx);
   console.log(ctx.params);
