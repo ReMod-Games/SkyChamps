@@ -1,6 +1,8 @@
 import { walk } from "../deps.ts";
 import { compile } from "./otf_compile.ts";
 
+const NORMALIZE_PATH = /\\/g;
+
 const base = "./frontend/typescript/";
 
 export class Cache {
@@ -15,8 +17,9 @@ export class Cache {
   async init(): Promise<void> {
     for await (const entry of walk(base, { includeDirs: false })) {
       (async () => {
-        const content = await compile(entry.path, entry.name);
-        this.data.set(entry.path.replace(".ts", ".js"), content);
+        const path = entry.path.replace(NORMALIZE_PATH, "/");
+        const content = await compile(path, entry.name);
+        this.data.set(path.replace(".ts", ".js"), content);
       })();
     }
   }
