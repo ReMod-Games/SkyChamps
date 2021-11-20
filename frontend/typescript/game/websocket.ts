@@ -1,19 +1,24 @@
 /// <reference lib="dom"/>
-import { messageHandler } from "./game_logic.js";
 
-import type {
-  AnyClientEvent,
-  MiscEvents as _,
-} from "../../../types/client_send_payloads/mod.ts";
+let WEBSOCKET_CONNECTION: WebSocket;
 
-const url = location.href;
-console.log(url);
-const ws = new WebSocket(url);
+export function connect(url: string): Promise<void> {
+  WEBSOCKET_CONNECTION = new WebSocket(url);
+  return new Promise(res => WEBSOCKET_CONNECTION.onopen = () => res());
+}
 
-ws.onmessage = messageHandler;
+export function send<E, T extends Record<string, E>>(payload: T): void {
+  WEBSOCKET_CONNECTION.send(JSON.stringify(payload));
+}
 
-export const identity = "";
+export function onMessage<T>(cb: (evt: MessageEvent<T>) => void): void {
+  WEBSOCKET_CONNECTION.onmessage = cb;
+}
 
-export function send(evt: AnyClientEvent) {
-  ws.send(JSON.stringify(evt));
+export function onError(cb: (evt: Event) => void): void {
+  WEBSOCKET_CONNECTION.onerror = cb;
+}
+
+export function onClose(cb: (evt: CloseEvent) => void): void {
+  WEBSOCKET_CONNECTION.onclose = cb;
 }

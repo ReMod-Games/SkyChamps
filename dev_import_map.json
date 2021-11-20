@@ -2,6 +2,7 @@
   "imports": {
     "./frontend/typescript/game/game_logic.js": "./frontend/typescript/game/game_logic.ts",
     "./frontend/typescript/game/dom_interaction.js": "./frontend/typescript/game/dom_interaction.ts",
-    "./frontend/typescript/game/websocket.js": "./frontend/typescript/game/websocket.ts"
+    "./frontend/typescript/game/websocket.js": "./frontend/typescript/game/websocket.ts",
+    "./frontend/typescript/game/dom_manipulate.js": "./frontend/typescript/game/dom_manipulate.ts"
   }
 }

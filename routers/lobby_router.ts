@@ -24,7 +24,7 @@ lobbyRouter.get("/get_code", async function (ctx) {
   ctx.response.body = res.body;
 });
 
-lobbyRouter.get("/lobby/:id", async function (ctx) {
+lobbyRouter.get("/lobby/:id/:name", async function (ctx) {
   ctx.state.tracker(ctx);
   // Send lobby page
   ctx.response.body = await ctx.state.cache.get(
