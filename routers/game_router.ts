@@ -9,7 +9,7 @@ gameRouter.get("/:id/:name", async function (ctx) {
   const game = ctx.state.games.get(gameID);
   if (!ctx.isUpgradable || !game) return ctx.response.status = 400;
   ctx.state.tracker(ctx);
-  
+
   if (game.playercount < 2) {
     await game.addPlayer(ctx.upgrade(), ctx.params.name);
     if (game.playercount === 2) game.startGame();
