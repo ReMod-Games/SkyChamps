@@ -4,7 +4,7 @@ let WEBSOCKET_CONNECTION: WebSocket;
 
 export function connect(url: string): Promise<void> {
   WEBSOCKET_CONNECTION = new WebSocket(url);
-  return new Promise(res => WEBSOCKET_CONNECTION.onopen = () => res());
+  return new Promise((res) => WEBSOCKET_CONNECTION.onopen = () => res());
 }
 
 export function send<E, T extends Record<string, E>>(payload: T): void {

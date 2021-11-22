@@ -3,10 +3,10 @@
 export function setTimer(timeLeft: number, interval: number): number {
   const timer = document.getElementById("timer")!;
   let timeRemaining = timeLeft;
-  
+
   return setInterval(
     () => timer.innerText = (timeRemaining -= interval).toString(),
-    interval
+    interval,
   );
 }
 
@@ -22,5 +22,5 @@ export function addChatMessage(message: string, player: string) {
 
 export function addErrorMessage(message: string) {
   const chat = document.getElementById("chat_box")!;
-  chat.innerHTML+= `<p class="error">${message}</p>`;
+  chat.innerHTML += `<p class="error">${message}</p>`;
 }

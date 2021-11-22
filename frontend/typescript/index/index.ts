@@ -4,7 +4,8 @@ onload = function () {
   document.getElementById("create_match")!.addEventListener(
     "click",
     () => {
-      const name = (document.getElementById("username") as HTMLInputElement).value;
+      const name =
+        (document.getElementById("username") as HTMLInputElement).value;
       fetch(`http://localhost:8000/get_code`)
         .then((res) => res.text())
         .then((id) => location.replace(`./lobby/${id}/${name}`));
