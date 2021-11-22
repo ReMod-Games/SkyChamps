@@ -12,7 +12,7 @@ interface ClientInit {
   gameAbortSignal: AbortSignal;
 }
 
-export class Spectator {
+export class Player {
   public gameID: string;
   public name: string;
   public id: number;
@@ -20,14 +20,25 @@ export class Spectator {
   protected webSocket: WebSocket;
   protected gameAbortSignal: AbortSignal;
 
+  public mana: number;
+  public hp: number;
+  public deck: Deck;
+
   constructor(init: ClientInit) {
     this.gameID = init.gameID;
     this.name = init.name;
     this.id = init.id;
     this.webSocket = init.webSocket;
     this.gameAbortSignal = init.gameAbortSignal;
+    this.mana = 0;
+    this.hp = 0;
+    this.deck = new Deck();
     this.gameAbortSignal
-      .addEventListener("abort", this.cleanUp, { once: true });
+      .addEventListener("abort", () => this.cleanUp(), { once: true });
+  }
+
+  onMessage(cb: VoidEventFunction<string>): void {
+    this.webSocket.onmessage = cb;
   }
 
   /** What to do when websocket errors */
@@ -61,24 +72,6 @@ export class Spectator {
     this.webSocket.onopen = null;
     this.webSocket.onmessage = null;
     this.webSocket.close();
-  }
-}
-
-export class Player extends Spectator {
-  declare mana: number;
-  declare hp: number;
-  declare deck: Deck;
-
-  constructor(init: ClientInit) {
-    super(init);
-    this.mana = 0;
-    this.hp = 0;
-    this.deck = new Deck();
-    this.gameAbortSignal
-      .addEventListener("abort", this.deck.cleanUp, { once: true });
-  }
-
-  onMessage(cb: VoidEventFunction<string>): void {
-    this.webSocket.onmessage = cb;
+    this.deck.cleanUp();
   }
 }

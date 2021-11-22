@@ -1,4 +1,4 @@
-import { Player, Spectator } from "./clients.ts";
+import { Player } from "./clients.ts";
 import { GameState } from "./game_state.ts";
 import { gameEventHandler } from "./game_event_handler.ts";
 
@@ -24,7 +24,6 @@ export class Game {
   public playercount: number;
   public players: Player[];
 
-  private spectators: Spectator[];
   private timeoutID: number;
 
   constructor(gameID: string) {
@@ -33,7 +32,6 @@ export class Game {
     this.abortController = new AbortController();
     this.state = new GameState();
     this.playercount = 0;
-    this.spectators = [];
     this.players = [];
 
     this.abortController
@@ -65,23 +63,12 @@ export class Game {
   }
 
   sendGlobalEvent(record: AnyServerEvent): void {
-    // Broadcast to players and spectators
-    this.spectators
-      .concat(this.players)
-      .forEach((x) => x.sendEvent(record));
-  }
-
-  // Not sure if I will need this.
-  sendPlayerEvent(record: AnyServerEvent): void {
-    // Send only to players
-    // Not intended for spectators
     for (const player of this.players) player.sendEvent(record);
   }
 
-  addClient(websocket: WebSocket, name: string): Promise<void> {
-    return this.playercount < 2
-      ? this.addPlayer(websocket, name)
-      : this.addSpectator(websocket, name);
+  addClient(websocket: WebSocket, name: string): Promise<void> | void {
+    if (this.playercount < 2) return this.addPlayer(websocket, name);
+    return;
   }
 
   /**
@@ -93,7 +80,6 @@ export class Game {
    */
   cleanUp(): void {
     this.state.cleanUp();
-    this.spectators = [];
     this.players.forEach((x) => x.cleanUp());
     this.players = [];
   }
@@ -128,30 +114,5 @@ export class Game {
 
     this.players.push(player);
     this.playercount += 1;
-  }
-
-  async addSpectator(webSocket: WebSocket, name: string) {
-    const possibleID = this.spectators.findIndex((x) => x === undefined);
-    const spectator = new Spectator({
-      gameID: this.gameID,
-      // If there is a empty spot in array, grab that. Else assign new one
-      id: possibleID > 0 ? possibleID : this.spectators.length,
-      gameAbortSignal: this.abortController.signal,
-      webSocket,
-      name,
-    });
-
-    // Silently remove spectator from match if disconnected
-    spectator.onClose(() => this.removeSpectator(spectator));
-    spectator.onError(() => this.removeSpectator(spectator));
-
-    // Wait for the connection to be opened
-    await spectator.awaitConnection();
-    this.spectators[spectator.id] = spectator;
-  }
-
-  removeSpectator(spectator: Spectator) {
-    delete this.spectators[spectator.id];
-    spectator.cleanUp();
   }
 }
