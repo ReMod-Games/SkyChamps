@@ -66,26 +66,6 @@ export class Game {
     for (const player of this.players) player.sendEvent(record);
   }
 
-  addClient(websocket: WebSocket, name: string): Promise<void> | void {
-    if (this.playercount < 2) return this.addPlayer(websocket, name);
-    return;
-  }
-
-  /**
-   * Works as a destructor.
-   *
-   * Clears up AbortController stuff
-   *
-   * Clears up Players and Spectators
-   */
-  cleanUp(): void {
-    this.state.cleanUp();
-    this.players.forEach((x) => x.cleanUp());
-    this.players = [];
-  }
-
-  // Private API
-
   async addPlayer(webSocket: WebSocket, name: string) {
     const player = new Player({
       gameID: this.gameID,
@@ -114,5 +94,18 @@ export class Game {
 
     this.players.push(player);
     this.playercount += 1;
+  }
+
+  /**
+   * Works as a destructor.
+   *
+   * Clears up AbortController stuff
+   *
+   * Clears up Players and Spectators
+   */
+  cleanUp(): void {
+    this.state.cleanUp();
+    this.players.forEach((x) => x.cleanUp());
+    this.players = [];
   }
 }
