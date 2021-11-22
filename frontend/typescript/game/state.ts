@@ -50,7 +50,7 @@ export class GameState {
   }
 
   removeCard(player: Player, cardIndex: number): void {
-    const _element = this[player].publicDeck[cardIndex];
+    const _element = this[player].publicDeck[cardIndex].element;
     delete this[player].publicDeck[cardIndex];
 
     // Get public deck div and remove `element` from it;
@@ -61,11 +61,15 @@ export class GameState {
   moveCard(player: "self", index: number, card: undefined): void;
   moveCard(player: Player, index: number, card?: CardJson): void {
     const { publicDeck, privateDeck } = this[player];
+    const element = privateDeck[index].element;
 
     publicDeck[index] =
       (player === "self"
         ? privateDeck[index]
-        : { element: privateDeck[index].element, ...card }) as CardJsonExt;
+        : { element, ...card }) as CardJsonExt;
+
+    // Play move animation of `element`
+    delete privateDeck[index];
   }
 
   modifyCard(
