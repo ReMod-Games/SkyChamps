@@ -35,15 +35,22 @@ export class Card {
     table.set(table.size, action);
   }
 
-  executeTurnActions(turn: number) {
+  /**
+   * @param turn Which turn to handle
+   * @returns True if card is dead. False if still alive. Undefined if not found
+   */
+  executeTurnActions(turn: number): boolean | undefined {
     const actions = this.turnTable.get(turn)?.values();
     if (!actions) return;
 
-    for (const action of actions) {
-      action(this);
-    }
+    for (const action of actions) action(this);
 
+    if (this.health === 0) {
+      this.cleanUp();
+      return true;
+    }
     this.turnTable.delete(turn);
+    return false;
   }
 
   cleanUp() {
