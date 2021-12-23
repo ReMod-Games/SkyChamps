@@ -50,10 +50,10 @@ export class GameState {
   }
 
   removeCard(player: Player, cardIndex: number): void {
-    const _element = this[player].publicDeck[cardIndex].element;
+    const element = this[player].publicDeck[cardIndex].element;
     delete this[player].publicDeck[cardIndex];
 
-    // Get public deck div and remove `element` from it;
+    document.removeChild(element);
     // Play delete animation of `element`
   }
 
