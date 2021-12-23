@@ -16,16 +16,17 @@ export class Deck {
   addCard(card: Card): number {
     // Note: This may need changes depending on client code.
     const possibleIndex = this.innerDeck.findIndex((x) => x === undefined);
-    const index = possibleIndex > 0 ? possibleIndex : this.innerDeck.length;
+    const index = possibleIndex >= 0 ? possibleIndex : this.innerDeck.length;
     this.innerDeck[index] = card;
     return index;
   }
 
-  removeCard(cardIndex: number): void {
+  removeCard(cardIndex: number): boolean {
     const card = this.innerDeck[cardIndex];
-    if (!card) return;
+    if (!card) return false;
     card.cleanUp();
     delete this.innerDeck[cardIndex];
+    return true;
   }
 
   moveCard(cardIndex: number): Card | undefined {
