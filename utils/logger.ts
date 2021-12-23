@@ -6,6 +6,9 @@ import {
   TokenReplacer,
 } from "../deps.ts";
 
+// Small hack to not throw even if dir already exists
+Deno.mkdirSync("./logs", { recursive: true });
+
 const console = new ConsoleStream()
   .withMinLogLevel(10)
   .withFormat(
