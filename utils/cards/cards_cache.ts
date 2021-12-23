@@ -10,7 +10,9 @@ export class CardCache {
   }
 
   getCard(id: number): Card | undefined {
-    return this.innerMap.get(id);
+    const maybeCard = this.innerMap.get(id);
+    if (!maybeCard) return;
+    return new Card(maybeCard);
   }
 
   getRandomCard(): Card {
