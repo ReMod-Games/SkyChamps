@@ -1,6 +1,10 @@
 import { Command } from "https://deno.land/x/cliffy@v0.20.1/command/mod.ts";
+import { walkSync } from "https://deno.land/std/fs/walk.ts";
 
 const VERSION = "0.1.0";
+const ARCHIVE_URL =
+  "https://github.com/ReMod-Games/SkyChamps/archive/refs/tags/";
+const RELEASES_URL = "https://github.com/ReMod-Games/SkyChamps/releases/latest";
 
 const setupCommand = new Command()
   .name("Setup")
@@ -33,7 +37,7 @@ const setupCommand = new Command()
   .option("-L, --log [path:string]", "Logging to file", {
     required: false,
     requiredValue: true,
-    default: null,
+    default: "./logs",
   })
   .action(setup);
 
@@ -54,7 +58,7 @@ const updateCommand = new Command()
     {
       required: false,
       requiredValue: true,
-      default: "main",
+      default: "latest",
     },
   )
   .action(update);
@@ -69,26 +73,19 @@ await new Command()
   .parse(Deno.args);
 
 async function update(options: Record<string, string>) {
-  const p = Deno.run({
-    cmd: [
-      "git",
-      "clone",
-      "https://github.com/ReMod-Games/SkyChamps",
-      "-q",
-      "--depth",
-      "1",
-      "--single-branch",
-      "--branch",
-      options.version,
-      "./",
-    ],
-    stdout: "null",
-  });
+  let tag = options.version;
+  if (options.version === "latest") {
+    console.log("Retrieving latest release");
+    tag = await getLatestTag();
+  }
 
-  await p.status();
+  const tempFile = await downloadLatestArchive(tag);
+  const tempDir = Deno.makeTempDirSync();
+  await unzip(tempFile, tempDir);
+  await move(tempDir + "/SkyChamps-" + tag);
 }
 
-function run(options: Record<string, unknown>) {
+async function run(options: Record<string, unknown>) {
   const debug = options.debug ? "DEBUG" : "";
   const args =
     `deno run --unstable --allow-read --allow-write --allow-net mod.ts ${debug}`
@@ -99,10 +96,17 @@ function run(options: Record<string, unknown>) {
     stdin: "inherit",
     cmd: args,
   });
-  p.status().then((x) => Deno.exit(x.code));
+  await p.status();
 }
 
-function setup(options: Record<string, unknown>) {
+async function setup(options: Record<string, unknown>) {
+  try {
+    Deno.openSync("./mod.ts", { create: false, createNew: false });
+  } catch {
+    console.log("First time setup detected!");
+    await update({ version: "latest" });
+  }
+  console.log("Generating config file");
   const config = {
     server: {
       http: {
@@ -128,4 +132,46 @@ function setup(options: Record<string, unknown>) {
     "./config.json",
     JSON.stringify(config, undefined, 2),
   );
+}
+
+async function downloadLatestArchive(tag: string): Promise<string> {
+  console.log("Downloading release: " + tag);
+  const s = await fetch(`${ARCHIVE_URL}${tag}.zip`);
+  const buff = await s.arrayBuffer();
+  const tempFile = await Deno.makeTempFile();
+  await Deno.writeFile(tempFile, new Uint8Array(buff));
+  return tempFile;
+}
+
+async function move(tempDir: string) {
+  console.log("Writing to disk");
+  const cwd = Deno.cwd();
+  for await (const entry of walkSync(tempDir)) {
+    const nPath = entry.path.replace(tempDir, cwd);
+    if (entry.isDirectory) Deno.mkdirSync(nPath, { recursive: true });
+    if (entry.isFile) Deno.copyFileSync(entry.path, nPath);
+  }
+}
+
+async function unzip(file: string, tempDir: string) {
+  console.log("Unzipping archive");
+  const p = Deno.run({
+    cmd: Deno.build.os === "windows"
+      ? [
+        "PowerShell",
+        "Expand-Archive",
+        "-Path",
+        file,
+        "-DestinationPath",
+        tempDir,
+      ]
+      : ["unzip", "-o", file, "-d", tempDir],
+    stdout: "null",
+  });
+  await p.status();
+}
+
+async function getLatestTag() {
+  const f = await fetch(RELEASES_URL);
+  return f.url.split("/").pop()!;
 }
