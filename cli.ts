@@ -88,7 +88,7 @@ async function update(options: Record<string, string>) {
 async function run(options: Record<string, unknown>) {
   const debug = options.debug ? "DEBUG" : "";
   const args =
-    `deno run --unstable --allow-read --allow-write --allow-net mod.ts ${debug}`
+    `deno run --no-check --unstable --allow-read --allow-write --allow-net mod.ts ${debug}`
       .split(" ");
   const p = Deno.run({
     stdout: "inherit",
