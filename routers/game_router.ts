@@ -12,7 +12,12 @@ gameRouter.get("/:id/:name", async function (ctx) {
 
   if (game.playercount < 2) {
     await game.addPlayer(ctx.upgrade(), ctx.params.name);
-    if (game.playercount === 2) game.startGame();
+    if (game.playercount === 2) {
+      console.log("GAME IS STARTIGN!");
+      game.startGame();
+    }
+  } else {
+    // Has to be spectator later on
   }
 });
 

@@ -1,11 +1,9 @@
 /// <reference lib="dom"/>
 
-// import * as WebSocketConnection from "./websocket.js";
-// import { messageHandler } from "./game_logic.js"
+import { messageHandler } from "./game_logic.js";
 
-// await WebSocketConnection.connect();
-// WebSocketConnection.onMessage(messageHandler);
+const [gameID, username] = location.pathname.replace("/lobby/", "").split("/");
 
-// onload = () => {
-
-// }
+const socket = new WebSocket(`ws://localhost:8001/${gameID}/${username}`);
+await new Promise((res) => socket.onopen = res);
+socket.onmessage = messageHandler;

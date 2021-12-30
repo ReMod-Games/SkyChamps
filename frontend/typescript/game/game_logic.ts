@@ -6,11 +6,11 @@ import type {
   SelfEvents as _2,
 } from "../../../types/server_send_payloads/mod.ts";
 
-import {} from "./dom_manipulate.js";
+import { addChatMessage } from "./dom_manipulate.js";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {
   const event: AnyServerEvent = JSON.parse(messageEvent.data);
-
+  console.log(event);
   switch (event.type) {
     // Misc Events
     case "game_win": {
@@ -32,6 +32,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "chat_message": {
+      addChatMessage(event.message, event.user);
       break;
     }
 
