@@ -1,14 +1,10 @@
-import { CardCache } from "../cards/cards_cache.ts";
+import { CARD_CACHE } from "../cards/cards_cache.ts";
 import { isValidPayload } from "./validate_payload.ts";
 import * as Errors from "./game_errors.ts";
 
 import type { AnyClientEvent } from "../../types/client_send_payloads/mod.ts";
 import type { Player } from "./clients.ts";
 import type { Game } from "./game.ts";
-
-const CARD_CACHE: CardCache = new CardCache(
-  JSON.parse(await Deno.readTextFile("./cards.json")),
-);
 
 const NON_TURN_BASED_EVENTS = ["chat_message", "disconnect"];
 

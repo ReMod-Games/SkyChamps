@@ -20,3 +20,7 @@ export class CardCache {
     return this.innerMap.get(id)!;
   }
 }
+
+export const CARD_CACHE: CardCache = new CardCache(
+  JSON.parse(await Deno.readTextFile("./cards.json")),
+);

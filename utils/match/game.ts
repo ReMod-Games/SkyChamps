@@ -1,5 +1,6 @@
 import { Player } from "./clients.ts";
 import { GameState } from "./game_state.ts";
+import { CARD_CACHE } from "../cards/cards_cache.ts";
 import { gameEventHandler } from "./game_event_handler.ts";
 
 import type {
