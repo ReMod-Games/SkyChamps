@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../resources/css/game.css">
-  <script type="module" src="../resources/javascript/game/game.js"></script>
+  <link rel="stylesheet" href="../../resources/css/game.css">
+  <script type="module" src="../../resources/javascript/game/game.js"></script>
   <title>Lobby</title>
 </head>
 
@@ -17,9 +17,9 @@
       <div id="username"></div>
       <button id="leave">Leave</button>
       <div id="chat">
-        <div id="chat_box"></div>
         <label for="chat_input">Chat message</label>
-        <input type="text" name="chat_input" id="chat_input">
+        <input type="text" name="chat_input" id="chat_input" onsubmit="chatMessage()">
+        <div id="chat_box"></div>
       </div>
     </div>
     </div>
@@ -29,16 +29,16 @@
 
     <div id="board">
       <!-- Should have a `../../resources/svg/board.svg` as background-image -->
-      <div class="player_ui" id="enemy_ui">
-        <div class="health bar" id="enemy_healthbar">
-          <label for="enemy_health">50/50</label>
-          <progress id="enemy_health" max="50" value="50"></progress>
+      <div class="player_ui" id="opp_ui">
+        <div class="health bar" id="opp_healthbar">
+          <label for="opp_health">50/50</label>
+          <progress id="opp_health" max="50" value="50"></progress>
         </div>
-        <div class="secret deck" id="enemy_deck"></div>
+        <div class="secret deck" id="opp_deck"></div>
       </div>
 
       <div class="match_board">
-        <div class="played deck" id="enemy_played_deck">
+        <div class="played deck" id="opp_played_deck">
           <!-- Has cards that are played (interactible) -->
         </div>
         <div class="played deck" id="self_played_deck">
