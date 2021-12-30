@@ -155,7 +155,7 @@ async function downloadLatestArchive(tag: string): Promise<string> {
     `${ARCHIVE_URL}${tag[0] === "/" ? tag.replace("/", "") : tag}.zip`,
   );
   const buff = await s.arrayBuffer();
-  const tempFile = await Deno.makeTempFile();
+  const tempFile = await Deno.makeTempFile() + ".zip";
   await Deno.writeFile(tempFile, new Uint8Array(buff));
   return tempFile;
 }
