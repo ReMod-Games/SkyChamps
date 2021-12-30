@@ -48,6 +48,20 @@ export class Game {
   startGame(): void {
     clearTimeout(this.timeoutID);
     this.sendGlobalEvent({ type: "game_start" });
+    for (let i = 0; i < 2; i++) {
+      const player = this.players[i];
+      const enemy = this.players[(i + 1) % 2];
+      for (let j = 0; j < 6; j++) {
+        player.sendEvent({
+          type: "self_draw",
+          cardIndex: j,
+          card: CARD_CACHE.getRandomCard(),
+        });
+        enemy.sendEvent({ type: "opp_draw", cardIndex: j });
+      }
+      player.sendEvent({ type: "self_end_turn" });
+      enemy.sendEvent({ type: "opp_end_turn" });
+    }
   }
 
   stopGame(event: MiscEvents.GameCancel): void {
