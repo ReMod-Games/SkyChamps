@@ -2,8 +2,7 @@ import { Command } from "https://deno.land/x/cliffy@v0.20.1/command/mod.ts";
 import { walkSync } from "https://deno.land/std/fs/walk.ts";
 
 const VERSION = "0.1.0";
-const ARCHIVE_URL =
-  "https://github.com/ReMod-Games/SkyChamps/archive/refs/tags/";
+const ARCHIVE_URL = "https://github.com/ReMod-Games/SkyChamps/archive/refs/";
 const RELEASES_URL = "https://github.com/ReMod-Games/SkyChamps/releases/latest";
 
 const setupCommand = new Command()
@@ -53,6 +52,10 @@ const updateCommand = new Command()
   .description("update the repo to the latest version!")
   .version(VERSION)
   .option(
+    "--git",
+    "Download the latest git tag",
+  )
+  .option(
     "-V, --version [version:string]",
     "Download a specific version (Mutually exclusive with --git)",
     {
@@ -74,15 +77,24 @@ await new Command()
 
 async function update(options: Record<string, string>) {
   let tag = options.version;
-  if (options.version === "latest") {
+  if (options.version !== "latest" && options.git) {
+    console.error("--version and --git are mutually exclusive!");
+    Deno.exit(1);
+  }
+  if (options.git) {
+    tag = "/heads/main";
+  }
+  if (options.version === "latest" && !options.git) {
     console.log("Retrieving latest release");
     tag = await getLatestTag();
   }
 
-  const tempFile = await downloadLatestArchive(tag);
+  const tempFile = await downloadLatestArchive(
+    tag === "/heads/main" ? tag : "tags/" + tag,
+  );
   const tempDir = Deno.makeTempDirSync();
   await unzip(tempFile, tempDir);
-  await move(tempDir + "/SkyChamps-" + tag);
+  await move(tempDir + "/SkyChamps-" + (tag === "/heads/main" ? "main" : tag));
 }
 
 async function run(options: Record<string, unknown>) {
@@ -136,7 +148,12 @@ async function setup(options: Record<string, unknown>) {
 
 async function downloadLatestArchive(tag: string): Promise<string> {
   console.log("Downloading release: " + tag);
-  const s = await fetch(`${ARCHIVE_URL}${tag}.zip`);
+  console.log(
+    `${ARCHIVE_URL}${tag[0] === "/" ? tag.replace("/", "") : tag}.zip`,
+  );
+  const s = await fetch(
+    `${ARCHIVE_URL}${tag[0] === "/" ? tag.replace("/", "") : tag}.zip`,
+  );
   const buff = await s.arrayBuffer();
   const tempFile = await Deno.makeTempFile();
   await Deno.writeFile(tempFile, new Uint8Array(buff));
@@ -166,7 +183,7 @@ async function unzip(file: string, tempDir: string) {
         tempDir,
       ]
       : ["unzip", "-o", file, "-d", tempDir],
-    stdout: "null",
+    // stdout: "null",
   });
   await p.status();
 }
