@@ -2,8 +2,11 @@ import { Deck } from "./deck.ts";
 
 export class GameState {
   public turn: number;
-  // These deck's are already played
-  // Should be visible to all players
+  /**
+   * These deck's are already played
+   *
+   * Should be visible to all players
+   */
   public playerDecks: [Deck, Deck];
   constructor() {
     this.turn = 0;
