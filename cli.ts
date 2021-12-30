@@ -94,7 +94,10 @@ async function update(options: Record<string, string>) {
   );
   const tempDir = Deno.makeTempDirSync();
   await unzip(tempFile, tempDir);
-  await move(tempDir + "/SkyChamps-" + (tag === "/heads/main" ? "main" : tag));
+  const slash = Deno.build.os === "windows" ? "\\" : "/";
+  await move(
+    `${tempDir}${slash}SkyChamps-${tag === "/heads/main" ? "main" : tag}`,
+  );
 }
 
 async function run(options: Record<string, unknown>) {
@@ -182,6 +185,7 @@ async function unzip(file: string, tempDir: string) {
       ]
       : ["unzip", "-o", file, "-d", tempDir],
     stdout: "null",
+    stderr: "null",
   });
   await p.status();
 }
