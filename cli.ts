@@ -148,14 +148,12 @@ async function setup(options: Record<string, unknown>) {
 
 async function downloadLatestArchive(tag: string): Promise<string> {
   console.log("Downloading release: " + tag);
-  console.log(
-    `${ARCHIVE_URL}${tag[0] === "/" ? tag.replace("/", "") : tag}.zip`,
-  );
   const s = await fetch(
     `${ARCHIVE_URL}${tag[0] === "/" ? tag.replace("/", "") : tag}.zip`,
   );
   const buff = await s.arrayBuffer();
   const tempFile = await Deno.makeTempFile() + ".zip";
+  console.log({ tempFile });
   await Deno.writeFile(tempFile, new Uint8Array(buff));
   return tempFile;
 }
@@ -183,7 +181,7 @@ async function unzip(file: string, tempDir: string) {
         tempDir,
       ]
       : ["unzip", "-o", file, "-d", tempDir],
-    // stdout: "null",
+    stdout: "null",
   });
   await p.status();
 }
