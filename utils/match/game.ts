@@ -3,10 +3,7 @@ import { GameState } from "./game_state.ts";
 import { CARD_CACHE } from "../cards/cards_cache.ts";
 import { gameEventHandler } from "./game_event_handler.ts";
 
-import type {
-  AnyServerEvent,
-  MiscEvents,
-} from "../../types/server_send_payloads/mod.ts";
+import type { AnyServerEvent } from "../../types/server_send_payloads/mod.ts";
 
 /**
  * Resources that need to be managed
@@ -52,11 +49,13 @@ export class Game {
       const player = this.players[i];
       const enemy = this.players[(i + 1) % 2];
       for (let j = 0; j < 6; j++) {
+        const card = CARD_CACHE.getRandomCard();
         player.sendEvent({
           type: "self_draw",
           cardIndex: j,
-          card: CARD_CACHE.getRandomCard(),
+          card,
         });
+        player.deck.addCard(card);
         enemy.sendEvent({ type: "opp_draw", cardIndex: j });
       }
       player.sendEvent({ type: "self_end_turn" });
@@ -64,8 +63,8 @@ export class Game {
     }
   }
 
-  stopGame(event: MiscEvents.GameCancel): void {
-    this.sendGlobalEvent(event);
+  stopGame(reason: string): void {
+    this.sendGlobalEvent({ type: "game_cancel", reason });
     // cleanUp will handle all player connections
     this.cleanUp();
   }
@@ -78,7 +77,7 @@ export class Game {
   }
 
   sendGlobalEvent(record: AnyServerEvent): void {
-    for (const player of this.players) player.sendEvent(record);
+    for (const player of this.players) player?.sendEvent(record);
   }
 
   async addPlayer(webSocket: WebSocket, name: string) {
@@ -91,16 +90,13 @@ export class Game {
     });
 
     // Initiate all eventListeners
-    player.onClose(() =>
-      this.stopGame({ type: "game_cancel", reason: "Player disconnected" })
-    );
+    const stopCB = () => {
+      delete this.players[player.id];
+      this.stopGame("Opponent Disconnected");
+    };
 
-    player.onError(() =>
-      this.stopGame({
-        type: "game_cancel",
-        reason: "Player connection got forcibly closed",
-      })
-    );
+    player.onClose(stopCB);
+    player.onError(stopCB);
 
     player.onMessage((evt) => gameEventHandler(evt, this, player.id));
 
