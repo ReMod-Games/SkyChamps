@@ -56,4 +56,18 @@ export class Card {
   cleanUp() {
     this.turnTable.clear();
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      attackName: this.attackName,
+      abilityName: this.abilityName,
+      health: this.health,
+      attackDamage: this.attackDamage,
+      critFactor: this.critFactor,
+      critChance: this.critChance,
+    };
+  }
 }
