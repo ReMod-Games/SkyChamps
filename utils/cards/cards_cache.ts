@@ -17,7 +17,7 @@ export class CardCache {
 
   getRandomCard(): Card {
     const id = Math.floor(Math.random() * this.innerMap.size);
-    return this.innerMap.get(id)!;
+    return new Card(this.innerMap.get(id)!);
   }
 }
 
