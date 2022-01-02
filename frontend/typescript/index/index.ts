@@ -6,7 +6,7 @@ onload = function () {
     () => {
       const name =
         (document.getElementById("username") as HTMLInputElement).value;
-      fetch(`http://localhost:8000/get_code`)
+      fetch(`${location.origin}/get_code`)
         .then((res) => res.text())
         .then((id) => location.replace(`./lobby/${id}/${name}`));
     },
