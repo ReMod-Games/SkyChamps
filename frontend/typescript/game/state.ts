@@ -93,3 +93,5 @@ export class GameState {
     return this[player].publicDeck[index];
   }
 }
+
+export const GAME_STATE = new GameState();

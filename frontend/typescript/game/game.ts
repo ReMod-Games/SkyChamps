@@ -1,7 +1,7 @@
 /// <reference lib="dom"/>
 
 import { messageHandler } from "./game_logic.js";
-import { GameState } from "./state.js";
+import { GAME_STATE } from "./state.js";
 import { addErrorMessage } from "./dom_manipulate.js";
 import type {
   GameEvents,
@@ -15,8 +15,6 @@ const socket = new WebSocket(
 await new Promise((res) => socket.onopen = res);
 socket.onmessage = messageHandler;
 
-const gameState = new GameState();
-
 document.getElementById("chat_input")!.onsubmit = (evt) => {
   const message = (evt.submitter as HTMLInputElement).value;
   const struct: MiscEvents.ChatMessage = {
@@ -29,7 +27,7 @@ document.getElementById("chat_input")!.onsubmit = (evt) => {
 };
 
 document.getElementById("attack")!.onclick = () => {
-  const { opp: oppIndex, self: selfIndex } = gameState.hightlightedCards;
+  const { opp: oppIndex, self: selfIndex } = GAME_STATE.hightlightedCards;
   if (!selfIndex) {
     addErrorMessage("Please select a card to attack with");
     return;
