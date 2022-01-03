@@ -1,3 +1,5 @@
+/// <reference lib="dom"/>
+
 import type { CardJson } from "../../../types/card.ts";
 
 export function createCard(card?: CardJson): HTMLDivElement {
