@@ -1,5 +1,6 @@
 /// <reference lib="dom"/>
 import type { CardJson } from "../../../types/card.ts";
+
 export function setTimer(timeLeft: number, interval: number): number {
   const timer = document.getElementById("timer")!;
   let timeRemaining = timeLeft;
@@ -13,6 +14,11 @@ export function setTimer(timeLeft: number, interval: number): number {
 export function setPlayername(name: string): void {
   const user = document.getElementById("username")!;
   user.innerText = name;
+}
+
+export function addGameMessage(message: string) {
+  const chat = document.getElementById("chat_box")!;
+  chat.innerHTML += `<p class="game_message">${message}</p>`;
 }
 
 export function addChatMessage(message: string, player: string) {
@@ -31,8 +37,10 @@ export function addToDeck(player: "self" | "opp", card?: CardJson): void {
   const deck = document.getElementById(player + "_deck");
   if (!deck) return;
   const cardDiv = document.createElement("div");
+  cardDiv.setAttribute("class", "card");
   if (card) {
     cardDiv.innerHTML = Object.entries(card)
+      .filter(([key]) => key.toLowerCase().includes("name"))
       .reduce((str, [key, value]) => str += `${key}: ${value}<br/>`, "");
   } else cardDiv.innerHTML = "hidden";
 

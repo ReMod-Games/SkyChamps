@@ -54,3 +54,18 @@ main {
   background-color: blueviolet;
   flex: 5;
 }
+.deck {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.game_message {
+  background-color: lightblue;
+}
+.error {
+  background-color: lightcoral;
+}
+.card {
+  padding: 2px;
+  background-color: violet;
+}

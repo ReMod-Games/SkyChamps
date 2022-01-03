@@ -6,7 +6,12 @@ import type {
   SelfEvents as _2,
 } from "../../../types/server_send_payloads/mod.ts";
 
-import { addChatMessage } from "./dom_manipulate.js";
+import {
+  addChatMessage,
+  addErrorMessage,
+  addGameMessage,
+  addToDeck,
+} from "./dom_manipulate.js";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {
   const event: AnyServerEvent = JSON.parse(messageEvent.data);
@@ -14,21 +19,27 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
   switch (event.type) {
     // Misc Events
     case "game_win": {
+      addGameMessage("Game ended and You won :D");
       break;
     }
     case "game_loss": {
+      addGameMessage("Game ended and You lost :C");
       break;
     }
     case "game_draw": {
+      addGameMessage("Game ended in a draw!");
       break;
     }
     case "game_start": {
+      addGameMessage("Game has started!");
       break;
     }
     case "game_cancel": {
+      addGameMessage("Game has been canceled!");
       break;
     }
     case "error": {
+      addErrorMessage(event.error + ":" + event.message);
       break;
     }
     case "chat_message": {
@@ -39,6 +50,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Opp Events
 
     case "opp_draw": {
+      addToDeck("opp");
       break;
     }
     case "opp_play": {
@@ -57,12 +69,14 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "opp_end_turn": {
+      // Enable buttons again
       break;
     }
 
     // Self Events
 
     case "self_draw": {
+      addToDeck("self", event.card);
       break;
     }
     case "self_play": {
@@ -81,6 +95,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "self_end_turn": {
+      // Disable buttons
       break;
     }
   }
