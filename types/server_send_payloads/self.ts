@@ -36,11 +36,11 @@ export interface SelfDied {
   cardIndex: number; // -1 if no player is killed
 }
 
-export interface SelfEffectDOT {
-  type: "self_effect_dot";
-  cardIndex: number; // -1 if player
-  damage: number;
-}
+// export interface SelfEffectDOT {
+//   type: "self_effect_dot";
+//   cardIndex: number; // -1 if player
+//   damage: number;
+// }
 
 export interface SelfEndTurn {
   type: "self_end_turn";
@@ -52,5 +52,5 @@ export type AnySelfEvent =
   | SelfAttack
   // | SelfAbility
   | SelfDied
-  | SelfEffectDOT
+  // | SelfEffectDOT
   | SelfEndTurn;

@@ -36,11 +36,11 @@ export interface OppDied {
   cardIndex: number; // -1 if player is killed
 }
 
-export interface OppEffectDOT {
-  type: "opp_effect_dot";
-  cardIndex: number; // -1 if player
-  damage: number;
-}
+// export interface OppEffectDOT {
+//   type: "opp_effect_dot";
+//   cardIndex: number; // -1 if player
+//   damage: number;
+// }
 
 export interface OppEndTurn {
   type: "opp_end_turn";
@@ -52,5 +52,5 @@ export type AnyOppEvent =
   | OppAttack
   // | OppAbility
   | OppDied
-  | OppEffectDOT
+  // | OppEffectDOT
   | OppEndTurn;
