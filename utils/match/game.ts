@@ -39,7 +39,7 @@ export class Game {
     this.timeoutID = setTimeout(() => {
       if (this.players.length < 2) this.cancelGame();
       this.timeoutID = NaN;
-    }, 1000 * 60 * 2);
+    }, 1000 * 60);
   }
 
   startGame(): void {
