@@ -12,11 +12,13 @@ interface Element {
 interface Self {
   privateDeck: CardJsonExt[];
   publicDeck: CardJsonExt[];
+  element: HTMLDivElement;
 }
 
 interface Opp {
   privateDeck: Element[];
   publicDeck: CardJsonExt[];
+  element: HTMLDivElement;
 }
 
 interface HighlightedCard {
@@ -32,21 +34,24 @@ export class GameState {
     this.self = {
       privateDeck: [],
       publicDeck: [],
+      element: null as unknown as HTMLDivElement,
     };
 
     this.opp = {
       privateDeck: [],
       publicDeck: [],
+      element: null as unknown as HTMLDivElement,
     };
     this.hightlightedCards = { opp: null, self: null };
   }
 
-  addCard(player: "opp", index: number): void;
-  addCard(player: "self", index: number, card: CardJson): void;
-  addCard(player: Player, index: number, card?: CardJson): void {
-    const deck = this[player].privateDeck;
+  addCard(id: "opp", index: number): void;
+  addCard(id: "self", index: number, card: CardJson): void;
+  addCard(id: Player, index: number, card?: CardJson): void {
+    const player = this[id];
     const element = createCard(card);
-    deck[index] = { element, ...card };
+    player.element.appendChild(element);
+    player.privateDeck[index] = { element, ...card };
 
     // Get private deck div and add `element` to it
     // Play draw animation of `element`
