@@ -12,9 +12,11 @@ onload = function () {
     },
   );
   document.getElementById("join_match")!.addEventListener("click", () => {
+    const name =
+      (document.getElementById("username") as HTMLInputElement).value;
     const id = prompt("Please enter your match id");
     if (id) {
-      location.replace(`${location.origin}/lobby/${id}`);
+      location.replace(`${location.origin}/lobby/${id}/${name}`);
     } else {
       alert("Invalid ID");
     }
