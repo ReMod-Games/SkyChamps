@@ -36,22 +36,63 @@ onload = () => {
   };
 
   document.getElementById("attack")!.onclick = () => {
-    const { opp: oppIndex, self: selfIndex } = GAME_STATE.selectedCards;
-    if (!selfIndex) {
+    const { opp, self } = GAME_STATE.selectedCards;
+    if (!self.index) {
       addErrorMessage("Please select a card to attack with");
       return;
     }
-    if (!oppIndex) {
+    if (self.type === "private") {
+      addErrorMessage("Please select a card that you've played");
+      return;
+    }
+    if (!opp.index || opp.type === "private") {
       addErrorMessage("Please select a card to attack");
       return;
     }
-    console.log({ selfIndex, oppIndex });
+
+    console.log({ self, opp });
     const payload: GameEvents.Attack = {
       type: "attack",
-      attackerCardIndex: selfIndex,
-      defenderCardIndex: oppIndex,
+      attackerCardIndex: self.index,
+      defenderCardIndex: opp.index,
     };
 
+    socket.send(JSON.stringify(payload));
+    GAME_STATE.selectedCards = {
+      opp: { type: null, index: null },
+      self: { type: null, index: null },
+    };
+  };
+
+  document.getElementById("play_card")!.onclick = () => {
+    const { self } = GAME_STATE.selectedCards;
+    if (!self.index) {
+      addErrorMessage("Please select a card to play!");
+      return;
+    }
+    if (self.type === "public") {
+      addErrorMessage("Please select a card from your hand!");
+      return;
+    }
+    const payload: GameEvents.PlayCard = {
+      type: "play_card",
+      cardIndex: self.index,
+    };
+
+    socket.send(JSON.stringify(payload));
+  };
+
+  document.getElementById("draw_card")!.onclick = () => {
+    const payload: GameEvents.DrawCard = {
+      type: "draw_card",
+    };
+    socket.send(JSON.stringify(payload));
+  };
+
+  document.getElementById("end_turn")!.onclick = () => {
+    const payload: GameEvents.EndTurn = {
+      type: "end_turn",
+    };
     socket.send(JSON.stringify(payload));
   };
 };
