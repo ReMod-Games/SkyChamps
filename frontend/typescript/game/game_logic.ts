@@ -12,6 +12,7 @@ import {
   addChatMessage,
   addErrorMessage,
   addGameMessage,
+  setTimer,
 } from "./dom_manipulate.js";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {
@@ -47,9 +48,14 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       addChatMessage(event.message, event.user);
       break;
     }
+    case "timer": {
+      const now = Date.now();
+      const time = new Date(event.date).getTime();
 
+      setTimer(time - now, 1000);
+      break;
+    }
     // Opp Events
-
     case "opp_draw": {
       GAME_STATE.addCard("opp", event.cardIndex);
       break;

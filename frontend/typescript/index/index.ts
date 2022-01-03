@@ -9,11 +9,8 @@ onload = () => {
 
   document.getElementById("join_match")!.onclick = () => {
     const id = prompt("Please enter your match id");
-    if (id) {
-      redirect(`${location.origin}/lobby/${id}`);
-    } else {
-      alert("Invalid ID");
-    }
+    if (id) redirect(`${location.origin}/lobby/${id}`);
+    else alert("Invalid ID");
   };
 };
 

@@ -102,7 +102,10 @@ export class Game {
 
     // Wait for the connection to be opened
     await player.awaitConnection();
-
+    player.sendEvent({
+      type: "timer",
+      date: new Date(this.createdAt.getTime() + 1000 * 60).toISOString(),
+    });
     this.players.push(player);
     this.playercount += 1;
   }

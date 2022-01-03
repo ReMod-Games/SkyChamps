@@ -1,5 +1,10 @@
 // MISC
 
+export interface Timer {
+  type: "timer";
+  date: string;
+}
+
 export interface GameWin {
   type: "game_win";
 }
@@ -14,6 +19,7 @@ export interface GameDraw {
 
 export interface GameStart {
   type: "game_start";
+  // opponent: string;
 }
 
 export interface ServerError {
@@ -40,4 +46,5 @@ export type AnyMiscEvent =
   | GameStart
   | ServerError
   | ChatMessage
-  | GameCancel;
+  | GameCancel
+  | Timer;
