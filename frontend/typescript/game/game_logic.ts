@@ -61,15 +61,22 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "opp_play": {
+      GAME_STATE.moveCard("opp", event.cardIndex, event.card);
       break;
     }
     case "opp_attack": {
+      GAME_STATE.modifyCard(
+        "self",
+        event.defendCardIndex,
+        (card) => card.health -= event.damage,
+      );
       break;
     }
     case "opp_ability": {
       break;
     }
     case "opp_kill": {
+      GAME_STATE.removeCard("opp", event.cardIndex);
       break;
     }
     case "opp_effect_dot": {
@@ -87,18 +94,30 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "self_play": {
+      GAME_STATE.moveCard("self", event.cardIndex);
       break;
     }
     case "self_attack": {
+      GAME_STATE.modifyCard(
+        "opp",
+        event.defendCardIndex,
+        (card) => card.health -= event.damage,
+      );
       break;
     }
     case "self_ability": {
       break;
     }
     case "self_kill": {
+      GAME_STATE.removeCard("self", event.cardIndex);
       break;
     }
     case "self_effect_dot": {
+      GAME_STATE.modifyCard(
+        "self",
+        event.cardIndex,
+        (card) => card.health -= event.damage,
+      );
       break;
     }
     case "self_end_turn": {

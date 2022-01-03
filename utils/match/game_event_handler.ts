@@ -137,6 +137,16 @@ export function gameEventHandler(
           defendCardIndex: defenderIndex,
           damage,
         });
+        if (deck.getCard(defenderIndex)?.health! <= 0) {
+          player.sendEvent({
+            type: "opp_kill",
+            cardIndex: defenderIndex,
+          });
+          opponent.sendEvent({
+            type: "self_kill",
+            cardIndex: defenderIndex,
+          });
+        }
       }
       break;
     }
