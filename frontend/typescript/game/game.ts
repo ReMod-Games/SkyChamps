@@ -29,7 +29,7 @@ onload = () => {
 
   document.getElementById("attack")!.onclick = () => {
     const { opponent, self } = GAME_STATE.self.selectors;
-    if (!self.index) {
+    if (self.index === null) {
       addErrorMessage("Please select a card to attack with");
       return;
     }
@@ -37,7 +37,7 @@ onload = () => {
       addErrorMessage("Please select a card that you've played");
       return;
     }
-    if (!opponent) {
+    if (opponent === null) {
       addErrorMessage("Please select a card to attack");
       return;
     }
