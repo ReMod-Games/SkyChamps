@@ -2,7 +2,7 @@
 
 import { messageHandler } from "./game_logic.js";
 import { GameState } from "./state.js";
-import { addErrorMessage } from "./dom_manipulate.ts";
+import { addErrorMessage } from "./dom_manipulate.js";
 import type {
   GameEvents,
   MiscEvents,
