@@ -35,7 +35,7 @@ export class Player {
     this.gameAbortSignal = init.gameAbortSignal;
     this.mana = 0;
     this.hp = 0;
-    this.deck = new Deck();
+    this.deck = new Deck(5);
     this.gameAbortSignal
       .addEventListener("abort", () => this.cleanUp(), { once: true });
   }

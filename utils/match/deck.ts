@@ -9,8 +9,8 @@ export class Deck {
     return this.innerDeck.length;
   }
 
-  constructor() {
-    this.innerDeck = [];
+  constructor(maxCards: number) {
+    this.innerDeck = new Array(maxCards);
   }
 
   addCard(card: Card): number {

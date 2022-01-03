@@ -10,7 +10,7 @@ export class GameState {
   public playerDecks: [Deck, Deck];
   constructor() {
     this.turn = 0;
-    this.playerDecks = [new Deck(), new Deck()];
+    this.playerDecks = [new Deck(4), new Deck(4)];
   }
 
   nextTurn() {

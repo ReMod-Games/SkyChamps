@@ -37,13 +37,20 @@ export function gameEventHandler(
       // Get card from db
       const card = CARD_CACHE.getRandomCard();
 
+      if (player.deck.length === 5) {
+        return player.sendEvent({
+          type: "error",
+          error: "Too many cards",
+          message: "Your deck is filled to the limit!",
+        });
+      }
+
       // Add card to player deck
       const index = player.deck.addCard(card);
 
       // Send events
       player.sendEvent({ type: "self_draw", cardIndex: index, card });
       opponent.sendEvent({ type: "opp_draw", cardIndex: index });
-
       break;
     }
 
@@ -51,6 +58,14 @@ export function gameEventHandler(
       // Validate action
       if (!isValidPayload(eventRecord, ["type", "cardIndex"])) {
         return player.sendEvent(Errors.INVALID_PAYLOAD);
+      }
+
+      if (game.state.playerDecks[playerID].length === 4) {
+        return player.sendEvent({
+          type: "error",
+          error: "Too many cards",
+          message: "Your deck is filled to the limit!",
+        });
       }
 
       // Add card to `game.gameState`
@@ -161,10 +176,6 @@ export function gameEventHandler(
       if (!isValidPayload(eventRecord, ["type"])) {
         return player.sendEvent(Errors.INVALID_PAYLOAD);
       }
-
-      // Send end turn event
-      player.sendEvent({ type: "self_end_turn" });
-      opponent.sendEvent({ type: "opp_end_turn" });
       break;
     }
 
@@ -201,6 +212,9 @@ export function gameEventHandler(
       });
   }
 
+  // Send end turn event
+  player.sendEvent({ type: "self_end_turn" });
+  opponent.sendEvent({ type: "opp_end_turn" });
   game.state.nextTurn();
 }
 

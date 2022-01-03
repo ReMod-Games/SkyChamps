@@ -54,7 +54,6 @@ export class GameState {
     player.privateDeck[index] = { element, ...card };
 
     element.onclick = () => this.selectedCards[id] = index;
-    // Get private deck div and add `element` to it
     // Play draw animation of `element`
   }
 
