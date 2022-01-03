@@ -1,9 +1,9 @@
 import { CARD_CACHE } from "../cards/cards_cache.ts";
 import { isValidPayload } from "./validate_payload.ts";
+import { Card } from "../cards/card.ts";
 import * as Errors from "./game_errors.ts";
 
 import type { AnyClientEvent } from "../../types/client_send_payloads/mod.ts";
-import type { Player } from "./clients.ts";
 import type { Game } from "./game.ts";
 
 const NON_TURN_BASED_EVENTS = ["chat_message", "disconnect"];
@@ -36,14 +36,14 @@ export function gameEventHandler(
 
       // Get card from db
       const card = CARD_CACHE.getRandomCard();
-
+      console.log(eventRecord);
       // Add card to player deck
       const index = player.deck.addCard(card);
       if (!index) {
         return player.sendEvent({
           type: "error",
-          error: "Too many cards",
-          message: "Your deck is filled to the limit!",
+          error: "Too many cards drawn",
+          message: "Your deck is filled to the limit of 5!",
         });
       }
       // Send events
@@ -57,26 +57,37 @@ export function gameEventHandler(
       if (!isValidPayload(eventRecord, ["type", "cardIndex"])) {
         return player.sendEvent(Errors.INVALID_PAYLOAD);
       }
-
+      console.log(eventRecord);
       if (game.state.playerDecks[playerID].length === 4) {
         return player.sendEvent({
           type: "error",
-          error: "Too many cards",
-          message: "Your deck is filled to the limit!",
+          error: "Too many cards played",
+          message: "Your deck is filled to the limit of 4!",
         });
       }
 
       // Add card to `game.gameState`
-      const card = player.deck.moveCard(eventRecord.cardIndex);
-      if (!card) {
-        return player.sendEvent(Errors.INVALID_CARD_INDEX);
-      }
+      const maybeCard = player.deck.getCard(eventRecord.cardIndex);
+      if (!maybeCard) return player.sendEvent(Errors.INVALID_CARD_INDEX);
+
+      player.deck.removeCard(eventRecord.cardIndex);
+      const card = new Card(maybeCard);
       const index = game
         .state.playerDecks[playerID]
         .addCard(card)!;
 
-      player.sendEvent({ type: "self_play", cardIndex: index });
-      opponent.sendEvent({ type: "opp_play", cardIndex: index, card });
+      player.sendEvent({
+        type: "self_play",
+        cardFromIndex: eventRecord.cardIndex,
+        cardToIndex: index,
+      });
+
+      opponent.sendEvent({
+        type: "opp_play",
+        cardFromIndex: eventRecord.cardIndex,
+        cardToIndex: index,
+        card,
+      });
       break;
     }
 
@@ -137,45 +148,18 @@ export function gameEventHandler(
           defendCardIndex: defenderIndex,
           damage,
         });
-        if (deck.getCard(defenderIndex)?.health! <= 0) {
+
+        if (deck.getCard(defenderIndex)!.health <= 0) {
           player.sendEvent({
-            type: "opp_kill",
+            type: "opp_died",
             cardIndex: defenderIndex,
           });
           opponent.sendEvent({
-            type: "self_kill",
+            type: "self_died",
             cardIndex: defenderIndex,
           });
         }
       }
-      break;
-    }
-
-    case "ability": {
-      // Validate action
-      if (
-        !isValidPayload(eventRecord, [
-          "type",
-          "cardIndex",
-          "receiver",
-          "receiverIndex",
-          "abilityType",
-          "damage",
-        ])
-      ) {
-        return player.sendEvent(Errors.INVALID_PAYLOAD);
-      }
-
-      const abilityName = player
-        .deck
-        .getCard(eventRecord.cardIndex)
-        ?.abilityName;
-
-      if (!abilityName) {
-        return player.sendEvent(Errors.INVALID_CARD_INDEX);
-      }
-      // Either executes or queue's ability depending on it's name
-      activatePlayerAbility(abilityName, player, opponent);
       break;
     }
 
@@ -226,15 +210,15 @@ export function gameEventHandler(
   game.state.nextTurn();
 }
 
-function activatePlayerAbility(
-  abilityName: string,
-  _player: Player,
-  _opponent: Player,
-): void {
-  switch (abilityName) {
-    // TODO: add all abilities
-    // TODO: Remove default case (not needed)
-    default:
-      break;
-  }
-}
+// function activatePlayerAbility(
+//   abilityName: string,
+//   _player: Player,
+//   _opponent: Player,
+// ): void {
+//   switch (abilityName) {
+//     // TODO: add all abilities
+//     // TODO: Remove default case (not needed)
+//     default:
+//       break;
+//   }
+// }
