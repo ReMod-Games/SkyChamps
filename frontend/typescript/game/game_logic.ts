@@ -10,7 +10,7 @@ import {
   addChatMessage,
   addErrorMessage,
   addGameMessage,
-  addToDeck,
+  createCard,
 } from "./dom_manipulate.js";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {
@@ -50,7 +50,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Opp Events
 
     case "opp_draw": {
-      addToDeck("opp");
+      createCard();
       break;
     }
     case "opp_play": {
@@ -76,7 +76,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Self Events
 
     case "self_draw": {
-      addToDeck("self", event.card);
+      createCard(event.card);
       break;
     }
     case "self_play": {
