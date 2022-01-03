@@ -1,5 +1,5 @@
 import { Deck } from "../../utils/match/deck.ts";
-import { assert, assertEquals, assertNotEquals } from "../test_deps.ts";
+import { assert, assertEquals } from "../test_deps.ts";
 import { CardCache } from "../../utils/cards/cards_cache.ts";
 
 const CARD_CACHE = new CardCache(
@@ -32,31 +32,6 @@ Deno.test({
     const invalidIndex = deck.removeCard(0);
     assert(validIndex);
     assert(!invalidIndex);
-  },
-  sanitizeExit: true,
-  sanitizeOps: true,
-  sanitizeResources: true,
-});
-
-Deno.test({
-  name: "Deck function moveCard",
-  fn() {
-    const deck = new Deck(5);
-    deck.addCard(CARD_CACHE.getRandomCard());
-    deck.addCard(CARD_CACHE.getRandomCard());
-    const card = deck.getCard(0);
-    deck.moveCard(0);
-    const no_card = deck.moveCard(0);
-    assert(card);
-    assertEquals(no_card, undefined);
-
-    const unmoddedCard = self.structuredClone(deck.getCard(1));
-    const s = deck.modifyCard(1, (card) => card.health = 0);
-    const modifiedCard = deck.getCard(1)!;
-    assert(s);
-    assertNotEquals(modifiedCard, unmoddedCard);
-    assertEquals(modifiedCard.health, 0);
-    assertEquals(unmoddedCard.health, 100);
   },
   sanitizeExit: true,
   sanitizeOps: true,
