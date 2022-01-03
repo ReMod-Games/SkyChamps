@@ -57,12 +57,12 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     }
     // Opp Events
     case "opp_draw": {
-      GAME_STATE.addCardPrivateDeck("opp", event.cardIndex);
+      GAME_STATE.addCard("opp", "private", event.cardIndex);
       break;
     }
     case "opp_play": {
-      GAME_STATE.removeCardPrivateDeck("opp", event.cardFromIndex);
-      GAME_STATE.addCardPublicDeck("opp", event.cardToIndex, event.card);
+      GAME_STATE.removeCard("opp", "private", event.cardFromIndex);
+      GAME_STATE.addCard("opp", "public", event.cardToIndex, event.card);
       break;
     }
     case "opp_attack": {
@@ -74,7 +74,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "opp_died": {
-      GAME_STATE.removeCardPublicDeck("opp", event.cardIndex);
+      GAME_STATE.removeCard("opp", "public", event.cardIndex);
       break;
     }
     case "opp_end_turn": {
@@ -85,12 +85,12 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Self Events
 
     case "self_draw": {
-      GAME_STATE.addCardPrivateDeck("self", event.cardIndex, event.card);
+      GAME_STATE.addCard("self", "private", event.cardIndex, event.card);
       break;
     }
     case "self_play": {
-      const card = GAME_STATE.getCardPrivateDeck(event.cardFromIndex);
-      GAME_STATE.addCardPublicDeck("self", event.cardToIndex, card);
+      const card = GAME_STATE.getCard("self", "private", event.cardFromIndex);
+      GAME_STATE.addCard("self", "public", event.cardToIndex, card);
       break;
     }
     case "self_attack": {
@@ -102,7 +102,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       break;
     }
     case "self_died": {
-      GAME_STATE.removeCardPublicDeck("self", event.cardIndex);
+      GAME_STATE.removeCard("self", "public", event.cardIndex);
       break;
     }
     case "self_end_turn": {
