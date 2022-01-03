@@ -37,17 +37,15 @@ export function gameEventHandler(
       // Get card from db
       const card = CARD_CACHE.getRandomCard();
 
-      if (player.deck.length === 5) {
+      // Add card to player deck
+      const index = player.deck.addCard(card);
+      if (!index) {
         return player.sendEvent({
           type: "error",
           error: "Too many cards",
           message: "Your deck is filled to the limit!",
         });
       }
-
-      // Add card to player deck
-      const index = player.deck.addCard(card);
-
       // Send events
       player.sendEvent({ type: "self_draw", cardIndex: index, card });
       opponent.sendEvent({ type: "opp_draw", cardIndex: index });
@@ -75,7 +73,7 @@ export function gameEventHandler(
       }
       const index = game
         .state.playerDecks[playerID]
-        .addCard(card);
+        .addCard(card)!;
 
       player.sendEvent({ type: "self_play", cardIndex: index });
       opponent.sendEvent({ type: "opp_play", cardIndex: index, card });

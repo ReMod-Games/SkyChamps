@@ -4,6 +4,7 @@ type ModifyFunction = (card: Card) => void;
 
 export class Deck {
   private innerDeck: Card[];
+  private maxCards: number;
 
   get length() {
     return this.innerDeck.length;
@@ -11,12 +12,14 @@ export class Deck {
 
   constructor(maxCards: number) {
     this.innerDeck = new Array(maxCards);
+    this.maxCards = maxCards;
   }
 
-  addCard(card: Card): number {
+  addCard(card: Card): number | undefined {
     // Note: This may need changes depending on client code.
     const possibleIndex = this.innerDeck.findIndex((x) => x === undefined);
     const index = possibleIndex >= 0 ? possibleIndex : this.innerDeck.length;
+    if (index > this.maxCards) return;
     this.innerDeck[index] = card;
     return index;
   }
