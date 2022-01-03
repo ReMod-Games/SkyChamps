@@ -52,7 +52,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       const now = Date.now();
       const time = new Date(event.date).getTime();
 
-      setTimer(time - now, 1000);
+      setTimer((time - now) / 1000, 1000);
       break;
     }
     // Opp Events

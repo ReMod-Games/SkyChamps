@@ -1,11 +1,16 @@
 /// <reference lib="dom"/>
 
-export function setTimer(timeLeft: number, interval: number): number {
+export function setTimer(timeLeft: number, interval: number) {
   const timer = document.getElementById("timer")!;
   let timeRemaining = timeLeft;
-
-  return setInterval(
-    () => timer.innerText = (timeRemaining -= interval).toString(),
+  const intervalSecond = interval / 1000;
+  const timeout = setInterval(
+    () => {
+      const time = (timeRemaining - intervalSecond);
+      if (time <= 0) clearInterval(timeout);
+      timer.innerText = time.toFixed(0);
+      timeRemaining = time;
+    },
     interval,
   );
 }
