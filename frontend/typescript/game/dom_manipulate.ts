@@ -1,5 +1,4 @@
 /// <reference lib="dom"/>
-import type { CardJson } from "../../../types/card.ts";
 
 export function setTimer(timeLeft: number, interval: number): number {
   const timer = document.getElementById("timer")!;
