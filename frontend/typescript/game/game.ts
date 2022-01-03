@@ -36,7 +36,7 @@ onload = () => {
   };
 
   document.getElementById("attack")!.onclick = () => {
-    const { opp: oppIndex, self: selfIndex } = GAME_STATE.hightlightedCards;
+    const { opp: oppIndex, self: selfIndex } = GAME_STATE.selectedCards;
     if (!selfIndex) {
       addErrorMessage("Please select a card to attack with");
       return;
@@ -45,6 +45,7 @@ onload = () => {
       addErrorMessage("Please select a card to attack");
       return;
     }
+    console.log({ selfIndex, oppIndex });
     const payload: GameEvents.Attack = {
       type: "attack",
       attackerCardIndex: selfIndex,

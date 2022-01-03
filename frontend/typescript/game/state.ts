@@ -21,7 +21,7 @@ interface Opp {
   element: HTMLDivElement;
 }
 
-interface HighlightedCard {
+interface SelectedCards {
   opp: null | number;
   self: null | number;
 }
@@ -29,7 +29,7 @@ interface HighlightedCard {
 export class GameState {
   self: Self;
   opp: Opp;
-  hightlightedCards: HighlightedCard;
+  selectedCards: SelectedCards;
   constructor() {
     this.self = {
       privateDeck: [],
@@ -42,7 +42,7 @@ export class GameState {
       publicDeck: [],
       element: null as unknown as HTMLDivElement,
     };
-    this.hightlightedCards = { opp: null, self: null };
+    this.selectedCards = { opp: null, self: null };
   }
 
   addCard(id: "opp", index: number): void;
@@ -53,6 +53,7 @@ export class GameState {
     player.element.appendChild(element);
     player.privateDeck[index] = { element, ...card };
 
+    element.onclick = () => this.selectedCards[id] = index;
     // Get private deck div and add `element` to it
     // Play draw animation of `element`
   }
@@ -60,7 +61,7 @@ export class GameState {
   removeCard(player: Player, cardIndex: number): void {
     const element = this[player].publicDeck[cardIndex].element;
     delete this[player].publicDeck[cardIndex];
-
+    element.onclick = null;
     document.removeChild(element);
     // Play delete animation of `element`
   }
