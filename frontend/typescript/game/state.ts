@@ -19,10 +19,15 @@ interface Opp {
   publicDeck: CardJsonExt[];
 }
 
+interface HighlightedCard {
+  opp: null | number;
+  self: null | number;
+}
+
 export class GameState {
   self: Self;
   opp: Opp;
-
+  hightlightedCards: HighlightedCard;
   constructor() {
     this.self = {
       privateDeck: [],
@@ -33,6 +38,7 @@ export class GameState {
       privateDeck: [],
       publicDeck: [],
     };
+    this.hightlightedCards = { opp: null, self: null };
   }
 
   addCard(player: "opp", index: number, card: undefined): void;
@@ -81,5 +87,9 @@ export class GameState {
     if (!card) return false;
     modifier(card);
     return true;
+  }
+
+  getCard(player: Player, index: number): CardJsonExt {
+    return this[player].publicDeck[index];
   }
 }
