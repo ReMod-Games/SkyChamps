@@ -57,11 +57,12 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     }
     // Opp Events
     case "opp_draw": {
-      GAME_STATE.addCard("opp", event.cardIndex);
+      GAME_STATE.addCardPrivateDeck("opp", event.cardIndex);
       break;
     }
     case "opp_play": {
-      GAME_STATE.moveCard("opp", event.cardIndex, event.card);
+      GAME_STATE.removeCardPrivateDeck("opp", event.cardFromIndex);
+      GAME_STATE.addCardPublicDeck("opp", event.cardToIndex, event.card);
       break;
     }
     case "opp_attack": {
@@ -72,14 +73,8 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       );
       break;
     }
-    case "opp_ability": {
-      break;
-    }
-    case "opp_kill": {
-      GAME_STATE.removeCard("opp", event.cardIndex);
-      break;
-    }
-    case "opp_effect_dot": {
+    case "opp_died": {
+      GAME_STATE.removeCardPublicDeck("opp", event.cardIndex);
       break;
     }
     case "opp_end_turn": {
@@ -90,11 +85,12 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Self Events
 
     case "self_draw": {
-      GAME_STATE.addCard("self", event.cardIndex, event.card);
+      GAME_STATE.addCardPrivateDeck("self", event.cardIndex, event.card);
       break;
     }
     case "self_play": {
-      GAME_STATE.moveCard("self", event.cardIndex);
+      const card = GAME_STATE.getCardPrivateDeck(event.cardFromIndex);
+      GAME_STATE.addCardPublicDeck("self", event.cardToIndex, card);
       break;
     }
     case "self_attack": {
@@ -105,19 +101,8 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
       );
       break;
     }
-    case "self_ability": {
-      break;
-    }
-    case "self_kill": {
-      GAME_STATE.removeCard("self", event.cardIndex);
-      break;
-    }
-    case "self_effect_dot": {
-      GAME_STATE.modifyCard(
-        "self",
-        event.cardIndex,
-        (card) => card.health -= event.damage,
-      );
+    case "self_died": {
+      GAME_STATE.removeCardPublicDeck("self", event.cardIndex);
       break;
     }
     case "self_end_turn": {
