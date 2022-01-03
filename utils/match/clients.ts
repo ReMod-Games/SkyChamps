@@ -22,6 +22,9 @@ export class Player {
 
   public mana: number;
   public hp: number;
+  /**
+   * Private deck of the player
+   */
   public deck: Deck;
 
   constructor(init: ClientInit) {
