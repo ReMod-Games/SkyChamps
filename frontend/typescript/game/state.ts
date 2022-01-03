@@ -1,6 +1,6 @@
 /// <reference lib="dom"/>
 import type { CardJson } from "../../../types/card.ts";
-
+import { createCard } from "./util.js";
 type Player = "opp" | "self";
 type CardJsonExt = Element & CardJson;
 type ModifyFunction = (card: CardJsonExt) => void;
@@ -41,14 +41,11 @@ export class GameState {
     this.hightlightedCards = { opp: null, self: null };
   }
 
-  addCard(player: "opp", index: number, card: undefined): void;
+  addCard(player: "opp", index: number): void;
   addCard(player: "self", index: number, card: CardJson): void;
   addCard(player: Player, index: number, card?: CardJson): void {
     const deck = this[player].privateDeck;
-    const element = document.createElement("div");
-    let className = "card";
-    if (card) className += ` ${card.name}`;
-    element.className = className;
+    const element = createCard(card);
     deck[index] = { element, ...card };
 
     // Get private deck div and add `element` to it

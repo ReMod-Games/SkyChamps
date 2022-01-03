@@ -6,11 +6,12 @@ import type {
   SelfEvents as _2,
 } from "../../../types/server_send_payloads/mod.ts";
 
+import { GAME_STATE } from "./state.js";
+
 import {
   addChatMessage,
   addErrorMessage,
   addGameMessage,
-  createCard,
 } from "./dom_manipulate.js";
 
 export function messageHandler(messageEvent: MessageEvent<string>) {
@@ -50,7 +51,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Opp Events
 
     case "opp_draw": {
-      createCard();
+      GAME_STATE.addCard("opp", event.cardIndex);
       break;
     }
     case "opp_play": {
@@ -76,7 +77,7 @@ export function messageHandler(messageEvent: MessageEvent<string>) {
     // Self Events
 
     case "self_draw": {
-      createCard(event.card);
+      GAME_STATE.addCard("self", event.cardIndex, event.card);
       break;
     }
     case "self_play": {
