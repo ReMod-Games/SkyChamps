@@ -9,7 +9,7 @@ const CARD_CACHE = new CardCache(
 Deno.test({
   name: "Deck function addCard",
   fn() {
-    const deck = new Deck();
+    const deck = new Deck(5);
     const firstIndex = deck.addCard(CARD_CACHE.getRandomCard());
     const secondIndex = deck.addCard(CARD_CACHE.getRandomCard());
     deck.removeCard(0);
@@ -26,7 +26,7 @@ Deno.test({
 Deno.test({
   name: "Deck function removeCard",
   fn() {
-    const deck = new Deck();
+    const deck = new Deck(5);
     deck.addCard(CARD_CACHE.getRandomCard());
     const validIndex = deck.removeCard(0);
     const invalidIndex = deck.removeCard(0);
@@ -41,11 +41,11 @@ Deno.test({
 Deno.test({
   name: "Deck function moveCard",
   fn() {
-    const deck = new Deck();
+    const deck = new Deck(5);
     deck.addCard(CARD_CACHE.getRandomCard());
     deck.addCard(CARD_CACHE.getRandomCard());
 
-    const card = deck.moveCard(0);
+    const card = deck.getCard(0);
     const no_card = deck.moveCard(0);
     assert(card);
     assertEquals(no_card, undefined);
