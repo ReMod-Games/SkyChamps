@@ -1,111 +1,125 @@
 /// <reference lib="dom"/>
 import type { CardJson } from "../../../types/card.ts";
 import { createCard } from "./util.js";
-type Player = "opp" | "self";
-type CardJsonExt = Element & CardJson;
-type ModifyFunction = (card: CardJsonExt) => void;
 
-interface Element {
-  element: HTMLDivElement;
+interface Deck {
+  cards: CardJson[];
+  elements: HTMLDivElement[];
 }
 
 interface Self {
-  privateDeck: CardJsonExt[];
-  publicDeck: CardJsonExt[];
-  element: HTMLDivElement;
+  private: Deck;
+  public: Deck;
+  selectors: {
+    opponent: number | null;
+    self: {
+      type: "private" | "public" | null;
+      index: number | null;
+    };
+  };
 }
 
-interface Opp {
-  privateDeck: Element[];
-  publicDeck: CardJsonExt[];
-  element: HTMLDivElement;
+interface Opponent {
+  private: HTMLDivElement[];
+  public: Deck;
 }
 
-interface SelectedCard {
-  type: null | "private" | "public";
-  index: null | number;
-}
-
-interface SelectedCards {
-  opp: SelectedCard;
-  self: SelectedCard;
-}
-
-export class GameState {
+class GameState {
   self: Self;
-  opp: Opp;
-  selectedCards: SelectedCards;
+  opp: Opponent;
+
   constructor() {
     this.self = {
-      privateDeck: [],
-      publicDeck: [],
-      element: null as unknown as HTMLDivElement,
+      private: {
+        cards: [],
+        elements: [],
+      },
+      public: {
+        cards: [],
+        elements: [],
+      },
+      selectors: {
+        opponent: null,
+        self: {
+          type: null,
+          index: null,
+        },
+      },
     };
 
     this.opp = {
-      privateDeck: [],
-      publicDeck: [],
-      element: null as unknown as HTMLDivElement,
-    };
-
-    this.selectedCards = {
-      opp: { type: null, index: null },
-      self: { type: null, index: null },
+      private: [],
+      public: {
+        cards: [],
+        elements: [],
+      },
     };
   }
 
-  addCard(id: "opp", index: number): void;
-  addCard(id: "self", index: number, card: CardJson): void;
-  addCard(id: Player, index: number, card?: CardJson): void {
-    const player = this[id];
-    const element = createCard(card);
-    player.element.appendChild(element);
-    player.privateDeck[index] = { element, ...card };
-
-    element.onclick = () => this.selectedCards[id] = { type: "private", index };
-    // Play draw animation of `element`
+  addCardPublicDeck(player: "opp" | "self", index: number, card: CardJson) {
+    const div = createCard(card);
+    this[player].public.elements[index] = div;
+    this[player].public.cards[index] = card;
   }
 
-  removeCard(player: Player, cardIndex: number): void {
-    const element = this[player].publicDeck[cardIndex].element;
-    delete this[player].publicDeck[cardIndex];
-    element.onclick = null;
-    document.removeChild(element);
-    // Play delete animation of `element`
-  }
-
-  moveCard(id: "opp", index: number, card: CardJson): void;
-  moveCard(id: "self", index: number): void;
-  moveCard(id: Player, index: number, card?: CardJson): void {
-    const { publicDeck, privateDeck } = this[id];
-    let { element } = privateDeck[index];
-    if (id === "opp") {
-      document.removeChild(element);
-      element = createCard(card);
+  addCardPrivateDeck(player: "opp", index: number): void;
+  addCardPrivateDeck(player: "self", index: number, card: CardJson): void;
+  addCardPrivateDeck(player: "opp" | "self", index: number, card?: CardJson) {
+    const div = createCard(card);
+    if (player === "opp") {
+      this.opp.private[index] = div;
+    } else {
+      this.self.private.elements[index] = div;
+      this.self.private.cards[index] = card!;
     }
-    element.onclick = () => this.selectedCards[id] = { type: "public", index };
-    publicDeck[index] =
-      (id === "self"
-        ? privateDeck[index]
-        : { element, ...card }) as CardJsonExt;
+  }
 
-    // Play move animation of `element`
-    delete privateDeck[index];
+  removeCardPublicDeck(player: "opp" | "self", index: number) {
+    const { cards, elements } = this[player].public;
+    const res = document.removeChild(elements[index]);
+    console.log({ childRemoved: res, player, index });
+    delete elements[index];
+    delete cards[index];
+  }
+
+  removeCardPrivateDeck(player: "opp" | "self", index: number) {
+    if (player === "opp") {
+      const elem = this.opp.private[index];
+      const res = document.removeChild(elem);
+      console.log({ childRemoved: res, player, index });
+      delete this.opp.private[index];
+    } else {
+      const { cards, elements } = this[player].private;
+      const res = document.removeChild(elements[index]);
+      console.log({ childRemoved: res, player, index });
+      delete elements[index];
+      delete cards[index];
+    }
+  }
+
+  getCardPublicDeck(player: "opp" | "self", index: number): CardJson {
+    return this[player].public.cards[index];
+  }
+
+  /**
+   * Can only be self
+   */
+  getCardPrivateDeck(index: number): CardJson {
+    return this.self.private.cards[index];
   }
 
   modifyCard(
-    player: Player,
-    cardIndex: number,
-    modifier: ModifyFunction,
-  ): boolean {
-    const card = this[player].publicDeck[cardIndex];
-    if (!card) return false;
-    modifier(card);
-    return true;
-  }
-
-  getCard(player: Player, index: number): CardJsonExt {
-    return this[player].publicDeck[index];
+    player: "opp" | "self",
+    index: number,
+    cb: (card: CardJson) => void,
+  ) {
+    const card = this[player].public.cards[index];
+    cb(card);
+    if (card.health <= 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

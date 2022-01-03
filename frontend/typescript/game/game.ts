@@ -16,14 +16,6 @@ const connectionPromise = new Promise((res) => socket.onopen = res);
 socket.onmessage = messageHandler;
 
 onload = () => {
-  console.log("REEEEE");
-  GAME_STATE.opp.element = document.getElementById(
-    "opp_deck",
-  )! as HTMLDivElement;
-  GAME_STATE.self.element = document.getElementById(
-    "self_deck",
-  )! as HTMLDivElement;
-
   document.getElementById("chat_input")!.onsubmit = (evt) => {
     const message = (evt.submitter as HTMLInputElement).value;
     const struct: MiscEvents.ChatMessage = {
@@ -36,7 +28,7 @@ onload = () => {
   };
 
   document.getElementById("attack")!.onclick = () => {
-    const { opp, self } = GAME_STATE.selectedCards;
+    const { opponent, self } = GAME_STATE.self.selectors;
     if (!self.index) {
       addErrorMessage("Please select a card to attack with");
       return;
@@ -45,27 +37,31 @@ onload = () => {
       addErrorMessage("Please select a card that you've played");
       return;
     }
-    if (!opp.index || opp.type === "private") {
+    if (!opponent) {
       addErrorMessage("Please select a card to attack");
       return;
     }
 
-    console.log({ self, opp });
+    console.log({ self, opponent });
     const payload: GameEvents.Attack = {
       type: "attack",
       attackerCardIndex: self.index,
-      defenderCardIndex: opp.index,
+      defenderCardIndex: opponent,
     };
 
     socket.send(JSON.stringify(payload));
-    GAME_STATE.selectedCards = {
-      opp: { type: null, index: null },
-      self: { type: null, index: null },
+    GAME_STATE.self.selectors = {
+      opponent: null,
+      self: {
+        type: null,
+        index: null,
+      },
     };
   };
 
   document.getElementById("play_card")!.onclick = () => {
-    const { self } = GAME_STATE.selectedCards;
+    console.log("Clicking play card");
+    const { self } = GAME_STATE.self.selectors;
     if (!self.index) {
       addErrorMessage("Please select a card to play!");
       return;
@@ -80,20 +76,25 @@ onload = () => {
     };
 
     socket.send(JSON.stringify(payload));
+    console.log("sended payload");
   };
 
   document.getElementById("draw_card")!.onclick = () => {
+    console.log("Clicking draw card");
     const payload: GameEvents.DrawCard = {
       type: "draw_card",
     };
     socket.send(JSON.stringify(payload));
+    console.log("sended payload");
   };
 
   document.getElementById("end_turn")!.onclick = () => {
+    console.log("Clicking end turn");
     const payload: GameEvents.EndTurn = {
       type: "end_turn",
     };
     socket.send(JSON.stringify(payload));
+    console.log("sended payload");
   };
 };
 
