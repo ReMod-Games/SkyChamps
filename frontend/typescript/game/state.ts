@@ -21,9 +21,14 @@ interface Opp {
   element: HTMLDivElement;
 }
 
+interface SelectedCard {
+  type: null | "private" | "public";
+  index: null | number;
+}
+
 interface SelectedCards {
-  opp: null | number;
-  self: null | number;
+  opp: SelectedCard;
+  self: SelectedCard;
 }
 
 export class GameState {
@@ -42,7 +47,11 @@ export class GameState {
       publicDeck: [],
       element: null as unknown as HTMLDivElement,
     };
-    this.selectedCards = { opp: null, self: null };
+
+    this.selectedCards = {
+      opp: { type: null, index: null },
+      self: { type: null, index: null },
+    };
   }
 
   addCard(id: "opp", index: number): void;
@@ -53,7 +62,7 @@ export class GameState {
     player.element.appendChild(element);
     player.privateDeck[index] = { element, ...card };
 
-    element.onclick = () => this.selectedCards[id] = index;
+    element.onclick = () => this.selectedCards[id] = { type: "private", index };
     // Play draw animation of `element`
   }
 
@@ -65,14 +74,14 @@ export class GameState {
     // Play delete animation of `element`
   }
 
-  moveCard(player: "opp", index: number, card: CardJson): void;
-  moveCard(player: "self", index: number, card: undefined): void;
-  moveCard(player: Player, index: number, card?: CardJson): void {
-    const { publicDeck, privateDeck } = this[player];
+  moveCard(id: "opp", index: number, card: CardJson): void;
+  moveCard(id: "self", index: number, card: undefined): void;
+  moveCard(id: Player, index: number, card?: CardJson): void {
+    const { publicDeck, privateDeck } = this[id];
     const element = privateDeck[index].element;
-
+    element.onclick = () => this.selectedCards[id] = { type: "public", index };
     publicDeck[index] =
-      (player === "self"
+      (id === "self"
         ? privateDeck[index]
         : { element, ...card }) as CardJsonExt;
 
