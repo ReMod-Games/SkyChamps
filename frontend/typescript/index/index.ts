@@ -1,24 +1,41 @@
 /// <reference lib="dom"/>
 
-onload = function () {
-  document.getElementById("create_match")!.addEventListener(
-    "click",
-    () => {
-      const name =
-        (document.getElementById("username") as HTMLInputElement).value;
-      fetch(`${location.origin}/get_code`)
-        .then((res) => res.text())
-        .then((id) => location.replace(`./lobby/${id}/${name}`));
-    },
-  );
-  document.getElementById("join_match")!.addEventListener("click", () => {
-    const name =
-      (document.getElementById("username") as HTMLInputElement).value;
+onload = () => {
+  document.getElementById("create_match")!.onclick = () => {
+    fetch(`${location.origin}/get_code`)
+      .then((res) => res.text())
+      .then((id) => redirect(`${location.origin}/lobby/${id}`));
+  };
+
+  document.getElementById("join_match")!.onclick = () => {
     const id = prompt("Please enter your match id");
     if (id) {
-      location.replace(`${location.origin}/lobby/${id}/${name}`);
+      redirect(`${location.origin}/lobby/${id}`);
     } else {
       alert("Invalid ID");
     }
-  });
+  };
 };
+
+function redirect(url: string) {
+  const input = (document.getElementById("username") as HTMLInputElement).value;
+  const cookie = parseCookie();
+  if (!input && !cookie.username) {
+    alert(
+      "No username was provided or found from the last session!\nPlease input one",
+    );
+  } else {
+    const name = input.length > 0 ? input : cookie.username;
+    document.cookie = `username=${name}`;
+    location.replace(url + `/${name}`);
+  }
+}
+
+function parseCookie(): Record<string, string> {
+  return document.cookie.split(";")
+    .map((kvPair) => kvPair.split("="))
+    .reduce((record, [key, value]) => {
+      record[key] = value;
+      return record;
+    }, {} as Record<string, string>);
+}
