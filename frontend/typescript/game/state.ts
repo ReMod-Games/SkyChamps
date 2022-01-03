@@ -75,10 +75,14 @@ export class GameState {
   }
 
   moveCard(id: "opp", index: number, card: CardJson): void;
-  moveCard(id: "self", index: number, card: undefined): void;
+  moveCard(id: "self", index: number): void;
   moveCard(id: Player, index: number, card?: CardJson): void {
     const { publicDeck, privateDeck } = this[id];
-    const element = privateDeck[index].element;
+    let { element } = privateDeck[index];
+    if (id === "opp") {
+      document.removeChild(element);
+      element = createCard(card);
+    }
     element.onclick = () => this.selectedCards[id] = { type: "public", index };
     publicDeck[index] =
       (id === "self"
