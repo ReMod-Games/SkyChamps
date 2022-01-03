@@ -73,6 +73,14 @@ class GameState {
     card?: CardJson,
   ) {
     const div = createCard(card);
+    div.onclick = () => {
+      if (player === "opp" && deck !== "private") {
+        this.self.selectors.opponent = index;
+      } else if (player === "self") {
+        this.self.selectors.self.type = deck;
+        this.self.selectors.self.index = index;
+      }
+    };
     this[player][deck].elements[index] = div;
     this[player][deck].parent.appendChild(div);
     if (player === "self" || deck === "public") {
@@ -86,7 +94,8 @@ class GameState {
     index: number,
   ) {
     const div = this[player][deck].elements[index];
-    this[player][deck].parent.removeChild(div);
+    div.onclick = null;
+    div.remove();
     if (player === "self" || deck === "public") {
       delete (this[player][deck] as Deck).cards[index];
     }
