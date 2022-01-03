@@ -25,16 +25,11 @@ export function addErrorMessage(message: string) {
   chat.innerHTML += `<p class="error">${message}</p>`;
 }
 
-export function addToDeck(player: "opp"): void;
-export function addToDeck(player: "self", card: CardJson): void;
-export function addToDeck(player: "self" | "opp", card?: CardJson): void {
-  const deck = document.getElementById(player + "_deck");
-  if (!deck) return;
+export function createCard(card?: CardJson): HTMLDivElement {
   const cardDiv = document.createElement("div");
   if (card) {
     cardDiv.innerHTML = Object.entries(card)
       .reduce((str, [key, value]) => str += `${key}: ${value}<br/>`, "");
   } else cardDiv.innerHTML = "hidden";
-
-  deck.appendChild(cardDiv);
+  return cardDiv;
 }
