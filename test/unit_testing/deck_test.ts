@@ -44,8 +44,8 @@ Deno.test({
     const deck = new Deck(5);
     deck.addCard(CARD_CACHE.getRandomCard());
     deck.addCard(CARD_CACHE.getRandomCard());
-
     const card = deck.getCard(0);
+    deck.moveCard(0);
     const no_card = deck.moveCard(0);
     assert(card);
     assertEquals(no_card, undefined);
