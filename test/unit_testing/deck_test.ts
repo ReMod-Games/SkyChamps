@@ -1,4 +1,4 @@
-import { Deck } from "../../utils/match/deck.ts";
+import { Deck } from "../../match/deck.ts";
 import { assert, assertEquals } from "../test_deps.ts";
 import { CardCache } from "../../utils/cards/cards_cache.ts";
 

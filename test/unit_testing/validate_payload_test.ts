@@ -1,4 +1,4 @@
-import { isValidPayload } from "../../utils/match/validate_payload.ts";
+import { isValidPayload } from "../../utils/validate_payload.ts";
 import { assert } from "../test_deps.ts";
 
 const payload = {
