@@ -1,4 +1,4 @@
-import type { Game } from "../utils/match/game.ts";
+import type { Game } from "../match/game.ts";
 import type { Cache } from "../utils/cache.ts";
 import type { Context } from "../deps.ts";
 
