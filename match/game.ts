@@ -1,9 +1,9 @@
 import { Player } from "./clients.ts";
 import { GameState } from "./game_state.ts";
-import { CARD_CACHE } from "../cards/cards_cache.ts";
+import { CARD_CACHE } from "../utils/cards/cards_cache.ts";
 import { gameEventHandler } from "./game_event_handler.ts";
 
-import type { AnyServerEvent } from "../../types/server_send_payloads/mod.ts";
+import type { AnyServerEvent } from "../types/server_send_payloads/mod.ts";
 
 /**
  * Resources that need to be managed

@@ -1,9 +1,9 @@
-import { CARD_CACHE } from "../cards/cards_cache.ts";
-import { isValidPayload } from "./validate_payload.ts";
-import { Card } from "../cards/card.ts";
+import { CARD_CACHE } from "../utils/cards/cards_cache.ts";
+import { isValidPayload } from "../utils//validate_payload.ts";
+import { Card } from "../utils/cards/card.ts";
 import * as Errors from "./game_errors.ts";
 
-import type { AnyClientEvent } from "../../types/client_send_payloads/mod.ts";
+import type { AnyClientEvent } from "../types/client_send_payloads/mod.ts";
 import type { Game } from "./game.ts";
 
 const NON_TURN_BASED_EVENTS = ["chat_message", "disconnect"];

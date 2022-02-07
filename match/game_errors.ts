@@ -1,4 +1,4 @@
-import type { MiscEvents } from "../../types/server_send_payloads/mod.ts";
+import type { MiscEvents } from "../types/server_send_payloads/mod.ts";
 
 export const INVALID_PAYLOAD: MiscEvents.ServerError = {
   type: "error",

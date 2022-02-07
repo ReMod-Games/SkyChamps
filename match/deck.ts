@@ -1,4 +1,4 @@
-import type { Card } from "../cards/card.ts";
+import type { Card } from "../utils/cards/card.ts";
 
 type ModifyFunction = (card: Card) => void;
 
