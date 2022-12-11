@@ -1,3 +1,4 @@
+import build from "./build.ts";
 import { requires, run } from "./_util.ts";
 
 export default async function install() {
@@ -10,11 +11,13 @@ export default async function install() {
   const CONFIG_BASE = {
     http: {
       certFile: "",
-      port: 80,
+      keyFile: "",
+      port: 8000,
     },
     gameserver: {
       certFile: "",
-      port: 800,
+      keyFile: "",
+      port: 8001,
     },
   };
 
@@ -22,6 +25,8 @@ export default async function install() {
     "./config.json.example",
     JSON.stringify(CONFIG_BASE, undefined, 2),
   );
+
+  await build();
 }
 
 if (import.meta.main) await install();
