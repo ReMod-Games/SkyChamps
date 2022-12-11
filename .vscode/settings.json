@@ -7,5 +7,17 @@
   "deno.enable": true,
   "deno.unstable": true,
   "deno.importMap": "./dev_import_map.json",
-  "editor.defaultFormatter": "denoland.vscode-deno"
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "deno.enablePaths": [
+    "./game-server",
+    "./http",
+    "./scripts",
+    "./types",
+    "./config.json",
+    "./main.ts"
+  ],
+  "volar.completion.preferredAttrNameCase": "camel",
+  "volar.completion.preferredTagNameCase": "pascal",
+  "volar.takeOverMode.enabled": "auto",
+  "volar.diagnostics.delay": 100
 }
