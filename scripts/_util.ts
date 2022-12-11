@@ -1,26 +1,33 @@
 const which = Deno.build.os === "windows" ? "where" : "which";
 
-export async function requires(...commands: string[]): Promise<boolean> {
-  const promises = commands.map((x) =>
-    Deno.run({
-      cmd: [which, x],
+export async function requires(...commands: string[]) {
+  for (let i = 0; i < commands.length; i++) {
+    const process = Deno.run({
+      cmd: [which, commands[i]],
       stderr: "null",
       stdin: "null",
       stdout: "null",
-    }).status()
-  );
+    });
 
-  const result = await Promise
-    .all(promises);
+    const status = await process.status();
+    process.close();
 
-  return !result.reduce((acc, s) => acc + s.code, 0);
+    if (!status.success) {
+      console.error(`Missing Shell Command: [${commands[i]}]`);
+      Deno.exit(1);
+    }
+  }
 }
 
-export function run(...args: string[]): Promise<boolean> {
-  return Deno.run({
+export async function run(...args: string[]) {
+  const process = Deno.run({
     cmd: args,
     stderr: "inherit",
     stdin: "null",
     stdout: "inherit",
-  }).status().then((x) => !!x.code);
+  });
+
+  const status = await process.status();
+  process.close();
+  if (!status.success) Deno.exit(status.code);
 }
